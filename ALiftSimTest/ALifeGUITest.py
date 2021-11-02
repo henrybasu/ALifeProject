@@ -7,6 +7,8 @@ GUI for this problem.  This must be run in Python 3!
 
 #
 import time
+import random
+import string
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
 
@@ -26,7 +28,12 @@ class ALifeGUI:
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
-        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, ["0000000"]*self.numberAgents)
+        randomGeneticStrings = []
+        for n in range(self.numberAgents):
+            randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
+            print(randomGeneticStrings)
+        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
+
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -247,13 +254,13 @@ class ALifeGUI:
         keepGoing = True
         if status == "local maxima":
             self._addMessage("Local maxima found after " + str(count) + " steps: " + str(nextState))
-            keepGoing = False
+            #keepGoing = False
             self.root.update()
             time.sleep(0.5)
         elif status == "optimal":
             self._addMessage("Optimal solution found after " + str(count) + " steps: " + str(nextState))
             # self.wrapUpSearch(nextState, nextValue)
-            keepGoing = False
+            #keepGoing = False
             self.root.update()
             time.sleep(0.5)
         else:
@@ -575,7 +582,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
+    numberOfAgents = 2
     s = ALifeGUI(20, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

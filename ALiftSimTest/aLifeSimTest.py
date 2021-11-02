@@ -186,7 +186,7 @@ class ALifeSimTest(object):
         while i < len(self.agentList):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
-            rAhead, cAhead = self._computeAhead(agentR, agentC, agentH)
+            rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
             foodHereRating = self._assessFood(agentR, agentC)
             foodAheadRating = self._assessFood(rAhead, cAhead)
             action = agent.respond(foodHereRating, foodAheadRating)
@@ -198,7 +198,8 @@ class ALifeSimTest(object):
                 self.agentMap[agentR, agentC].remove(agent)
                 self.agentMap[rAhead, cAhead].append(agent)
                 agentR, agentC = rAhead, cAhead
-                isOkay = agent.changeEnergy(-5)
+                isOkay = agent.changeEnergy(0)
+
             elif action == 'left':
                 agent.updatePose(agentR, agentC, self._leftTurn(agentH))
                 isOkay = agent.changeEnergy(-2)
@@ -219,19 +220,19 @@ class ALifeSimTest(object):
 
 
 
-    def _computeAhead(self, row, col, heading):
+    def _computeAhead(self, row, col, heading, moveSpeed):
         """Determine the cell that is one space ahead of current cell, given the heading."""
         if heading == 'n':   # agent is pointing north, row value decreases
-            newR = (row - 1) % self.gridSize
+            newR = (row - moveSpeed) % self.gridSize
             return newR, col
         elif heading == 's':  # agent is pointing south, row value increases
-            newR = (row + 1) % self.gridSize
+            newR = (row + moveSpeed) % self.gridSize
             return newR, col
         elif heading == 'w':  # agent is pointing west, col value decreases
-            newC = (col - 1) % self.gridSize
+            newC = (col - moveSpeed) % self.gridSize
             return row, newC
         else:  # agent is pointing east, col value increases
-            newC = (col + 1) % self.gridSize
+            newC = (col + moveSpeed) % self.gridSize
             return row, newC
 
     def _assessFood(self, row, col):
@@ -313,11 +314,11 @@ class Agent(object):
         self.whichScenarios = dict()
         self.visObjectId = None
 
-        self.visionRange = self.geneticString[0]
-        self.jumpHeight = self.geneticString[1]
-        self.moveSpeed = self.geneticString[2]
-        self.moveType = self.geneticString[3]
-        self.sleepType = self.geneticString[4]
+        self.visionRange = int(self.geneticString[0])
+        self.jumpHeight = int(self.geneticString[1])
+        self.moveSpeed = int(self.geneticString[2])
+        self.moveType = int(self.geneticString[3])
+        self.sleepType = int(self.geneticString[4])
         self.energy = int(self.geneticString[5:6])
 
         self.score = 0
@@ -353,6 +354,7 @@ class Agent(object):
         self.energy += changeVal
         if self.energy <= 0:
             return False
+        print(self.energy)
         return True
 
     def respond(self, foodHere, foodAhead):
@@ -401,7 +403,7 @@ class Agent(object):
             return 'right'
         else:
             print("SHOULD NEVER GET HERE")
-            return 'eat'
+            return 'forward'
 
         # action = self.geneticString[0]
         #
