@@ -187,9 +187,16 @@ class ALifeSimTest(object):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
-            foodHereRating = self._assessFood(agentR, agentC)
-            foodAheadRating = self._assessFood(rAhead, cAhead)
-            action = agent.respond(foodHereRating, foodAheadRating)
+            # foodHereRating = self._assessFood(agentR, agentC)
+            # print("foodHereRating: " + str(foodHereRating))
+            # foodAheadRating = self._assessFood(rAhead, cAhead)
+            # print("foodAheadRating " + str(foodAheadRating))
+            creatureHereRating = self._assessCreatureHere(agentR, agentC)
+            print("creatureHereRating " + str(creatureHereRating))
+            creatureAheadRating = self._assessCreature(rAhead,cAhead)
+            print("creatureAheadRating: " + str(creatureAheadRating))
+            #TODO: replace 0s with foodHereRating and foodAheadRating
+            action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
             if action == 'eat':
                 newEnergy = self._foodEaten(agentR, agentC)
                 isOkay = agent.changeEnergy(newEnergy - 1)
@@ -209,6 +216,13 @@ class ALifeSimTest(object):
             else:
                 print("Unknown action:", action)
                 isOkay = agent.changeEnergy(-1)
+
+            agentR, agentC, agentH = agent.getPose()
+            rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
+            creatureHereRating = self._assessCreatureHere(agentR, agentC)
+            print("creatureHereRating after moving: " + str(creatureHereRating))
+            creatureAheadRating = self._assessCreature(rAhead, cAhead)
+            print("creatureAheadRating after moving: " + str(creatureAheadRating))
 
             if isOkay:
                 i = i + 1
@@ -238,13 +252,62 @@ class ALifeSimTest(object):
     def _assessFood(self, row, col):
         """Given a row and column, examine the amount of food there, and divide it into
         no food, some food, and plentiful food: returning 0, 1, or 2."""
+        print("-----------------------")
+        print("AssessFood")
         foodAmt = self.foodMap[row, col]
+        print("FoodMap: " + str(self.foodMap))
+        print("Row and Col: " + str(row) + ", " + str(col))
+        print("FoodMap[row,col] " + str(self.foodMap[row, col]))
+        print("-----------------------")
         if foodAmt == 0:
             return 0
         elif foodAmt < 20:
             return 1
         else:
             return 2
+
+    def _assessCreature(self, row, col):
+        """Given a row and column, examine the amount of creatures there, and divide it into
+        no creatures, and some creatures: returning 0 or 1."""
+        print("-----------------------")
+        print("AssessCreature")
+        creatureAmt = self.agentMap[row, col]
+        print("AgentMap: " + str(self.agentMap))
+        print("Row and Col: " + str(row) + ", " + str(col))
+        print("CreatureAmount = AgentMap[row,col]: " + str(self.agentMap[row, col]))
+        #print(self.agentMap[row, col])
+        print("self: " + str(self))
+
+        print("-----------------------")
+
+        if creatureAmt == []:
+            # print("no creature ahead")
+            return 0
+        elif creatureAmt == []:
+            return 0
+        else:
+            return 1
+
+    def _assessCreatureHere(self, row, col):
+        """Given a row and column, examine the amount of creatures there, and divide it into
+        no creatures, and some creatures: returning 0 or 1."""
+        print("-----------------------")
+        print("AssessCreatureHere")
+        creatureAmt = self.agentMap[row, col]
+        print("AgentMap: " + str(self.agentMap))
+        print("Row and Col: " + str(row) + ", " + str(col))
+        print("CreatureAmount = AgentMap[row,col]: " + str(self.agentMap[row, col]))
+        #print(self.agentMap[row, col])
+        print("self: " + str(self))
+
+        print("-----------------------")
+
+        if len(creatureAmt) <= 1:
+            return 0
+        else:
+            print("collision with another creature")
+            #self.__delattr__(self)
+            return 1
 
     def _foodEaten(self, row, col):
         """Determines what, if any, food is eaten from the current given location. It returns the
@@ -357,7 +420,7 @@ class Agent(object):
         print(self.energy)
         return True
 
-    def respond(self, foodHere, foodAhead):
+    def respond(self, foodHere, foodAhead, creatureHere, creatureAhead):
         """
         This performs the action the rules would require, given how much food is here and food ahead, and
         the internal energy level
@@ -390,7 +453,7 @@ class Agent(object):
             self.whichScenarios[index] += 1
         else:
             self.whichScenarios[index] = 1
-        action = self.geneticString[index]
+        action = 0
         if action == 'a':
             return random.choice(['eat', 'forward', 'left', 'right'])
         elif action == 's':

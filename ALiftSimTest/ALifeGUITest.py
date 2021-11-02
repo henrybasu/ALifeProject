@@ -29,8 +29,10 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
+        randomGeneticStrings.append("0010099")
+        randomGeneticStrings.append("0000099")
         for n in range(self.numberAgents):
-            randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
+            #randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
             print(randomGeneticStrings)
         self.sim = ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
 
@@ -583,6 +585,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
-    s = ALifeGUI(20, numberOfAgents)
+    s = ALifeGUI(4, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
