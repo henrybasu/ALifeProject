@@ -69,25 +69,6 @@ class ALifeSim(object):
         """Given a row and column, returns a list of the agents at that location."""
         return self.agentMap[row, col]
 
-    def _placeFood(self):
-        """Places food in random clumps so that roughly self.percentFood cells have food."""
-        totalCells = self.gridSize ** 2
-        foodClumps = int(self.FOOD_PERCENT * totalCells)
-        for i in range(foodClumps):
-            self._addFoodClump()
-
-
-    def _addFoodClump(self):
-        """Adds a clump of food at a random location."""
-        (randRow, randCol) = self._genRandomLoc()
-        for deltaR in range(-1, 2):
-            offsetR = (randRow + deltaR) % self.gridSize
-            for deltaC in range(-1, 2):
-                offsetC = (randCol + deltaC) % self.gridSize
-                foodAmt = 20 - (5 * (abs(deltaR) + abs(deltaC)))
-                self.foodMap[offsetR, offsetC] += foodAmt
-
-
     def _genRandomPose(self):
         """Generates a random location on the foodMap with equal probability."""
         row = random.randrange(self.gridSize)
@@ -162,23 +143,8 @@ class ALifeSim(object):
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
         self.stepNum += 1
-        self._growFood()
         self._updateAgents()
 
-
-    def _growFood(self):
-        """Updates every cell in the food map with more food, up to the maximum amount"""
-        # Grow food
-        for cell in self.foodMap:
-            foodAmt = self.foodMap[cell]
-            if foodAmt < self.MAX_FOOD:
-                newAmt = int(foodAmt * self.GROWTH_RATE)
-                self.foodMap[cell] += newAmt
-                if self.foodMap[cell] > self.MAX_FOOD:
-                    self.foodMap[cell] = self.MAX_FOOD
-        newClump = random.random()
-        if newClump <= self.NEW_FOOD_PERCENT:
-            self._addFoodClump()
 
     def _updateAgents(self):
         """Updates the position and energy of every agent based on its chosen action."""
@@ -187,38 +153,10 @@ class ALifeSim(object):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH)
-            foodHereRating = self._assessFood(agentR, agentC)
-            foodAheadRating = self._assessFood(rAhead, cAhead)
-            action = agent.respond(foodHereRating, foodAheadRating)
-            if action == 'eat':
-                newEnergy = self._foodEaten(agentR, agentC)
-                isOkay = agent.changeEnergy(newEnergy - 1)
-            elif action == 'forward':
-                agent.updatePose(rAhead, cAhead, agentH)
-                self.agentMap[agentR, agentC].remove(agent)
-                self.agentMap[rAhead, cAhead].append(agent)
-                agentR, agentC = rAhead, cAhead
-                isOkay = agent.changeEnergy(-5)
-            elif action == 'left':
-                agent.updatePose(agentR, agentC, self._leftTurn(agentH))
-                isOkay = agent.changeEnergy(-2)
-            elif action == 'right':
-                agent.updatePose(agentR, agentC, self._rightTurn(agentH))
-                isOkay = agent.changeEnergy(-2)
-            else:
-                print("Unknown action:", action)
-                isOkay = agent.changeEnergy(-1)
-
-            if isOkay:
-                i = i + 1
-            else:
-                # print("Agent ran out of energy on step", self.stepNum)
-                self.deadAgents.append((agent, self.stepNum))
-                self.agentList.pop(i)
-                self.agentMap[agentR, agentC].remove(agent)
 
 
 
+    # TODO: Change this
     def _computeAhead(self, row, col, heading):
         """Determine the cell that is one space ahead of current cell, given the heading."""
         if heading == 'n':   # agent is pointing north, row value decreases
@@ -233,28 +171,6 @@ class ALifeSim(object):
         else:  # agent is pointing east, col value increases
             newC = (col + 1) % self.gridSize
             return row, newC
-
-    def _assessFood(self, row, col):
-        """Given a row and column, examine the amount of food there, and divide it into
-        no food, some food, and plentiful food: returning 0, 1, or 2."""
-        foodAmt = self.foodMap[row, col]
-        if foodAmt == 0:
-            return 0
-        elif foodAmt < 20:
-            return 1
-        else:
-            return 2
-
-    def _foodEaten(self, row, col):
-        """Determines what, if any, food is eaten from the current given location. It returns the
-        energy value of the food eaten, and updates the foodMap."""
-        foodAtCell = self.foodMap[row, col]
-        if foodAtCell <= 10:
-            self.foodMap[row, col] = 0
-            return foodAtCell
-        else:
-            self.foodMap[row, col] -= 10
-            return 10
 
 
     def _leftTurn(self, heading):
@@ -301,7 +217,7 @@ class Agent(object):
 
     ARBITRARY_BEHAVIOR = "a" * 27
 
-    def __init__(self, ruleset = None, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = None):
+    def __init__(self, ruleset = None, initPose = (0, 0, 'n'), initEnergy = 40, geneticString="0000000000"):
         """
         Sets up an agent with a ruleset, location, and energ
         :param ruleset:   string describing behaviors of agent in different scenarios
@@ -312,6 +228,9 @@ class Agent(object):
         self.whichScenarios = dict()
         self.energy = initEnergy
         self.visObjectId = None
+
+        self.visionRange = geneticString[0]
+
         if ruleset is None:
             self.ruleset = self.ARBITRARY_BEHAVIOR
         else:

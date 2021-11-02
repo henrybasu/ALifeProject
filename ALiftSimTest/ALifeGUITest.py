@@ -14,7 +14,7 @@ from aLifeSim import ALifeSim
 from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
-class ALifeGUI:
+class ALifeGUITest:
     """Set up and manage all the variables for the GUI interface."""
     
     def __init__(self, gridDim, numAgents=10, maxSteps=100):
@@ -188,8 +188,6 @@ class ALifeGUI:
         for each click of the "step" button"""
         searchFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
         searchFrame.grid(row=4, column=1, padx=5, pady=5, sticky=N)
-        searchTitle = Label(searchFrame, text="Search Options", font="Arial 16 bold")
-        searchTitle.grid(row=0, column=1, padx=5, pady=5)
         self.searchType = StringVar()
         self.searchType.set("hillClimb")
 
@@ -476,6 +474,7 @@ class ALifeGUI:
             print("Bad heading for agent", heading)
 
 
+    # TODO: Change this if we want to change the patch color
     def _determinePatchColor(self, foodAt, maxFood):
         if foodAt == 0:
             cellColor = "white"
@@ -624,13 +623,10 @@ class ALifeGUI:
         return (int(row), int(col))
 
 
-
-
-
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 1
-    s = ALifeGUI(20, numberOfAgents)
+    s = ALifeGUITest(20, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
