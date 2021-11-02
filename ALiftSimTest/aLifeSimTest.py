@@ -2,7 +2,7 @@
 
 import random
 
-class ALifeSim(object):
+class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
     set of behaviors. Each cell of the foodMap has some amount of food on it, Food tends to occur
     in clusters. Each agent has a certain amount of health that is depleted a bit each time step,
@@ -13,7 +13,7 @@ class ALifeSim(object):
     GROWTH_RATE = 0.005
     MAX_FOOD = 20
 
-    def __init__(self, gridSize, numAgents, rulesets = None, geneticString = None):
+    def __init__(self, gridSize, numAgents, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
@@ -34,12 +34,12 @@ class ALifeSim(object):
             agentPose = self._genRandomPose()
             r, c, h = agentPose
 
-            if rulesets is None or len(rulesets) <= i:
+            if geneticStrings is None or len(geneticStrings) <= i:
                 nextAgent = Agent(initPose = agentPose)
             else:
-                nextAgent = Agent(ruleset=rulesets[i], initPose = agentPose)
+                nextAgent = Agent(geneticString=geneticStrings[i], initPose = agentPose)
 
-            if geneticString is None:
+            if geneticStrings is None:
                 pass
 
 
@@ -68,6 +68,25 @@ class ALifeSim(object):
     def agentsAt(self, row, col):
         """Given a row and column, returns a list of the agents at that location."""
         return self.agentMap[row, col]
+
+    def _placeFood(self):
+        """Places food in random clumps so that roughly self.percentFood cells have food."""
+        totalCells = self.gridSize ** 2
+        foodClumps = int(self.FOOD_PERCENT * totalCells)
+        for i in range(foodClumps):
+            self._addFoodClump()
+
+
+    def _addFoodClump(self):
+        """Adds a clump of food at a random location."""
+        (randRow, randCol) = self._genRandomLoc()
+        for deltaR in range(-1, 2):
+            offsetR = (randRow + deltaR) % self.gridSize
+            for deltaC in range(-1, 2):
+                offsetC = (randCol + deltaC) % self.gridSize
+                foodAmt = 20 - (5 * (abs(deltaR) + abs(deltaC)))
+                self.foodMap[offsetR, offsetC] += foodAmt
+
 
     def _genRandomPose(self):
         """Generates a random location on the foodMap with equal probability."""
@@ -143,8 +162,23 @@ class ALifeSim(object):
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
         self.stepNum += 1
+        self._growFood()
         self._updateAgents()
 
+
+    def _growFood(self):
+        """Updates every cell in the food map with more food, up to the maximum amount"""
+        # Grow food
+        for cell in self.foodMap:
+            foodAmt = self.foodMap[cell]
+            if foodAmt < self.MAX_FOOD:
+                newAmt = int(foodAmt * self.GROWTH_RATE)
+                self.foodMap[cell] += newAmt
+                if self.foodMap[cell] > self.MAX_FOOD:
+                    self.foodMap[cell] = self.MAX_FOOD
+        newClump = random.random()
+        if newClump <= self.NEW_FOOD_PERCENT:
+            self._addFoodClump()
 
     def _updateAgents(self):
         """Updates the position and energy of every agent based on its chosen action."""
@@ -152,25 +186,76 @@ class ALifeSim(object):
         while i < len(self.agentList):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
-            rAhead, cAhead = self._computeAhead(agentR, agentC, agentH)
+            rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
+            foodHereRating = self._assessFood(agentR, agentC)
+            foodAheadRating = self._assessFood(rAhead, cAhead)
+            action = agent.respond(foodHereRating, foodAheadRating)
+            if action == 'eat':
+                newEnergy = self._foodEaten(agentR, agentC)
+                isOkay = agent.changeEnergy(newEnergy - 1)
+            elif action == 'forward':
+                agent.updatePose(rAhead, cAhead, agentH)
+                self.agentMap[agentR, agentC].remove(agent)
+                self.agentMap[rAhead, cAhead].append(agent)
+                agentR, agentC = rAhead, cAhead
+                isOkay = agent.changeEnergy(0)
+
+            elif action == 'left':
+                agent.updatePose(agentR, agentC, self._leftTurn(agentH))
+                isOkay = agent.changeEnergy(-2)
+            elif action == 'right':
+                agent.updatePose(agentR, agentC, self._rightTurn(agentH))
+                isOkay = agent.changeEnergy(-2)
+            else:
+                print("Unknown action:", action)
+                isOkay = agent.changeEnergy(-1)
+
+            if isOkay:
+                i = i + 1
+            else:
+                # print("Agent ran out of energy on step", self.stepNum)
+                self.deadAgents.append((agent, self.stepNum))
+                self.agentList.pop(i)
+                self.agentMap[agentR, agentC].remove(agent)
 
 
 
-    # TODO: Change this
-    def _computeAhead(self, row, col, heading):
+    def _computeAhead(self, row, col, heading, moveSpeed):
         """Determine the cell that is one space ahead of current cell, given the heading."""
         if heading == 'n':   # agent is pointing north, row value decreases
-            newR = (row - 1) % self.gridSize
+            newR = (row - moveSpeed) % self.gridSize
             return newR, col
         elif heading == 's':  # agent is pointing south, row value increases
-            newR = (row + 1) % self.gridSize
+            newR = (row + moveSpeed) % self.gridSize
             return newR, col
         elif heading == 'w':  # agent is pointing west, col value decreases
-            newC = (col - 1) % self.gridSize
+            newC = (col - moveSpeed) % self.gridSize
             return row, newC
         else:  # agent is pointing east, col value increases
-            newC = (col + 1) % self.gridSize
+            newC = (col + moveSpeed) % self.gridSize
             return row, newC
+
+    def _assessFood(self, row, col):
+        """Given a row and column, examine the amount of food there, and divide it into
+        no food, some food, and plentiful food: returning 0, 1, or 2."""
+        foodAmt = self.foodMap[row, col]
+        if foodAmt == 0:
+            return 0
+        elif foodAmt < 20:
+            return 1
+        else:
+            return 2
+
+    def _foodEaten(self, row, col):
+        """Determines what, if any, food is eaten from the current given location. It returns the
+        energy value of the food eaten, and updates the foodMap."""
+        foodAtCell = self.foodMap[row, col]
+        if foodAtCell <= 10:
+            self.foodMap[row, col] = 0
+            return foodAtCell
+        else:
+            self.foodMap[row, col] -= 10
+            return 10
 
 
     def _leftTurn(self, heading):
@@ -217,28 +302,27 @@ class Agent(object):
 
     ARBITRARY_BEHAVIOR = "a" * 27
 
-    def __init__(self, ruleset = None, initPose = (0, 0, 'n'), initEnergy = 40, geneticString="0000000000"):
+    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "0000000"):
         """
-        Sets up an agent with a ruleset, location, and energ
+        Sets up an agent with a ruleset, location, and energy
         :param ruleset:   string describing behaviors of agent in different scenarios
         :param initLoc:   tuple giving agent's initial location
         :param initEnergy: integer initial energy
         """
+        self.geneticString = geneticString
         self.row, self.col, self.heading = initPose
         self.whichScenarios = dict()
-        self.energy = initEnergy
         self.visObjectId = None
 
-        self.visionRange = geneticString[0]
+        self.visionRange = int(self.geneticString[0])
+        self.jumpHeight = int(self.geneticString[1])
+        self.moveSpeed = int(self.geneticString[2])
+        self.moveType = int(self.geneticString[3])
+        self.sleepType = int(self.geneticString[4])
+        self.energy = int(self.geneticString[5:6])
 
-        if ruleset is None:
-            self.ruleset = self.ARBITRARY_BEHAVIOR
-        else:
-            self.ruleset = ruleset
+        self.score = 0
 
-        if geneticString is None:
-            self.geneticString = "123456789"
-            print(self.geneticString)
 
     def setVisId(self, id):
         """Set the tkinter id so the object knows it"""
@@ -270,6 +354,7 @@ class Agent(object):
         self.energy += changeVal
         if self.energy <= 0:
             return False
+        print(self.energy)
         return True
 
     def respond(self, foodHere, foodAhead):
@@ -305,7 +390,7 @@ class Agent(object):
             self.whichScenarios[index] += 1
         else:
             self.whichScenarios[index] = 1
-        action = self.ruleset[index]
+        action = self.geneticString[index]
         if action == 'a':
             return random.choice(['eat', 'forward', 'left', 'right'])
         elif action == 's':
@@ -318,7 +403,7 @@ class Agent(object):
             return 'right'
         else:
             print("SHOULD NEVER GET HERE")
-            return 'eat'
+            return 'forward'
 
         # action = self.geneticString[0]
         #
@@ -336,7 +421,7 @@ class Agent(object):
 
 
 if __name__ == '__main__':
-    sim = ALifeSim(50, 20)
+    sim = ALifeSimTest(50, 20)
     for rounds in range(5):
         print("Round", rounds)
         sim.printGrid()

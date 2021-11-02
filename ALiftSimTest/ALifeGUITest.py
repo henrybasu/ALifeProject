@@ -7,26 +7,33 @@ GUI for this problem.  This must be run in Python 3!
 
 #
 import time
+import random
+import string
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
 
-from aLifeSim import ALifeSim
+from aLifeSimTest import ALifeSimTest
 from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
-class ALifeGUITest:
+class ALifeGUI:
     """Set up and manage all the variables for the GUI interface."""
     
     def __init__(self, gridDim, numAgents=10, maxSteps=100):
         """Given the dimension of the grid, and the number of agents set up a new Tk object of the right size"""
         self.root = Tk()
-        self.root.title("Susan Fox's Local Search ALife Simulation")
+        self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
-        self.sim = ALifeSim(self.gridDim, self.numberAgents)
+        randomGeneticStrings = []
+        for n in range(self.numberAgents):
+            randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
+            print(randomGeneticStrings)
+        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
+
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -76,7 +83,7 @@ class ALifeGUITest:
         titleFrame =  Frame(self.root, bd=5, padx=5, pady=5)
         titleFrame.grid(row=1, column=1, columnspan=3, padx=5, pady=5)
 
-        titleLabel = Label(titleFrame, text="Susan's Local Search ALife Simulation", font="Arial 20 bold",
+        titleLabel = Label(titleFrame, text="Jonathan and Henry's ALife Simulation", font="Arial 20 bold",
                            anchor=CENTER, padx=5, pady=5)
         titleLabel.grid(row=1, column=1)
 
@@ -97,32 +104,6 @@ class ALifeGUITest:
         """Sets up the tools for modifying the grid and the number of agents"""
         gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove")
         gridSetupFrame.grid(row=2, column=1, padx=5, pady=5, sticky=N)
-        editTitle = Label(gridSetupFrame, text="Sim Builder Options", font="Arial 16 bold", anchor = CENTER)
-        editTitle.grid(row=0, column=1, padx=5, pady=5)
-
-        # Make a new subframe
-        makerFrame = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
-        makerFrame.grid(row=1, column=1, padx=5, pady=5)
-
-        sizeLabel = Label(makerFrame, text="Grid Dim")
-        self.gridDimensionText = IntVar()
-        self.gridDimensionText.set(str(self.gridDim))
-        self.rowsEntry = Entry(makerFrame, textvariable=self.gridDimensionText, width=4, justify=CENTER)
-        agentsLabel = Label(makerFrame, text="Agents")
-        self.agentNum = IntVar()
-        self.agentNum.set(self.numberAgents)
-        self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
-
-        self.gridButton = Button(makerFrame, text="New Grid", command=self.resetGridWorld)
-
-        # place the basic widgets for setting up the grid and agents
-        sizeLabel.grid(row=1, column=3)
-        agentsLabel.grid(row=2, column=3)
-        self.rowsEntry.grid(row=1, column=4)
-        self.numAgents.grid(row=2, column=4)
-        self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
-
-
 
     def _initGrid(self):
         """sets up the grid with current assigned dimensions, and number of agents
@@ -186,30 +167,8 @@ class ALifeGUITest:
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
         stepping or running it, and quitting from it.  You can also choose how many steps should happen
         for each click of the "step" button"""
-        searchFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
-        searchFrame.grid(row=4, column=1, padx=5, pady=5, sticky=N)
         self.searchType = StringVar()
         self.searchType.set("hillClimb")
-
-        hillClimbButton = Radiobutton(searchFrame, text="Hill-Climbing",
-                                      variable=self.searchType, value="hillClimb")
-        beamButton = Radiobutton(searchFrame, text="Beam Search",
-                                 variable=self.searchType, value="beam")
-        gaButton = Radiobutton(searchFrame, text="Genetic Alg",
-                               variable=self.searchType, value="ga")
-        hillClimbButton.grid(row=1, column=1, sticky=W)
-        beamButton.grid(row=2, column=1, sticky=W)
-        gaButton.grid(row=3, column=1, sticky=W)
-
-        resetSearch = Button(searchFrame, text="Set Up Search", command=self.resetSearch)
-
-        self.stepSearch = Button(searchFrame, text="Step Search", command=self.stepSearch, state=DISABLED)
-        self.runSearch = Button(searchFrame, text="Run Search", command=self.runSearch, state=DISABLED)
-        self.quitSearch = Button(searchFrame, text="Quit Search", command=self.quitSearch, state=DISABLED)
-        resetSearch.grid(row=13, column=1, pady=5)
-        self.stepSearch.grid(row=15, column=1)
-        self.runSearch.grid(row=16, column=1)
-        # self.quitSearch.grid(row=17, column=1)  # left off this button, as it doesn't work!
         self.currentSearch = None
         self.currentSearcher = None
         self.currentNode = None
@@ -237,7 +196,7 @@ class ALifeGUITest:
         except:
             self._postMessage("Dimension must be positive integer.")
             return
-        self.sim = ALifeSim(self.gridDim, self.numberAgents, rulesets=[ruleString] * self.numberAgents)
+        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, "0000000" * self.numberAgents)
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
@@ -257,12 +216,7 @@ class ALifeGUITest:
         self.currentNode = None
         self.currentSearch = self.searchType.get()
         print(self.currentSearch)
-        if self.currentSearch == "hillClimb":
-            self.currentSearcher = HillClimber(RulesetState(self.evalRulestring, self.maxSteps))
-        elif self.currentSearch == 'beam':
-            self.currentSearcher = BeamSearcher(RulesetState(self.evalRulestring, self.maxSteps))
-        elif self.currentSearch == 'ga':
-            self.currentSearcher = GASearcher(RulesetState(self.evalRulestring, self.maxSteps))
+        self.currentSearcher = HillClimber(RulesetState(self.evalRulestring, self.maxSteps))
 
         self._disableChanges()
         self._enableSearch()
@@ -300,13 +254,13 @@ class ALifeGUITest:
         keepGoing = True
         if status == "local maxima":
             self._addMessage("Local maxima found after " + str(count) + " steps: " + str(nextState))
-            keepGoing = False
+            #keepGoing = False
             self.root.update()
             time.sleep(0.5)
         elif status == "optimal":
             self._addMessage("Optimal solution found after " + str(count) + " steps: " + str(nextState))
             # self.wrapUpSearch(nextState, nextValue)
-            keepGoing = False
+            #keepGoing = False
             self.root.update()
             time.sleep(0.5)
         else:
@@ -474,7 +428,6 @@ class ALifeGUITest:
             print("Bad heading for agent", heading)
 
 
-    # TODO: Change this if we want to change the patch color
     def _determinePatchColor(self, foodAt, maxFood):
         if foodAt == 0:
             cellColor = "white"
@@ -623,10 +576,13 @@ class ALifeGUITest:
         return (int(row), int(col))
 
 
+
+
+
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
-    s = ALifeGUITest(20, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(20, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
