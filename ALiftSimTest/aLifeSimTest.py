@@ -2,7 +2,7 @@
 
 import random
 
-class ALifeSim(object):
+class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
     set of behaviors. Each cell of the foodMap has some amount of food on it, Food tends to occur
     in clusters. Each agent has a certain amount of health that is depleted a bit each time step,
@@ -13,7 +13,7 @@ class ALifeSim(object):
     GROWTH_RATE = 0.005
     MAX_FOOD = 20
 
-    def __init__(self, gridSize, numAgents, rulesets = None, geneticString = None):
+    def __init__(self, gridSize, numAgents, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
@@ -34,12 +34,12 @@ class ALifeSim(object):
             agentPose = self._genRandomPose()
             r, c, h = agentPose
 
-            if rulesets is None or len(rulesets) <= i:
+            if geneticStrings is None or len(geneticStrings) <= i:
                 nextAgent = Agent(initPose = agentPose)
             else:
-                nextAgent = Agent(ruleset=rulesets[i], initPose = agentPose)
+                nextAgent = Agent(geneticString=geneticStrings[i], initPose = agentPose)
 
-            if geneticString is None:
+            if geneticStrings is None:
                 pass
 
 
@@ -301,25 +301,27 @@ class Agent(object):
 
     ARBITRARY_BEHAVIOR = "a" * 27
 
-    def __init__(self, ruleset = None, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = None):
+    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "0000000"):
         """
-        Sets up an agent with a ruleset, location, and energ
+        Sets up an agent with a ruleset, location, and energy
         :param ruleset:   string describing behaviors of agent in different scenarios
         :param initLoc:   tuple giving agent's initial location
         :param initEnergy: integer initial energy
         """
+        self.geneticString = geneticString
         self.row, self.col, self.heading = initPose
         self.whichScenarios = dict()
-        self.energy = initEnergy
         self.visObjectId = None
-        if ruleset is None:
-            self.ruleset = self.ARBITRARY_BEHAVIOR
-        else:
-            self.ruleset = ruleset
 
-        if geneticString is None:
-            self.geneticString = "123456789"
-            print(self.geneticString)
+        self.visionRange = self.geneticString[0]
+        self.jumpHeight = self.geneticString[1]
+        self.moveSpeed = self.geneticString[2]
+        self.moveType = self.geneticString[3]
+        self.sleepType = self.geneticString[4]
+        self.energy = int(self.geneticString[5:6])
+
+        self.score = 0
+
 
     def setVisId(self, id):
         """Set the tkinter id so the object knows it"""
@@ -386,7 +388,7 @@ class Agent(object):
             self.whichScenarios[index] += 1
         else:
             self.whichScenarios[index] = 1
-        action = self.ruleset[index]
+        action = self.geneticString[index]
         if action == 'a':
             return random.choice(['eat', 'forward', 'left', 'right'])
         elif action == 's':
@@ -417,7 +419,7 @@ class Agent(object):
 
 
 if __name__ == '__main__':
-    sim = ALifeSim(50, 20)
+    sim = ALifeSimTest(50, 20)
     for rounds in range(5):
         print("Round", rounds)
         sim.printGrid()
