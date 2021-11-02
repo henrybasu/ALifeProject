@@ -31,9 +31,11 @@ class ALifeGUI:
         randomGeneticStrings = []
         randomGeneticStrings.append("0010099")
         randomGeneticStrings.append("0000099")
-        for n in range(self.numberAgents):
+        #for n in range(self.numberAgents):
             #randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
-            print(randomGeneticStrings)
+        print("--------------------------------------------------------------------------------------------")
+        print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
+        print("--------------------------------------------------------------------------------------------")
         self.sim = ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
 
 
