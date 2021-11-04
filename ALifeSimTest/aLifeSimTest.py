@@ -183,7 +183,7 @@ class ALifeSimTest(object):
     def _updateAgents(self):
         """Updates the position and energy of every agent based on its chosen action."""
         i = 0
-        print("aLifeSim object is using _updateAgents()")
+        print("aLifeSim object is using _updateAgents() for step " + str(self.stepNum))
         print("--------------------------------------------------------------------------------------------")
         while i < len(self.agentList):
             print("***************AGENT NO." + str(i) + "***************")
@@ -301,7 +301,7 @@ class ALifeSimTest(object):
             return 0
         else:
             print("collision with another creature")
-            #del creatureAmt[0] #TODO
+            #del creatureAmt
             return 1
 
     def _foodEaten(self, row, col):
