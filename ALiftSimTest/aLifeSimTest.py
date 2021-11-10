@@ -190,6 +190,8 @@ class ALifeSimTest(object):
             foodHereRating = self._assessFood(agentR, agentC)
             foodAheadRating = self._assessFood(rAhead, cAhead)
             action = agent.respond(foodHereRating, foodAheadRating)
+
+
             if action == 'eat':
                 newEnergy = self._foodEaten(agentR, agentC)
                 isOkay = agent.changeEnergy(newEnergy - 1)
