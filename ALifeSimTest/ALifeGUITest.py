@@ -16,7 +16,7 @@ from aLifeSimTest import ALifeSimTest
 from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
-class ALifeGUITest:
+class ALifeGUI:
     """Set up and manage all the variables for the GUI interface."""
     
     def __init__(self, gridDim, numAgents=10, maxSteps=100):
@@ -29,9 +29,13 @@ class ALifeGUITest:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        for n in range(self.numberAgents):
-            randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
-            print(randomGeneticStrings)
+        randomGeneticStrings.append("0010099")
+        randomGeneticStrings.append("0000099")
+        #for n in range(self.numberAgents):
+            #randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
+        print("--------------------------------------------------------------------------------------------")
+        print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
+        print("--------------------------------------------------------------------------------------------")
         self.sim = ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
 
 
@@ -167,7 +171,6 @@ class ALifeGUITest:
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
         stepping or running it, and quitting from it.  You can also choose how many steps should happen
         for each click of the "step" button"""
-
         self.searchType = StringVar()
         self.searchType.set("hillClimb")
         self.currentSearch = None
@@ -429,7 +432,6 @@ class ALifeGUITest:
             print("Bad heading for agent", heading)
 
 
-    # TODO: Change this if we want to change the patch color
     def _determinePatchColor(self, foodAt, maxFood):
         if foodAt == 0:
             cellColor = "white"
@@ -578,11 +580,13 @@ class ALifeGUITest:
         return (int(row), int(col))
 
 
+
+
+
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-
     numberOfAgents = 2
-    s = ALifeGUITest(20, numberOfAgents)
+    s = ALifeGUI(3, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
