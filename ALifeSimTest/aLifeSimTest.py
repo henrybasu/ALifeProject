@@ -169,6 +169,7 @@ class ALifeSimTest(object):
         for i in range(len(self.agentList)):
             print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
             self._printVision(self.agentList[i])
+            print(self._areCreaturesInVision(self.agentList[i]))
 
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
@@ -295,7 +296,7 @@ class ALifeSimTest(object):
         creatureAmt = self.agentMap[row, col]
         #print("AgentMap: " + str(self.agentMap))
         #print("Row and Col: " + str(row) + ", " + str(col))
-        print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
+        # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
         #print(self.agentMap[row, col])
         #print("self: " + str(self))
 
@@ -405,6 +406,37 @@ class ALifeSimTest(object):
                         print(visionList[i], end="")
 
         print("\n")
+
+    def _areCreaturesInVision(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        visionList = []
+
+        if heading == "n":
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(self._assessCreature((ownY - (int(agent.geneticString[0]) - i)) % self.gridSize, ownX))
+                if visionList[i] != 0:
+                    return 1
+
+        elif heading == "s":
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(self._assessCreature((ownY + i + 1) % self.gridSize, ownX))
+                if visionList[i] != 0:
+                    return 1
+
+        elif heading == "e":
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(self._assessCreature(ownY, (ownX + i + 1) % self.gridSize))
+                if visionList[i] != 0:
+                    return 1
+
+        elif heading == "w":
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(
+                    self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize))
+                if visionList[i] != 0:
+                    return 1
+
+        return 0
 
 
 

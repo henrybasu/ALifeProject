@@ -29,12 +29,12 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        randomGeneticStrings.append("30100199")
-        randomGeneticStrings.append("30100299")
-        randomGeneticStrings.append("30100399")
-        randomGeneticStrings.append("30100499")
-        randomGeneticStrings.append("30100599")
-        randomGeneticStrings.append("30100699")
+        # randomGeneticStrings.append("30100199")
+        # randomGeneticStrings.append("30100299")
+        # randomGeneticStrings.append("30100399")
+        # randomGeneticStrings.append("30100499")
+        # randomGeneticStrings.append("30100599")
+        # randomGeneticStrings.append("30100699")
         """
         X0000000 - 
         0X000000 - 
@@ -44,8 +44,8 @@ class ALifeGUI:
         00000X00 - 
         000000XX - Energy
         """
-        # for n in range(self.numberAgents-2):
-        #     randomGeneticStrings.append('01'.join(random.choice(string.digits) for i in range(3))+"99")
+        for n in range(self.numberAgents):
+            randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(6))+"99")
 
 
         print("--------------------------------------------------------------------------------------------")
@@ -630,6 +630,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 6
-    s = ALifeGUI(5, numberOfAgents)
+    s = ALifeGUI(20, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
