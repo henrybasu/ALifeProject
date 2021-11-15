@@ -29,10 +29,25 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        randomGeneticStrings.append("0010099")
-        randomGeneticStrings.append("0000099")
-        #for n in range(self.numberAgents):
-            #randomGeneticStrings.append(''.join(random.choice(string.digits) for i in range(5))+"99")
+        randomGeneticStrings.append("30100199")
+        randomGeneticStrings.append("30100299")
+        randomGeneticStrings.append("30100399")
+        randomGeneticStrings.append("30100499")
+        randomGeneticStrings.append("30100599")
+        randomGeneticStrings.append("30100699")
+        """
+        X0000000 - 
+        0X000000 - 
+        00X00000 - Movement
+        000X0000 - 
+        0000X000 - 
+        00000X00 - 
+        000000XX - Energy
+        """
+        # for n in range(self.numberAgents-2):
+        #     randomGeneticStrings.append('01'.join(random.choice(string.digits) for i in range(3))+"99")
+
+
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
@@ -200,7 +215,7 @@ class ALifeGUI:
         except:
             self._postMessage("Dimension must be positive integer.")
             return
-        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, "0000000" * self.numberAgents)
+        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, "00000000" * self.numberAgents)
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
@@ -330,7 +345,8 @@ class ALifeGUI:
         if len(self.sim.getAgents()) == 0:
             return False
         for agent in self.sim.getAgents():
-            agColor = self._determineAgentColor(agent.getEnergy())
+            # agColor = self._determineAgentColor(agent.getEnergy())
+            agColor = self._UpdateAgentColor(agent.getColor())
             id = agent.getVisId()
             self.canvas.itemconfig(id, fill=agColor)
             (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
@@ -401,7 +417,7 @@ class ALifeGUI:
                 agents = self.sim.agentsAt(row, col)
                 for ag in agents:
                     offsetCoords = self._determineAgentCoords(ag)
-                    agColor = self._determineAgentColor(ag.getEnergy())
+                    agColor = self._setAgentColor(ag.getColor())
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
                     agId = self.canvas.create_polygon(coords,fill=agColor)
                     self.agentIdToPose[agId] = ag.getPose()
@@ -455,6 +471,32 @@ class ALifeGUI:
             redColor = int((ratio * 245) + 10)
             color = "#%02x%02x%02x" % (redColor, 0, 0)
         return color
+
+    def _setAgentColor(self, color):
+
+        if color == 1:
+            return 'black'
+        elif color == 2:
+            return 'red'
+        elif color == 3:
+            return 'orange'
+        elif color == 4:
+            return 'yellow'
+        elif color == 5:
+            return 'blue'
+        elif color == 6:
+            return 'green'
+        elif color == 7:
+            return 'purple'
+        elif color == 8:
+            return 'brown'
+        elif color == 9:
+            return 'pink'
+        elif color == 0:
+            return 'teal'
+
+    def _UpdateAgentColor(self, color):
+        return self._setAgentColor(color)
 
 
 
@@ -583,10 +625,11 @@ class ALifeGUI:
 
 
 
+
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
-    s = ALifeGUI(3, numberOfAgents)
+    numberOfAgents = 6
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

@@ -166,6 +166,10 @@ class ALifeSimTest(object):
         self._updateAgents()
 
 
+        for i in range(len(self.agentList)):
+            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+            self._printVision(self.agentList[i])
+
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
         # Grow food
@@ -186,7 +190,18 @@ class ALifeSimTest(object):
         print("aLifeSim object is using _updateAgents() for step " + str(self.stepNum))
         print("--------------------------------------------------------------------------------------------")
         while i < len(self.agentList):
-            print("***************AGENT NO." + str(i) + "***************")
+            print("")
+            print("")
+            print("")
+            print("")
+            print("*************** AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ***************")
+
+
+
+            print("x, y, heading: " + str(self.agentList[i].getPose()))
+            print(self.agentList[i].geneticString)
+
+
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
@@ -194,10 +209,12 @@ class ALifeSimTest(object):
             # print("foodHereRating: " + str(foodHereRating))
             # foodAheadRating = self._assessFood(rAhead, cAhead)
             # print("foodAheadRating " + str(foodAheadRating))
+
             creatureHereRating = self._assessCreatureHere(agentR, agentC)
-            print("Agent no." + str(i) + "'s creatureHereRating before moving: " + str(creatureHereRating))
+            print("Creatures at current location: " + str(creatureHereRating))
+
             creatureAheadRating = self._assessCreature(rAhead,cAhead)
-            print("Agent no." + str(i) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
+            print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
             print("-------------------------------------------------")
             #TODO: replace 0s with foodHereRating and foodAheadRating
             action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
@@ -224,9 +241,13 @@ class ALifeSimTest(object):
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
             creatureHereRating = self._assessCreatureHere(agentR, agentC)
-            print("Agent no." + str(i) + "'s creatureHereRating after moving: " + str(creatureHereRating))
+            print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureHereRating after moving: " + str(creatureHereRating))
             creatureAheadRating = self._assessCreature(rAhead, cAhead)
-            print("Agent no." + str(i) + "'s creatureAheadRating after moving: " + str(creatureAheadRating))
+            print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating after moving: " + str(creatureAheadRating))
+
+            if creatureAheadRating == 1:
+                print("CREATURE AHEAD")
+
             print("--------------------------------------------------------------------------------------------")
 
             if isOkay:
@@ -270,7 +291,7 @@ class ALifeSimTest(object):
     def _assessCreature(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
-        print("AssessCreature for (" + str(row) + "," + str(col) + ")")
+        # print("Looking at location: (" + str(row) + "," + str(col) + ")")
         creatureAmt = self.agentMap[row, col]
         #print("AgentMap: " + str(self.agentMap))
         #print("Row and Col: " + str(row) + ", " + str(col))
@@ -281,19 +302,19 @@ class ALifeSimTest(object):
         if creatureAmt == []:
             # print("no creature ahead")
             return 0
-        elif creatureAmt == []:
-            return 0
+        # elif creatureAmt == []:
+        #     return 0
         else:
             return 1
 
     def _assessCreatureHere(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
-        print("AssessCreatureHere for (" + str(row) + "," + str(col) + ")")
+        print("Looking at current location: (" + str(row) + "," + str(col) + ")")
         creatureAmt = self.agentMap[row, col]
         #print("AgentMap: " + str(self.agentMap))
         #print("Row and Col: " + str(row) + ", " + str(col))
-        print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
+        # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
         #print(self.agentMap[row, col])
         #print("self: " + str(self))
 
@@ -301,7 +322,7 @@ class ALifeSimTest(object):
             return 0
         else:
             print("collision with another creature")
-            #del creatureAmt
+            # del creatureAmt
             return 1
 
     def _foodEaten(self, row, col):
@@ -338,6 +359,53 @@ class ALifeSimTest(object):
         else:
             return 'n'
 
+    def _printVision(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        visionList = []
+
+        if heading == "n":
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(self._assessCreature((ownY - (int(agent.geneticString[0]) - i)) % self.gridSize, ownX))
+            visionList.append("|  ^  |")
+
+        elif heading == "s":
+            visionList.append("|  v  |")
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(self._assessCreature((ownY + i + 1) % self.gridSize, ownX))
+
+        elif heading == "e":
+            visionList.append("|  >  |")
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(self._assessCreature(ownY, (ownX + i + 1) % self.gridSize))
+
+        elif heading == "w":
+            for i in range(int(agent.geneticString[0])):
+                visionList.append(self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize))
+            visionList.append("|  <  |")
+
+
+        if len(visionList) > 0:
+            for i in range(len(visionList)):
+                if visionList[i] == 0:
+                    visionList[i] = "|     |"
+                    if heading == "n" or heading == "s":
+                        print(visionList[i])
+                    else:
+                        print(visionList[i], end="")
+                elif visionList[i] == 1:
+                    visionList[i] = "|  *  |"
+                    if heading == "n" or heading == "s":
+                        print(visionList[i])
+                    else:
+                        print(visionList[i], end="")
+                else:
+                    if heading == "n" or heading == "s":
+                        print(visionList[i])
+                    else:
+                        print(visionList[i], end="")
+
+        print("\n")
+
 
 
 class Agent(object):
@@ -360,7 +428,7 @@ class Agent(object):
 
     ARBITRARY_BEHAVIOR = "a" * 27
 
-    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "0000000"):
+    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000"):
         """
         Sets up an agent with a ruleset, location, and energy
         :param ruleset:   string describing behaviors of agent in different scenarios
@@ -372,12 +440,23 @@ class Agent(object):
         self.whichScenarios = dict()
         self.visObjectId = None
 
+        """
+        X000000 - Vision Range
+        0X00000 - Jump Height
+        00X0000 - Move Speed
+        000X000 - Move Type
+        0000X00 - Sleep Type
+        00000X0 - Color
+        00000XX - Energy
+        """
+
         self.visionRange = int(self.geneticString[0])
         self.jumpHeight = int(self.geneticString[1])
         self.moveSpeed = int(self.geneticString[2])
         self.moveType = int(self.geneticString[3])
         self.sleepType = int(self.geneticString[4])
-        self.energy = int(self.geneticString[5:6])
+        self.color = int(self.geneticString[5])
+        self.energy = int(self.geneticString[6:7])
 
         self.score = 0
 
@@ -395,6 +474,32 @@ class Agent(object):
     def getEnergy(self):
         """Returns the current energy value"""
         return self.energy
+
+    def getColor(self):
+        return self.color
+
+    def colorNumberToText(self, color):
+        """Returns the text value of the agent's color"""
+        if color == 1:
+            return 'black'
+        elif color == 2:
+            return 'red'
+        elif color == 3:
+            return 'orange'
+        elif color == 4:
+            return 'yellow'
+        elif color == 5:
+            return 'blue'
+        elif color == 6:
+            return 'green'
+        elif color == 7:
+            return 'purple'
+        elif color == 8:
+            return 'brown'
+        elif color == 9:
+            return 'pink'
+        elif color == 0:
+            return 'teal'
 
     def getPose(self):
         """Return the row, column, and heading of the agent."""
