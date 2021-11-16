@@ -168,8 +168,10 @@ class ALifeSimTest(object):
 
         for i in range(len(self.agentList)):
             print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+            print("~ Vision ~")
             self._printVision(self.agentList[i])
-            print(self._areCreaturesInVision(self.agentList[i]))
+            print("~ Smell ~")
+            self._printSmell(self.agentList[i])
 
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
@@ -443,6 +445,48 @@ class ALifeSimTest(object):
 
         return 0
 
+    def _printSmell(self, agent):
+        smellRadius = agent.geneticString[1]
+        ownY, ownX, heading = agent.getPose()
+
+        if heading == "n":
+            direction = "^"
+        elif heading == "s":
+            direction = "v"
+        elif heading == "e":
+            direction = ">"
+        elif heading == "w":
+            direction = "<"
+
+
+        if int(smellRadius) == 1:
+            cellsSmelled = self.smellRadius1(agent)
+            print(cellsSmelled)
+        else:
+            cellsSmelled = []
+            print("nope")
+
+        print("\t" + str(cellsSmelled[0]) + "\t")
+        print(str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2]))
+        print("\t" + str(cellsSmelled[1]) + "\t")
+
+
+    def smellRadius1(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX)
+        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX)
+        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize)
+        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        return cellsSmelled
+
 
 
 class Agent(object):
@@ -631,10 +675,6 @@ class Agent(object):
     def __str__(self):
         formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}"
         return formStr.format(self.row, self.col, self.heading, self.energy)
-
-
-    def getFirstValue(self, geneticString):
-        return self.geneticString[0]
 
 
 if __name__ == '__main__':

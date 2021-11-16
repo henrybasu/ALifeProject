@@ -29,23 +29,23 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        randomGeneticStrings.append("30100199")
-        randomGeneticStrings.append("30100299")
-        randomGeneticStrings.append("30100399")
-        randomGeneticStrings.append("30100499")
-        randomGeneticStrings.append("30100599")
-        randomGeneticStrings.append("30100699")
-        randomGeneticStrings.append("30100799")
-        randomGeneticStrings.append("30100899")
-        randomGeneticStrings.append("30100999")
+        randomGeneticStrings.append("31100199")
+        randomGeneticStrings.append("31100299")
+        randomGeneticStrings.append("31100399")
+        randomGeneticStrings.append("31100499")
+        randomGeneticStrings.append("3100599")
+        randomGeneticStrings.append("31100699")
+        randomGeneticStrings.append("31100799")
+        randomGeneticStrings.append("31100899")
+        randomGeneticStrings.append("31100999")
 
         """
-        X0000000 - 
-        0X000000 - 
+        X0000000 - Vision
+        0X000000 - Smell
         00X00000 - Movement
         000X0000 - 
         0000X000 - 
-        00000X00 - 
+        00000X00 - Color
         000000XX - Energy
         """
         # for n in range(self.numberAgents):
@@ -93,8 +93,8 @@ class ALifeGUI:
         self.root.mainloop()
 
 
-    ### =================================================================
-    ### Widget-creating helper functions
+    # =================================================================
+    # Widget-creating helper functions
         
     def _initTitle(self):
         """Sets up the title section of the GUI, where the Quit and Help buttons are located"""
@@ -423,11 +423,12 @@ class ALifeGUI:
                     offsetCoords = self._determineAgentCoords(ag)
                     agColor = self._setAgentColor(ag.getColor())
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                    agId = self.canvas.create_polygon(coords,fill=agColor)
+                    agId = self.canvas.create_polygon(coords, outline="black", fill=agColor, width=2)
                     self.agentIdToPose[agId] = ag.getPose()
                     # print('orig coords:', coords)
                     # print("agent pose:", ag.getPose())
                     ag.setVisId(agId)
+
 
 
     def _determineAgentCoords(self, agent):
@@ -633,7 +634,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 9
-    s = ALifeGUI(30, numberOfAgents)
+    numberOfAgents = 10
+    s = ALifeGUI(20, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
