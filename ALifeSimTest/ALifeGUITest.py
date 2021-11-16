@@ -33,7 +33,7 @@ class ALifeGUI:
         randomGeneticStrings.append("31100299")
         randomGeneticStrings.append("31100399")
         randomGeneticStrings.append("31100499")
-        randomGeneticStrings.append("3100599")
+        randomGeneticStrings.append("31100599")
         randomGeneticStrings.append("31100699")
         randomGeneticStrings.append("31100799")
         randomGeneticStrings.append("31100899")
@@ -365,7 +365,6 @@ class ALifeGUI:
             self.agentIdToPose[id] = agent.getPose()
         self.currSteps += 1
         self.currStepsText.set(self.currSteps)
-        print("Dead agents:", self.sim.getDeadAgents())
         return True
 
 
@@ -636,6 +635,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 9
-    s = ALifeGUI(20, numberOfAgents)
+    s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
