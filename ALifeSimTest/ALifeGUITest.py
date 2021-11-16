@@ -365,6 +365,7 @@ class ALifeGUI:
             self.agentIdToPose[id] = agent.getPose()
         self.currSteps += 1
         self.currStepsText.set(self.currSteps)
+        print("Dead agents:", self.sim.getDeadAgents())
         return True
 
 
@@ -634,7 +635,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 10
+    numberOfAgents = 9
     s = ALifeGUI(20, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

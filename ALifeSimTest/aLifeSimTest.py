@@ -162,7 +162,7 @@ class ALifeSimTest(object):
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
         self.stepNum += 1
-        self._growFood()
+        # self._growFood()
         self._updateAgents()
 
 
@@ -238,13 +238,13 @@ class ALifeSimTest(object):
 
             elif action == 'left':
                 agent.updatePose(agentR, agentC, self._leftTurn(agentH))
-                isOkay = agent.changeEnergy(-2)
+                isOkay = agent.changeEnergy(0)
             elif action == 'right':
                 agent.updatePose(agentR, agentC, self._rightTurn(agentH))
-                isOkay = agent.changeEnergy(-2)
+                isOkay = agent.changeEnergy(0)
             else:
                 print("Unknown action:", action)
-                isOkay = agent.changeEnergy(-1)
+                isOkay = agent.changeEnergy(0)
 
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
@@ -261,7 +261,7 @@ class ALifeSimTest(object):
             if isOkay:
                 i = i + 1
             else:
-                # print("Agent ran out of energy on step", self.stepNum)
+                print("Agent ran out of energy on step", self.stepNum)
                 self.deadAgents.append((agent, self.stepNum))
                 self.agentList.pop(i)
                 self.agentMap[agentR, agentC].remove(agent)
