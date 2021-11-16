@@ -33,7 +33,7 @@ class ALifeGUI:
         randomGeneticStrings.append("31100299")
         randomGeneticStrings.append("31100399")
         randomGeneticStrings.append("31100499")
-        randomGeneticStrings.append("3100599")
+        randomGeneticStrings.append("31100599")
         randomGeneticStrings.append("31100699")
         randomGeneticStrings.append("31100799")
         randomGeneticStrings.append("31100899")
@@ -634,7 +634,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 10
-    s = ALifeGUI(20, numberOfAgents)
+    numberOfAgents = 9
+    s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
