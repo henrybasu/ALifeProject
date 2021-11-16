@@ -206,6 +206,10 @@ class ALifeSimTest(object):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
+
+            # checks to see if there is a creature in the agent's vision
+            isCreatureAhead = self._areCreaturesInVision(agent)
+
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
             # foodAheadRating = self._assessFood(rAhead, cAhead)
@@ -217,8 +221,9 @@ class ALifeSimTest(object):
             creatureAheadRating = self._assessCreature(rAhead,cAhead)
             print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
             print("-------------------------------------------------")
-            #TODO: replace 0s with foodHereRating and foodAheadRating
-            action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
+            # #TODO: replace 0s with foodHereRating and foodAheadRating
+            # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
+            action = agent.determineAction(isCreatureAhead)
             if action == 'eat':
                 newEnergy = self._foodEaten(agentR, agentC)
                 isOkay = agent.changeEnergy(newEnergy - 1)
@@ -606,10 +611,22 @@ class Agent(object):
             return 'forward'
 
         # action = self.geneticString[0]
-        #
         # for i in range(len(self.geneticString[0])):
         #     print("movement: " + str(i))
         #     return 'forward'
+
+
+    def determineAction(self, isCreatureAhead):
+        if isCreatureAhead == 0:
+            return 'forward'
+        elif isCreatureAhead == 1:
+            return random.choice(['left', 'right'])
+        else:
+            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
+            return 'forward'
+
+
+
 
     def __str__(self):
         formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}"
