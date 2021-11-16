@@ -29,15 +29,15 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        randomGeneticStrings.append("31100199")
+        randomGeneticStrings.append("32100199")
         randomGeneticStrings.append("31100299")
-        randomGeneticStrings.append("31100399")
-        randomGeneticStrings.append("31100499")
-        randomGeneticStrings.append("31100599")
-        randomGeneticStrings.append("31100699")
-        randomGeneticStrings.append("31100799")
-        randomGeneticStrings.append("31100899")
-        randomGeneticStrings.append("31100999")
+        # randomGeneticStrings.append("31100399")
+        # randomGeneticStrings.append("31100499")
+        # randomGeneticStrings.append("31100599")
+        # randomGeneticStrings.append("31100699")
+        # randomGeneticStrings.append("31100799")
+        # randomGeneticStrings.append("31100899")
+        # randomGeneticStrings.append("31100999")
 
         """
         X0000000 - Vision
@@ -634,7 +634,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 9
-    s = ALifeGUI(10, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

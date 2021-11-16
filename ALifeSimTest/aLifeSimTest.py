@@ -479,17 +479,31 @@ class ALifeSimTest(object):
             direction = ">"
         elif heading == "w":
             direction = "<"
+        else:
+            direction = "x"
 
 
         if int(smellRadius) == 1:
             cellsSmelled = self.smellRadius1(agent)
             print(cellsSmelled)
-        else:
-            print("nope")
 
-        print("\t" + str(cellsSmelled[0]) + "\t")
-        print(str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2]))
-        print("\t" + str(cellsSmelled[1]) + "\t")
+            print("\t" + str(cellsSmelled[0]) + "\t")
+            print(str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2]))
+            print("\t" + str(cellsSmelled[1]) + "\t")
+
+        elif int(smellRadius) == 2:
+            cellsSmelled = self.smellRadius2(agent)
+            print(cellsSmelled)
+
+            print("\t\t" + str(cellsSmelled[4]) + "\t\t")
+            print("\t" + str(cellsSmelled[8]) + "\t" + str(cellsSmelled[0]) + " \t" + str(cellsSmelled[9]))
+            print(str(cellsSmelled[7]) + "\t" + str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2])+ " \t" + str(cellsSmelled[6]))
+            print("\t" + str(cellsSmelled[10]) + "\t" + str(cellsSmelled[1]) + " \t" + str(cellsSmelled[11]))
+            print("\t\t" + str(cellsSmelled[5]) + "\t\t")
+        else:
+            print("NO SMELL")
+
+
 
 
     def smellRadius1(self, agent):
@@ -508,9 +522,47 @@ class ALifeSimTest(object):
 
         return cellsSmelled
 
+    def smellRadius2(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX)
+        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX)
+        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize)
+        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize)
+
+        cellTwoAbove = self._assessCreature((ownY - 2) % self.gridSize, ownX)
+        cellTwoBelow = self._assessCreature((ownY + 2) % self.gridSize, ownX)
+        cellTwoRight = self._assessCreature(ownY, (ownX + 2) % self.gridSize)
+        cellTwoLeft = self._assessCreature(ownY, (ownX - 2) % self.gridSize)
+
+        cellAboveLeft = self._assessCreature((ownY - 1) % self.gridSize, (ownX - 1) % self.gridSize)
+        cellAboveRight = self._assessCreature((ownY - 1) % self.gridSize, (ownX + 1) % self.gridSize)
+        cellBelowRight = self._assessCreature((ownY + 1) % self.gridSize, (ownX + 1) % self.gridSize)
+        cellBelowLeft = self._assessCreature((ownY + 1) % self.gridSize, (ownX - 1) % self.gridSize)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        cellsSmelled.append(cellTwoAbove)
+        cellsSmelled.append(cellTwoBelow)
+        cellsSmelled.append(cellTwoRight)
+        cellsSmelled.append(cellTwoLeft)
+
+        cellsSmelled.append(cellAboveLeft)
+        cellsSmelled.append(cellAboveRight)
+        cellsSmelled.append(cellBelowLeft)
+        cellsSmelled.append(cellBelowRight)
+
+        return cellsSmelled
+
     def areCreaturesInSmellRadius(self, agent):
         ownY, ownX, heading = agent.getPose()
         smellRadius = agent.geneticString[1]
+
+        # actions for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
             cellsSmelled = self.smellRadius1(agent)
             if cellsSmelled[0] != 0 and heading == "n":
@@ -551,6 +603,19 @@ class ALifeSimTest(object):
 
             else:
                 return "none"
+
+        # TODO: Finish setting this up
+        elif int(smellRadius) == 2:
+            cellsSmelled = self.smellRadius1(agent)
+            if (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "n":
+                return "above"
+            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "n":
+                return "below"
+            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "n":
+                return "right"
+            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "n":
+                return "left"
+
         else:
             return "NO SMELL"
 
