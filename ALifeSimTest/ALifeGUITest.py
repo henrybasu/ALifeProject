@@ -29,11 +29,11 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        randomGeneticStrings.append("12110199")
-        randomGeneticStrings.append("12100299")
-        randomGeneticStrings.append("12100399")
-        randomGeneticStrings.append("12100499")
-        randomGeneticStrings.append("12100599")
+        randomGeneticStrings.append("12100199")
+        randomGeneticStrings.append("12101299")
+        # randomGeneticStrings.append("12100399")
+        # randomGeneticStrings.append("12100499")
+        # randomGeneticStrings.append("12100599")
         # randomGeneticStrings.append("12100699")
         # randomGeneticStrings.append("12100799")
         # randomGeneticStrings.append("12100899")
@@ -44,7 +44,7 @@ class ALifeGUI:
         0X000000 - Smell
         00X00000 - Movement
         000X0000 - Aggression
-        0000X000 - 
+        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (0)
         00000X00 - Color
         000000XX - Energy
         """
@@ -463,10 +463,29 @@ class ALifeGUI:
         #     ratio = diff / maxFood
         #     greenColor = int((ratio * 245) + 10)
         #     cellColor = "#%02x%02x%02x" % (0, greenColor, 0)
-        if (self.sim.time<6 or self.sim.time>18):
-            cellColor = "purple"
-        else:
-            cellColor = "white"
+
+        night = "#02003b"
+        dusk = "#1f1c7a"
+        sunrise = "#4845a3"
+        morning = "#736fd6"
+        noon = "#a6a3ff"
+        afternoon = "#7873ff"
+        sunset = "#4944db"
+
+        if self.sim.time >= 23 or self.sim.time <= 2:
+            cellColor = night
+        elif 3 <= self.sim.time <= 4 or 19 <= self.sim.time <= 22:
+            cellColor = dusk
+        elif 5 <= self.sim.time <= 7:
+            cellColor = sunrise
+        elif 8 <= self.sim.time <= 9:
+            cellColor = morning
+        elif 10 <= self.sim.time <= 14:
+            cellColor = noon
+        elif 15 <= self.sim.time <= 16:
+            cellColor = afternoon
+        elif 17 <= self.sim.time <= 18:
+            cellColor = sunset
 
         return cellColor
 
@@ -638,7 +657,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 5
-    s = ALifeGUI(10, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

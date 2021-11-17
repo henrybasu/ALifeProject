@@ -162,7 +162,7 @@ class ALifeSimTest(object):
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
         self.stepNum += 1
-        if (self.time!=24):
+        if self.time != 24:
             self.time += 1
         else:
             self.time = 0
@@ -233,7 +233,7 @@ class ALifeSimTest(object):
             print("-------------------------------------------------")
             # #TODO: replace 0s with foodHereRating and foodAheadRating
             # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
-            action = agent.determineAction(self.agentList[i], isCreatureAhead, canSmellCreature)
+            action = agent.determineAction(self.agentList[i], isCreatureAhead, canSmellCreature, self.time)
             if action == 'eat':
                 newEnergy = self._foodEaten(agentR, agentC)
                 isOkay = agent.changeEnergy(newEnergy - 1)
@@ -701,6 +701,7 @@ class Agent(object):
         self.visionRange = int(self.geneticString[0])
         self.moveSpeed = int(self.geneticString[2])
         self.Aggression = int(self.geneticString[3])
+        self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:7])
 
@@ -824,13 +825,25 @@ class Agent(object):
         #     print("movement: " + str(i))
         #     return 'forward'
 
-    def determineAction(self, agent, isCreatureAhead, cellsSmelled):
-        if agent.Aggression == 0:
-            return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
-        elif agent.Aggression == 1:
-            return "forward"
+    def isAwake(self, sleepValue, time):
+        if sleepValue == 0 and 6 <= time <= 18:
+            return "awake"
+        elif sleepValue == 1 and (time < 6 or time > 18):
+            return "awake"
         else:
-            print("SHOULD NOT GET HERE")
+            return "sleeping"
+
+    def determineAction(self, agent, isCreatureAhead, cellsSmelled, time):
+        if self.isAwake(agent.sleepValue, time) == "awake":
+            if agent.Aggression == 0:
+                return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
+            elif agent.Aggression == 1:
+                return "forward"
+            else:
+                print("SHOULD NOT GET HERE")
+
+        elif self.isAwake(agent.sleepValue, time) == "sleeping":
+            return "none"
 
 
     def determineActionDocile(self, agent, isCreatureAhead, cellsSmelled):

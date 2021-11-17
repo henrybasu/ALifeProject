@@ -171,26 +171,35 @@ class Agent(object):
         #     return 'forward'
 
     def determineAction(self, agent, isCreatureAhead, cellsSmelled):
+        if agent.Aggression == 0:
+            return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
+        elif agent.Aggression == 1:
+            return "forward"
+        else:
+            print("SHOULD NOT GET HERE")
+
+
+    def determineActionDocile(self, agent, isCreatureAhead, cellsSmelled):
         creaturesAround = cellsSmelled
 
+        if isCreatureAhead == 1:
+            return random.choice(['left', 'right', 'turnAround'])
+
         # if it can't see any creatures, and can't smell any creatures: go forwards
-        if isCreatureAhead == 0 and creaturesAround == "none":
-            return 'forward'
+        elif isCreatureAhead == 0 and creaturesAround == "none":
+            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
         # if it can't see any creatures, and but it can smell any creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
             if creaturesAround == "above":
-                return 'turnAround'
+                return random.choice(['left', 'right', 'turnAround'])
             elif creaturesAround == "left":
-                return 'right'
+                return random.choice(['right', 'forward', 'turnAround'])
             elif creaturesAround == "right":
-                return 'left'
+                return random.choice(['left', 'forward', 'turnAround'])
             elif creaturesAround == "below":
-                return 'forward'
+                return random.choice(['left', 'right', 'forward'])
 
-
-        elif isCreatureAhead == 1:
-            return random.choice(['left', 'right'])
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
