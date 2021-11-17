@@ -454,15 +454,19 @@ class ALifeGUI:
 
 
     def _determinePatchColor(self, foodAt, maxFood):
-        if foodAt == 0:
-            cellColor = "white"
+        # if foodAt == 0:
+        #     cellColor = "white"
+        # else:
+        #     diff = maxFood - foodAt
+        #     if diff < 0:
+        #         diff = 0
+        #     ratio = diff / maxFood
+        #     greenColor = int((ratio * 245) + 10)
+        #     cellColor = "#%02x%02x%02x" % (0, greenColor, 0)
+        if (self.sim.time<6 or self.sim.time>18):
+            cellColor = "purple"
         else:
-            diff = maxFood - foodAt
-            if diff < 0:
-                diff = 0
-            ratio = diff / maxFood
-            greenColor = int((ratio * 245) + 10)
-            cellColor = "#%02x%02x%02x" % (0, greenColor, 0)
+            cellColor = "white"
 
         return cellColor
 

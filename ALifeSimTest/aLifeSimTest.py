@@ -11,6 +11,7 @@ class ALifeSimTest(object):
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 20
+    time = 0
 
     def __init__(self, gridSize, numAgents, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
@@ -161,6 +162,10 @@ class ALifeSimTest(object):
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
         self.stepNum += 1
+        if (self.time!=24):
+            self.time += 1
+        else:
+            self.time = 0
         # self._growFood()
         self._updateAgents()
 
