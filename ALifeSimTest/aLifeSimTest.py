@@ -211,10 +211,10 @@ class ALifeSimTest(object):
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
 
             # checks to see if there is a creature in the agent's vision
-            isCreatureAhead = self._areCreaturesInVision(agent)
+            isCreatureAhead = self._areCreaturesInVision(self.agentList[i])
 
             # checks to see if there is a creature in the agent's smell radius
-            canSmellCreature = self.areCreaturesInSmellRadius(agent)
+            canSmellCreature = self.areCreaturesInSmellRadius(self.agentList[i])
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
@@ -242,6 +242,7 @@ class ALifeSimTest(object):
                 isOkay = agent.changeEnergy(0)
 
             elif action == 'left':
+                print("HERE --------------")
                 agent.updatePose(agentR, agentC, self._leftTurn(agentH))
                 isOkay = agent.changeEnergy(0)
 
@@ -250,7 +251,7 @@ class ALifeSimTest(object):
                 isOkay = agent.changeEnergy(0)
 
             elif action == 'turnAround':
-                agent.updatePose(agentR, agentC, self._rightTurn(agentH))
+                agent.updatePose(agentR, agentC, self._turnAround(agentH))
                 isOkay = agent.changeEnergy(0)
 
             else:
@@ -386,8 +387,10 @@ class ALifeSimTest(object):
             return 'w'
         elif heading == 's':
             return 'n'
-        else:
+        elif heading == 'w':
             return 'e'
+        else:
+            return 'BROKEN'
 
     def _printVision(self, agent):
         ownY, ownX, heading = agent.getPose()
@@ -460,11 +463,11 @@ class ALifeSimTest(object):
 
         elif heading == "w":
             for i in range(int(agent.geneticString[0])):
-                visionList.append(
-                    self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize))
+                visionList.append(self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize))
                 if visionList[i] != 0:
                     return 1
 
+        print("DON't SEE ANYONE")
         return 0
 
     def _printSmell(self, agent):
@@ -600,13 +603,12 @@ class ALifeSimTest(object):
                 return "below"
             elif cellsSmelled[3] != 0 and heading == "w":
                 return "above"
-
             else:
                 return "none"
 
         # TODO: Finish setting this up
         elif int(smellRadius) == 2:
-            cellsSmelled = self.smellRadius1(agent)
+            cellsSmelled = self.smellRadius2(agent)
             if (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "n":
                 return "above"
             elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "n":
@@ -615,6 +617,35 @@ class ALifeSimTest(object):
                 return "right"
             elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "n":
                 return "left"
+
+            elif (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "s":
+                return "below"
+            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "s":
+                return "above"
+            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "s":
+                return "left"
+            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "s":
+                return "right"
+
+            elif (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "e":
+                return "left"
+            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "e":
+                return "right"
+            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "e":
+                return "above"
+            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "e":
+                return "below"
+
+            elif (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "w":
+                return "right"
+            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "w":
+                return "left"
+            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "w":
+                return "below"
+            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "w":
+                return "above"
+            else:
+                return "none"
 
         else:
             return "NO SMELL"
@@ -654,20 +685,18 @@ class Agent(object):
         self.visObjectId = None
 
         """
-        X000000 - Vision Range
-        0X00000 - Jump Height
-        00X0000 - Move Speed
-        000X000 - Move Type
-        0000X00 - Sleep Type
-        00000X0 - Color
-        00000XX - Energy
+        X0000000 - Vision
+        0X000000 - Smell
+        00X00000 - Movement
+        000X0000 - Predator (0) or Prey (1)
+        0000X000 - 
+        00000X00 - Color
+        000000XX - Energy
         """
 
         self.visionRange = int(self.geneticString[0])
-        self.jumpHeight = int(self.geneticString[1])
         self.moveSpeed = int(self.geneticString[2])
-        self.moveType = int(self.geneticString[3])
-        self.sleepType = int(self.geneticString[4])
+        self.Aggression = int(self.geneticString[3])
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:7])
 
@@ -792,30 +821,38 @@ class Agent(object):
         #     return 'forward'
 
     def determineAction(self, agent, isCreatureAhead, cellsSmelled):
+        if agent.Aggression == 0:
+            return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
+        elif agent.Aggression == 1:
+            return "forward"
+        else:
+            print("SHOULD NOT GET HERE")
+
+
+    def determineActionDocile(self, agent, isCreatureAhead, cellsSmelled):
         creaturesAround = cellsSmelled
 
+        if isCreatureAhead == 1:
+            return random.choice(['left', 'right', 'turnAround'])
+
         # if it can't see any creatures, and can't smell any creatures: go forwards
-        if isCreatureAhead == 0 and creaturesAround == "none":
-            return 'forward'
+        elif isCreatureAhead == 0 and creaturesAround == "none":
+            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
         # if it can't see any creatures, and but it can smell any creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
             if creaturesAround == "above":
-                return 'turnAround'
+                return random.choice(['left', 'right', 'turnAround'])
             elif creaturesAround == "left":
-                return 'right'
+                return random.choice(['right', 'forward', 'turnAround'])
             elif creaturesAround == "right":
-                return 'left'
+                return random.choice(['left', 'forward', 'turnAround'])
             elif creaturesAround == "below":
-                return 'forward'
+                return random.choice(['left', 'right', 'forward'])
 
-
-        elif isCreatureAhead == 1:
-            return random.choice(['left', 'right'])
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
-
 
 
     def __str__(self):
