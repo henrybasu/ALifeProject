@@ -12,7 +12,7 @@ import string
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
 
-from aLifeSimTest import ALifeSimTest
+from ALifeSimTest import ALifeSimTest
 from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 

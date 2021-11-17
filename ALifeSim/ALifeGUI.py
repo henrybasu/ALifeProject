@@ -10,7 +10,7 @@ import time
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
 
-from aLifeSim import ALifeSim
+from ALifeSim import ALifeSim
 from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
