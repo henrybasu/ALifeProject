@@ -29,8 +29,8 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        # randomGeneticStrings.append("12100199")
-        # randomGeneticStrings.append("12101299")
+        randomGeneticStrings.append("12110299")
+        randomGeneticStrings.append("11000599")
         # randomGeneticStrings.append("12100399")
         # randomGeneticStrings.append("12100499")
         # randomGeneticStrings.append("12100599")
@@ -48,17 +48,17 @@ class ALifeGUI:
         00000X00 - Color
         000000XX - Energy
         """
-        for n in range(self.numberAgents):
-            randomVision = str(random.randint(0, 5))
-            randomSmell = str(random.randint(0, 2))
-            randomMovement = str(random.randint(1, 1))
-            randomAggression = str(random.randint(0, 1))
-            randomSleepType = str(random.randint(0, 1))
-            randomColor = str(random.randint(0, 9))
-            randomEnergy = "99"
-            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
-            randomGeneticStrings.append(randomGeneticString)
-            print(randomGeneticString)
+        # for n in range(self.numberAgents):
+        #     randomVision = str(random.randint(0, 5))
+        #     randomSmell = str(random.randint(0, 2))
+        #     randomMovement = str(random.randint(1, 1))
+        #     randomAggression = str(random.randint(0, 1))
+        #     randomSleepType = str(random.randint(0, 1))
+        #     randomColor = str(random.randint(0, 9))
+        #     randomEnergy = "99"
+        #     randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
+        #     randomGeneticStrings.append(randomGeneticString)
+        #     print(randomGeneticString)
 
 
         print("--------------------------------------------------------------------------------------------")
@@ -336,7 +336,7 @@ class ALifeGUI:
         while self.currSteps <= self.maxSteps:
             result = self.stepSimulation()
             self.root.update()
-            time.sleep(self.delayTime + .05)
+            time.sleep(self.delayTime)
             if not result:
                 break
         self.reportSimResult()
@@ -666,7 +666,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 9
-    s = ALifeGUI(10, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

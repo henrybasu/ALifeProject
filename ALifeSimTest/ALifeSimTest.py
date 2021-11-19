@@ -11,7 +11,7 @@ class ALifeSimTest(object):
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 20
-    time = 0
+    time = 12
 
     def __init__(self, gridSize, numAgents, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
@@ -161,11 +161,12 @@ class ALifeSimTest(object):
         """Update one step of the simulation. This means growing food, and then updating each agent
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
-        self.stepNum += 1
-        if self.time != 24:
-            self.time += 1
-        else:
-            self.time = 0
+        #TODO Uncomment this to reimplement time VVV
+        # self.stepNum += 1
+        # if self.time != 24:
+        #     self.time += 1
+        # else:
+        #     self.time = 0
         # self._growFood()
         self._updateAgents()
 
@@ -214,6 +215,9 @@ class ALifeSimTest(object):
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
 
+            # checks to see if there is a creature where the agent currently is
+            isCreatureHere = self._assessCreatureHere(agentR, agentC)
+
             # checks to see if there is a creature in the agent's vision
             isCreatureAhead = self._areCreaturesInVision(self.agentList[i])
 
@@ -231,12 +235,16 @@ class ALifeSimTest(object):
             creatureAheadRating = self._assessCreature(rAhead,cAhead)
             print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
             print("-------------------------------------------------")
-            # #TODO: replace 0s with foodHereRating and foodAheadRating
+            #TODO: replace 0s with foodHereRating and foodAheadRating
             # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
-            action = agent.determineAction(self.agentList[i], isCreatureAhead, canSmellCreature, self.time)
+            action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time)
             if action == 'eat':
                 newEnergy = self._foodEaten(agentR, agentC)
                 isOkay = agent.changeEnergy(newEnergy - 1)
+
+            elif action == 'attack':
+                self.attackCreature(rAhead, cAhead)
+                isOkay = agent.changeEnergy(0)
 
             elif action == 'forward':
                 agent.updatePose(rAhead, cAhead, agentH)
@@ -610,7 +618,6 @@ class ALifeSimTest(object):
             else:
                 return "none"
 
-        # TODO: Finish setting this up
         elif int(smellRadius) == 2:
             cellsSmelled = self.smellRadius2(agent)
             if (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "n":
@@ -648,11 +655,53 @@ class ALifeSimTest(object):
                 return "below"
             elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "w":
                 return "above"
+
+            elif cellsSmelled[8] != 0 and heading == "n":
+                return random.choice(["above", "left"])
+            elif cellsSmelled[9] != 0 and heading == "n":
+                return random.choice(["above", "right"])
+            elif cellsSmelled[10] != 0 and heading == "n":
+                return random.choice(["below", "left"])
+            elif cellsSmelled[11] != 0 and heading == "n":
+                return random.choice(["below", "right"])
+
+            elif cellsSmelled[8] != 0 and heading == "s":
+                return random.choice(["below", "right"])
+            elif cellsSmelled[9] != 0 and heading == "s":
+                return random.choice(["below", "left"])
+            elif cellsSmelled[10] != 0 and heading == "s":
+                return random.choice(["above", "right"])
+            elif cellsSmelled[11] != 0 and heading == "s":
+                return random.choice(["above", "left"])
+
+            elif cellsSmelled[8] != 0 and heading == "e":
+                return random.choice(["below", "left"])
+            elif cellsSmelled[9] != 0 and heading == "e":
+                return random.choice(["above", "left"])
+            elif cellsSmelled[10] != 0 and heading == "e":
+                return random.choice(["below", "right"])
+            elif cellsSmelled[11] != 0 and heading == "e":
+                return random.choice(["above", "right"])
+
+            elif cellsSmelled[8] != 0 and heading == "w":
+                return random.choice(["above", "right"])
+            elif cellsSmelled[9] != 0 and heading == "w":
+                return random.choice(["below", "right"])
+            elif cellsSmelled[10] != 0 and heading == "w":
+                return random.choice(["above", "left"])
+            elif cellsSmelled[11] != 0 and heading == "w":
+                return random.choice(["below", "left"])
+
             else:
                 return "none"
 
         else:
             return "NO SMELL"
+
+    def attackCreature(self, row, column):
+        creatureHere = self.agentMap[row, column]
+        print(self.agentMap)
+        print("~~~FOUND CREATURE~~~")
 
 
 
@@ -833,12 +882,13 @@ class Agent(object):
         else:
             return "sleeping"
 
-    def determineAction(self, agent, isCreatureAhead, cellsSmelled, time):
+
+    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
                 return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
             elif agent.Aggression == 1:
-                return "forward"
+                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             else:
                 print("SHOULD NOT GET HERE")
 
@@ -866,6 +916,34 @@ class Agent(object):
                 return random.choice(['left', 'forward', 'turnAround'])
             elif creaturesAround == "below":
                 return random.choice(['left', 'right', 'forward'])
+
+        else:
+            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
+            return 'forward'
+
+    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
+        creaturesAround = cellsSmelled
+
+        if isCreatureHere == 1:
+            return "attack"
+
+        elif isCreatureAhead == 1:
+            return random.choice(['forward'])
+
+        # if it can't see any creatures, and can't smell any creatures: go forwards
+        elif isCreatureAhead == 0 and creaturesAround == "none":
+            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
+
+        # if it can't see any creatures, and but it can smell any creatures:
+        elif isCreatureAhead == 0 and creaturesAround != "none":
+            if creaturesAround == "above":
+                return random.choice(['forward'])
+            elif creaturesAround == "left":
+                return random.choice(['left'])
+            elif creaturesAround == "right":
+                return random.choice(['right'])
+            elif creaturesAround == "below":
+                return random.choice(['turnAround'])
 
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
