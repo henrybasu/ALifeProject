@@ -31,7 +31,7 @@ class ALifeGUI:
         randomGeneticStrings = []
         randomGeneticStrings.append("12110299")
         randomGeneticStrings.append("11000599")
-        # randomGeneticStrings.append("12100399")
+        # randomGeneticStrings.append("11000099")
         # randomGeneticStrings.append("12100499")
         # randomGeneticStrings.append("12100599")
         # randomGeneticStrings.append("12100699")
@@ -40,13 +40,13 @@ class ALifeGUI:
         # randomGeneticStrings.append("12100999")
 
         """
-        X0000000 - Vision
-        0X000000 - Smell
-        00X00000 - Movement
-        000X0000 - Aggression
-        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (0)
-        00000X00 - Color
-        000000XX - Energy
+        X0000000 - Vision [0]
+        0X000000 - Smell [1]
+        00X00000 - Movement [2]
+        000X0000 - Aggression [3]
+        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (0) [4]
+        00000X00 - Color [5]
+        0000000X - Energy [6:7]
         """
         # for n in range(self.numberAgents):
         #     randomVision = str(random.randint(0, 5))
@@ -275,6 +275,9 @@ class ALifeGUI:
         Otherwise, this is very similar to the previous function"""
         keepLooping = self._handleOneStep()
 
+    def deleteAgent(self, agent):
+        self.canvas.delete()
+
 
     def _handleOneStep(self):
         """This helper helps both the run search and step search callbacks, by handling the
@@ -358,6 +361,14 @@ class ALifeGUI:
         if len(self.sim.getAgents()) == 0:
             return False
         for agent in self.sim.getAgents():
+            print("ENERGY WE SEE: " + str(agent.getEnergy()))
+            if agent.getEnergy() <= 0:
+                print("MADE IT HERE")
+                id = agent.getVisId()
+                self.canvas.itemconfig(id, fill="white")
+                break
+
+
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor())
             id = agent.getVisId()
@@ -530,7 +541,7 @@ class ALifeGUI:
         elif color == 9:
             return 'pink'
         elif color == 0:
-            return 'teal'
+            return 'gray'
 
     def _UpdateAgentColor(self, color):
         return self._setAgentColor(color)

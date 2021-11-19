@@ -243,32 +243,33 @@ class ALifeSimTest(object):
                 isOkay = agent.changeEnergy(newEnergy - 1)
 
             elif action == 'attack':
-                self.attackCreature(rAhead, cAhead)
-                isOkay = agent.changeEnergy(0)
+                pass
+                self.attackCreature(self.agentList[i], agentR, agentC)
+                isOkay = agent.changeEnergy(-1)
 
             elif action == 'forward':
                 agent.updatePose(rAhead, cAhead, agentH)
                 self.agentMap[agentR, agentC].remove(agent)
                 self.agentMap[rAhead, cAhead].append(agent)
                 agentR, agentC = rAhead, cAhead
-                isOkay = agent.changeEnergy(0)
+                isOkay = agent.changeEnergy(-1)
 
             elif action == 'left':
                 print("HERE --------------")
                 agent.updatePose(agentR, agentC, self._leftTurn(agentH))
-                isOkay = agent.changeEnergy(0)
+                isOkay = agent.changeEnergy(-1)
 
             elif action == 'right':
                 agent.updatePose(agentR, agentC, self._rightTurn(agentH))
-                isOkay = agent.changeEnergy(0)
+                isOkay = agent.changeEnergy(-1)
 
             elif action == 'turnAround':
                 agent.updatePose(agentR, agentC, self._turnAround(agentH))
-                isOkay = agent.changeEnergy(0)
+                isOkay = agent.changeEnergy(-1)
 
             else:
                 print("Unknown action:", action)
-                isOkay = agent.changeEnergy(0)
+                isOkay = agent.changeEnergy(-1)
 
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
@@ -281,6 +282,9 @@ class ALifeSimTest(object):
                 print("CREATURE AHEAD")
 
             print("--------------------------------------------------------------------------------------------")
+
+            # if agent.energy <= 0:
+            #     isOkay = False
 
             if isOkay:
                 i = i + 1
@@ -698,10 +702,23 @@ class ALifeSimTest(object):
         else:
             return "NO SMELL"
 
-    def attackCreature(self, row, column):
-        creatureHere = self.agentMap[row, column]
-        print(self.agentMap)
-        print("~~~FOUND CREATURE~~~")
+    def attackCreature(self, agent, row, col):
+        for j in range(len(self.agentsAt(row, col))):
+            print(self.agentsAt(row, col)[j].geneticString)
+
+            print(self.agentsAt(row, col)[j].geneticString[3])
+            if int(self.agentsAt(row, col)[j].geneticString[3]) == 0:
+                print("DEAD MAN")
+                deadCreature = self.agentsAt(row, col)[j]
+
+                deadCreature.changeEnergy(-100)
+                print("DEAD MAN ENERGY: " + str(deadCreature.energy))
+                # self.updateGeneticString(deadCreature, 5 )
+
+
+                # self.deadAgents.append((deadCreature, self.stepNum))
+                # # self.agentList.pop(deadCreature)
+                # self.agentMap[row, col].remove(deadCreature)
 
 
 
@@ -752,7 +769,8 @@ class Agent(object):
         self.Aggression = int(self.geneticString[3])
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
-        self.energy = int(self.geneticString[6:7])
+        self.energy = int(self.geneticString[6:])
+        print(self.energy)
 
         self.score = 0
 
@@ -772,7 +790,11 @@ class Agent(object):
         return self.energy
 
     def getColor(self):
-        return self.color
+        if self.energy > 0:
+            return self.color
+        else:
+            print("HERE")
+            return 13
 
     def colorNumberToText(self, color):
         """Returns the text value of the agent's color"""
@@ -795,7 +817,7 @@ class Agent(object):
         elif color == 9:
             return 'pink'
         elif color == 0:
-            return 'teal'
+            return 'gray'
 
     def getPose(self):
         """Return the row, column, and heading of the agent."""
@@ -811,6 +833,7 @@ class Agent(object):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
         or below: the agent "dies" in that case."""
         self.energy += changeVal
+        print("ENERGY LEVEL: " + str(self.energy))
         if self.energy <= 0:
             return False
         print(self.energy)
@@ -948,6 +971,9 @@ class Agent(object):
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
+
+    def getGeneticString(self):
+        return self.geneticString
 
 
     def __str__(self):
