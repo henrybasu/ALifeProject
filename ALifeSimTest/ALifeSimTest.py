@@ -1,5 +1,6 @@
 
 import random
+from ALifeGUITest import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -167,6 +168,8 @@ class ALifeSimTest(object):
         #     self.time += 1
         # else:
         #     self.time = 0
+
+
         # self._growFood()
         self._updateAgents()
 
@@ -201,19 +204,18 @@ class ALifeSimTest(object):
         while i < len(self.agentList):
             print("")
             print("")
-            print("")
-            print("")
             print("*************** AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ***************")
 
-
-
-            print("x, y, heading: " + str(self.agentList[i].getPose()))
-            print(self.agentList[i].geneticString)
-
+            # print("x, y, heading: " + str(self.agentList[i].getPose()))
+            # print(self.agentList[i].geneticString)
 
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
+
+            if agent.energy <= 0:
+                print("here")
+
 
             # checks to see if there is a creature where the agent currently is
             isCreatureHere = self._assessCreatureHere(agentR, agentC)
@@ -230,11 +232,11 @@ class ALifeSimTest(object):
             # print("foodAheadRating " + str(foodAheadRating))
 
             creatureHereRating = self._assessCreatureHere(agentR, agentC)
-            print("Creatures at current location: " + str(creatureHereRating))
+            # print("Creatures at current location: " + str(creatureHereRating))
 
             creatureAheadRating = self._assessCreature(rAhead,cAhead)
-            print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
-            print("-------------------------------------------------")
+            # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
+            # print("-------------------------------------------------")
             #TODO: replace 0s with foodHereRating and foodAheadRating
             # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
             action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time)
@@ -243,7 +245,6 @@ class ALifeSimTest(object):
                 isOkay = agent.changeEnergy(newEnergy - 1)
 
             elif action == 'attack':
-                pass
                 self.attackCreature(self.agentList[i], agentR, agentC)
                 isOkay = agent.changeEnergy(-1)
 
@@ -255,7 +256,6 @@ class ALifeSimTest(object):
                 isOkay = agent.changeEnergy(-1)
 
             elif action == 'left':
-                print("HERE --------------")
                 agent.updatePose(agentR, agentC, self._leftTurn(agentH))
                 isOkay = agent.changeEnergy(-1)
 
@@ -265,18 +265,18 @@ class ALifeSimTest(object):
 
             elif action == 'turnAround':
                 agent.updatePose(agentR, agentC, self._turnAround(agentH))
-                isOkay = agent.changeEnergy(-1)
+                isOkay = agent.changeEnergy(-2)
 
             else:
                 print("Unknown action:", action)
-                isOkay = agent.changeEnergy(-1)
+                isOkay = agent.changeEnergy(0)
 
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
             creatureHereRating = self._assessCreatureHere(agentR, agentC)
-            print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureHereRating after moving: " + str(creatureHereRating))
+            # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureHereRating after moving: " + str(creatureHereRating))
             creatureAheadRating = self._assessCreature(rAhead, cAhead)
-            print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating after moving: " + str(creatureAheadRating))
+            # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating after moving: " + str(creatureAheadRating))
 
             if creatureAheadRating == 1:
                 print("CREATURE AHEAD")
@@ -289,7 +289,8 @@ class ALifeSimTest(object):
             if isOkay:
                 i = i + 1
             else:
-                # print("Agent ran out of energy on step", self.stepNum)
+                print("Agent ran out of energy on step", self.stepNum)
+                print(self.agentList)
                 self.deadAgents.append((agent, self.stepNum))
                 self.agentList.pop(i)
                 self.agentMap[agentR, agentC].remove(agent)
@@ -346,7 +347,7 @@ class ALifeSimTest(object):
     def _assessCreatureHere(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
-        print("Looking at current location: (" + str(row) + "," + str(col) + ")")
+        # print("Looking at current location: (" + str(row) + "," + str(col) + ")")
         creatureAmt = self.agentMap[row, col]
         #print("AgentMap: " + str(self.agentMap))
         #print("Row and Col: " + str(row) + ", " + str(col))
@@ -483,7 +484,7 @@ class ALifeSimTest(object):
                 if visionList[i] != 0:
                     return 1
 
-        print("DON't SEE ANYONE")
+        # print("DON't SEE ANYONE")
         return 0
 
     def _printSmell(self, agent):
@@ -770,7 +771,6 @@ class Agent(object):
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:])
-        print(self.energy)
 
         self.score = 0
 
