@@ -12,7 +12,7 @@ import string
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
 
-from ALifeSimTest import ALifeSimTest
+import ALifeSimTest
 from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
@@ -29,9 +29,9 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        # randomGeneticStrings.append("12100199")
-        # randomGeneticStrings.append("12101299")
-        # randomGeneticStrings.append("12100399")
+        randomGeneticStrings.append("12110299")
+        randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("11000099")
         # randomGeneticStrings.append("12100499")
         # randomGeneticStrings.append("12100599")
         # randomGeneticStrings.append("12100699")
@@ -40,31 +40,31 @@ class ALifeGUI:
         # randomGeneticStrings.append("12100999")
 
         """
-        X0000000 - Vision
-        0X000000 - Smell
-        00X00000 - Movement
-        000X0000 - Aggression
-        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (0)
-        00000X00 - Color
-        000000XX - Energy
+        X0000000 - Vision [0]
+        0X000000 - Smell [1]
+        00X00000 - Movement [2]
+        000X0000 - Aggression [3]
+        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (0) [4]
+        00000X00 - Color [5]
+        0000000X - Energy [6:7]
         """
-        for n in range(self.numberAgents):
-            randomVision = str(random.randint(0, 5))
-            randomSmell = str(random.randint(0, 2))
-            randomMovement = str(random.randint(1, 1))
-            randomAggression = str(random.randint(0, 1))
-            randomSleepType = str(random.randint(0, 1))
-            randomColor = str(random.randint(0, 9))
-            randomEnergy = "99"
-            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
-            randomGeneticStrings.append(randomGeneticString)
-            print(randomGeneticString)
+        # for n in range(self.numberAgents):
+        #     randomVision = str(random.randint(0, 5))
+        #     randomSmell = str(random.randint(0, 2))
+        #     randomMovement = str(random.randint(1, 1))
+        #     randomAggression = str(random.randint(0, 1))
+        #     randomSleepType = str(random.randint(0, 1))
+        #     randomColor = str(random.randint(1, 9))
+        #     randomEnergy = "99"
+        #     randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
+        #     randomGeneticStrings.append(randomGeneticString)
+        #     print(randomGeneticString)
 
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
-        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
+        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
 
 
         # Variables to hold the results of a simulation
@@ -228,7 +228,7 @@ class ALifeGUI:
         except:
             self._postMessage("Dimension must be positive integer.")
             return
-        self.sim = ALifeSimTest(self.gridDim, self.numberAgents, "00000000" * self.numberAgents)
+        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, "00000000" * self.numberAgents)
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
@@ -274,6 +274,9 @@ class ALifeGUI:
         """This repeats the current stepCount number of steps of the search, stopping after that.
         Otherwise, this is very similar to the previous function"""
         keepLooping = self._handleOneStep()
+
+    def deleteAgent(self, agent):
+        self.canvas.delete()
 
 
     def _handleOneStep(self):
@@ -336,7 +339,7 @@ class ALifeGUI:
         while self.currSteps <= self.maxSteps:
             result = self.stepSimulation()
             self.root.update()
-            time.sleep(self.delayTime + .05)
+            time.sleep(self.delayTime)
             if not result:
                 break
         self.reportSimResult()
@@ -358,8 +361,16 @@ class ALifeGUI:
         if len(self.sim.getAgents()) == 0:
             return False
         for agent in self.sim.getAgents():
+            print("ENERGY WE SEE: " + str(agent.getEnergy()))
+            if agent.getEnergy() <= 0:
+                print("MADE IT HERE")
+                id = agent.getVisId()
+                self.canvas.itemconfig(id, fill="white")
+                break
+
+
             # agColor = self._determineAgentColor(agent.getEnergy())
-            agColor = self._UpdateAgentColor(agent.getColor())
+            agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
             id = agent.getVisId()
             self.canvas.itemconfig(id, fill=agColor)
             (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
@@ -429,6 +440,7 @@ class ALifeGUI:
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
                 for ag in agents:
+                    self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
                     agColor = self._setAgentColor(ag.getColor())
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
@@ -495,6 +507,8 @@ class ALifeGUI:
             cellColor = afternoon
         elif 17 <= self.sim.time <= 18:
             cellColor = sunset
+        else:
+            cellColor = noon
 
         return cellColor
 
@@ -530,10 +544,19 @@ class ALifeGUI:
         elif color == 9:
             return 'pink'
         elif color == 0:
-            return 'teal'
+            return 'gray'
 
-    def _UpdateAgentColor(self, color):
-        return self._setAgentColor(color)
+    def _UpdateAgentColor(self, color, energy):
+        print("ENERGY: " + str(energy))
+        if energy <= 0:
+            color = 'black'
+
+        else:
+            color = self._setAgentColor(color)
+
+        return color
+
+
 
 
 
@@ -666,7 +689,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 9
+    numberOfAgents = 2
     s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
