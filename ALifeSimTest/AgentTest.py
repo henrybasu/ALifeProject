@@ -169,12 +169,13 @@ class Agent(object):
         #     print("movement: " + str(i))
         #     return 'forward'
 
-    def determineAction(self, agent, isCreatureAhead, cellsSmelled, time):
+
+    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
                 return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
             elif agent.Aggression == 1:
-                return "forward"
+                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             else:
                 print("SHOULD NOT GET HERE")
 
@@ -207,6 +208,34 @@ class Agent(object):
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
 
+    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
+        creaturesAround = cellsSmelled
+
+        if isCreatureHere == 1:
+            return "attack"
+
+        elif isCreatureAhead == 1:
+            return random.choice(['forward'])
+
+        # if it can't see any creatures, and can't smell any creatures: go forwards
+        elif isCreatureAhead == 0 and creaturesAround == "none":
+            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
+
+        # if it can't see any creatures, and but it can smell any creatures:
+        elif isCreatureAhead == 0 and creaturesAround != "none":
+            if creaturesAround == "above":
+                return random.choice(['forward'])
+            elif creaturesAround == "left":
+                return random.choice(['left'])
+            elif creaturesAround == "right":
+                return random.choice(['right'])
+            elif creaturesAround == "below":
+                return random.choice(['turnAround'])
+
+        else:
+            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
+            return 'forward'
+
 
     def handleCollision(self, otherObject):
         """Determines how to handle a collision with another object. Checks if the object is an agent, food, or part of
@@ -227,6 +256,10 @@ class Agent(object):
             return "awake"
         else:
             return "sleeping"
+
+
+    def getGeneticString(self):
+        return self.geneticString
 
 
     def __str__(self):
