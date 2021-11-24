@@ -32,25 +32,24 @@ class Agent(object):
         self.whichScenarios = dict()
         self.visObjectId = None
 
-        """
-        X000000 - Vision Range
-        0X00000 - Jump Height
-        00X0000 - Move Speed
-        000X000 - Move Type
-        0000X00 - Sleep Type
-        00000X0 - Color
-        00000XX - Energy
-        """
-
         self.visionRange = int(self.geneticString[0])
-        self.jumpHeight = int(self.geneticString[1])
         self.moveSpeed = int(self.geneticString[2])
-        self.moveType = int(self.geneticString[3])
-        self.sleepType = int(self.geneticString[4])
+        self.Aggression = int(self.geneticString[3])
+        self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:7])
 
         self.score = 0
+
+        """
+        X0000000 - Vision
+        0X000000 - Smell
+        00X00000 - Movement Speed
+        000X0000 - Predator (0) or Prey (1)
+        0000X000 - Sleep Type
+        00000X00 - Color
+        000000XX - Energy
+        """
 
 
     def setVisId(self, id):
@@ -170,13 +169,17 @@ class Agent(object):
         #     print("movement: " + str(i))
         #     return 'forward'
 
-    def determineAction(self, agent, isCreatureAhead, cellsSmelled):
-        if agent.Aggression == 0:
-            return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
-        elif agent.Aggression == 1:
-            return "forward"
-        else:
-            print("SHOULD NOT GET HERE")
+    def determineAction(self, agent, isCreatureAhead, cellsSmelled, time):
+        if self.isAwake(agent.sleepValue, time) == "awake":
+            if agent.Aggression == 0:
+                return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
+            elif agent.Aggression == 1:
+                return "forward"
+            else:
+                print("SHOULD NOT GET HERE")
+
+        elif self.isAwake(agent.sleepValue, time) == "sleeping":
+            return "none"
 
 
     def determineActionDocile(self, agent, isCreatureAhead, cellsSmelled):
@@ -204,6 +207,26 @@ class Agent(object):
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
 
+
+    def handleCollision(self, otherObject):
+        """Determines how to handle a collision with another object. Checks if the object is an agent, food, or part of
+        the environment, and returns the action to take."""
+        print("Collision with " + str(otherObject))
+        return
+
+
+    def death(self):
+        """"Deletes this agent from the agentList, appends it to the deadAgentsList, removes it from the map.
+        Keeps track of its genetic string & how long it survived."""
+        return
+
+    def isAwake(self, sleepValue, time):
+        if sleepValue == 0 and 6 <= time <= 18:
+            return "awake"
+        elif sleepValue == 1 and (time < 6 or time > 18):
+            return "awake"
+        else:
+            return "sleeping"
 
 
     def __str__(self):
