@@ -63,13 +63,20 @@ class ALifeSimTest(object):
         return self.agentList[:]
 
 
+    def getDeadAgents(self):
+        """Returns a list of the dead agents."""
+        return self.deadAgents
+
+
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
         return self.foodMap[row, col]
 
+
     def agentsAt(self, row, col):
         """Given a row and column, returns a list of the agents at that location."""
         return self.agentMap[row, col]
+
 
     def _placeFood(self):
         """Places food in random clumps so that roughly self.percentFood cells have food."""
@@ -96,6 +103,7 @@ class ALifeSimTest(object):
         col = random.randrange(self.gridSize)
         heading = random.choice(['n', 'e', 'w', 's'])
         return (row, col, heading)
+
 
     def _genRandomLoc(self):
         """Generates a random location on the foodMap with equal probability."""
@@ -154,11 +162,6 @@ class ALifeSimTest(object):
             print(agent, "died in step", step)
 
 
-    def getDeadAgents(self):
-        """Returns a list of the dead agents."""
-        return self.deadAgents
-
-
     def step(self):
         """Update one step of the simulation. This means growing food, and then updating each agent
         with its chosen behavior. That could also mean managing agents who "die" because they run out
@@ -183,6 +186,7 @@ class ALifeSimTest(object):
             self._printSmell(self.agentList[i])
             print(self.areCreaturesInSmellRadius(self.agentList[i]))
 
+
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
         # Grow food
@@ -196,6 +200,7 @@ class ALifeSimTest(object):
         newClump = random.random()
         if newClump <= self.NEW_FOOD_PERCENT:
             self._addFoodClump()
+
 
     def _updateAgents(self):
         """Updates the position and energy of every agent based on its chosen action."""
@@ -311,6 +316,7 @@ class ALifeSimTest(object):
             newC = (col + moveSpeed) % self.gridSize
             return row, newC
 
+
     def _assessFood(self, row, col):
         """Given a row and column, examine the amount of food there, and divide it into
         no food, some food, and plentiful food: returning 0, 1, or 2."""
@@ -325,6 +331,7 @@ class ALifeSimTest(object):
             return 1
         else:
             return 2
+
 
     def _assessCreature(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
@@ -345,6 +352,7 @@ class ALifeSimTest(object):
         else:
             return 1
 
+
     def _assessCreatureHere(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
@@ -362,6 +370,7 @@ class ALifeSimTest(object):
             print("collision with another creature")
             # del creatureAmt
             return 1
+
 
     def _foodEaten(self, row, col):
         """Determines what, if any, food is eaten from the current given location. It returns the
@@ -397,6 +406,7 @@ class ALifeSimTest(object):
         else:
             return 'n'
 
+
     def _turnAround(self, heading):
         """return the new heading for a right turn"""
         if heading == 'n':
@@ -409,6 +419,7 @@ class ALifeSimTest(object):
             return 'e'
         else:
             return 'BROKEN'
+
 
     def _printVision(self, agent):
         ownY, ownX, heading = agent.getPose()
@@ -457,6 +468,7 @@ class ALifeSimTest(object):
 
         print("\n")
 
+
     def _areCreaturesInVision(self, agent):
         ownY, ownX, heading = agent.getPose()
         visionList = []
@@ -487,6 +499,7 @@ class ALifeSimTest(object):
 
         # print("DON't SEE ANYONE")
         return 0
+
 
     def _printSmell(self, agent):
         smellRadius = agent.geneticString[1]
@@ -525,8 +538,6 @@ class ALifeSimTest(object):
             print("NO SMELL")
 
 
-
-
     def smellRadius1(self, agent):
         ownY, ownX, heading = agent.getPose()
         cellsSmelled = []
@@ -542,6 +553,7 @@ class ALifeSimTest(object):
         cellsSmelled.append(cellLeft)
 
         return cellsSmelled
+
 
     def smellRadius2(self, agent):
         ownY, ownX, heading = agent.getPose()
@@ -578,6 +590,7 @@ class ALifeSimTest(object):
         cellsSmelled.append(cellBelowRight)
 
         return cellsSmelled
+
 
     def areCreaturesInSmellRadius(self, agent):
         ownY, ownX, heading = agent.getPose()
@@ -704,6 +717,7 @@ class ALifeSimTest(object):
         else:
             return "NO SMELL"
 
+
     def attackCreature(self, agent, row, col):
         for j in range(len(self.agentsAt(row, col))):
             print(self.agentsAt(row, col)[j].geneticString)
@@ -723,25 +737,25 @@ class ALifeSimTest(object):
                 # self.agentMap[row, col].remove(deadCreature)
 
 
-if __name__ == '__main__':
-    sim = ALifeSimTest(50, 20)
-    for rounds in range(5):
-        print("Round", rounds)
-        sim.printGrid()
-        sim.printAgents()
-        sim.step()
-    totalScenarios = dict()
-    for i in range(27):
-        totalScenarios[i] = 0
-    for agents, when in sim.getDeadAgents():
-        for val in agents.whichScenarios:
-            totalScenarios[val] += agents.whichScenarios[val]
-    for agents in sim.agentList:
-        for val in agents.whichScenarios:
-            totalScenarios[val] += agents.whichScenarios[val]
-    vals = list(totalScenarios.keys())
-    vals.sort()
-    for val in vals:
-        print(val, totalScenarios[val])
+# if __name__ == '__main__':
+#     sim = ALifeSimTest(50, 20)
+#     for rounds in range(5):
+#         print("Round", rounds)
+#         sim.printGrid()
+#         sim.printAgents()
+#         sim.step()
+#     totalScenarios = dict()
+#     for i in range(27):
+#         totalScenarios[i] = 0
+#     for agents, when in sim.getDeadAgents():
+#         for val in agents.whichScenarios:
+#             totalScenarios[val] += agents.whichScenarios[val]
+#     for agents in sim.agentList:
+#         for val in agents.whichScenarios:
+#             totalScenarios[val] += agents.whichScenarios[val]
+#     vals = list(totalScenarios.keys())
+#     vals.sort()
+#     for val in vals:
+#         print(val, totalScenarios[val])
 
 

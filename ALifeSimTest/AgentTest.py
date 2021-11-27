@@ -66,8 +66,21 @@ class Agent(object):
         """Returns the current energy value"""
         return self.energy
 
+
     def getColor(self):
+        "Returns the agent's color as a digit 0-9"
         return self.color
+
+
+    def getGeneticString(self):
+        """Returns the agent's genetic string"""
+        return self.geneticString
+
+
+    def getPose(self):
+        """Return the row, column, and heading of the agent."""
+        return self.row, self.col, self.heading
+
 
     def colorNumberToText(self, color):
         """Returns the text value of the agent's color"""
@@ -92,15 +105,13 @@ class Agent(object):
         elif color == 0:
             return 'teal'
 
-    def getPose(self):
-        """Return the row, column, and heading of the agent."""
-        return self.row, self.col, self.heading
 
     def updatePose(self, row, col, heading):
         """Updates the agent's pose to a new position and heading"""
         self.row = row
         self.col = col
         self.heading = heading
+
 
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
@@ -110,6 +121,7 @@ class Agent(object):
             return False
         print(self.energy)
         return True
+
 
     def respond(self, foodHere, foodAhead, creatureHere, creatureAhead):
         """
@@ -121,7 +133,8 @@ class Agent(object):
         """
         eLevel = self._assessEnergy()
         behavIndex = (3 ** 2) * foodHere + 3 * foodAhead + eLevel
-        return self.chooseAction(behavIndex)
+        # return self.chooseAction(behavIndex)
+        #TODO: Change this to use determineAction instead of chooseAction (chooseAction no longer exists)
 
 
     def _assessEnergy(self):
@@ -132,42 +145,6 @@ class Agent(object):
             return 1
         else:
             return 2
-
-
-    def chooseAction(self, index):
-        """
-        Does the specified action.
-        :param action: one of 's' for stay, 'f' for forward, 'l' for left, 'r' for right, or 'a' for arbitrary
-        :return: returns the specified action, unless the action is 'a', in which case it picks an action at random.
-        """
-        if index in self.whichScenarios:
-            self.whichScenarios[index] += 1
-        else:
-            self.whichScenarios[index] = 1
-        action = 0
-        if action == 'a':
-            print("action chosen: a")
-            return random.choice(['eat', 'forward', 'left', 'right'])
-        elif action == 's':
-            print("action chosen: s")
-            return 'eat'
-        elif action == 'f':
-            print("action chosen: f")
-            return 'forward'
-        elif action == 'l':
-            print("action chosen: l")
-            return 'left'
-        elif action == 'r':
-            print("action chosen: r")
-            return 'right'
-        else:
-            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-            return 'forward'
-
-        # action = self.geneticString[0]
-        # for i in range(len(self.geneticString[0])):
-        #     print("movement: " + str(i))
-        #     return 'forward'
 
 
     def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
@@ -256,10 +233,6 @@ class Agent(object):
             return "awake"
         else:
             return "sleeping"
-
-
-    def getGeneticString(self):
-        return self.geneticString
 
 
     def __str__(self):

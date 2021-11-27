@@ -29,8 +29,8 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         randomGeneticStrings = []
-        # randomGeneticStrings.append("12110299")
-        # randomGeneticStrings.append("11100599")
+        randomGeneticStrings.append("12110299")
+        randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11000099")
         # randomGeneticStrings.append("12100499")
         # randomGeneticStrings.append("12100599")
@@ -48,16 +48,16 @@ class ALifeGUI:
         00000X00 - Color [5]
         0000000X - Energy [6:7]
         """
-        for n in range(self.numberAgents):
-            randomVision = str(random.randint(0, 5))
-            randomSmell = str(random.randint(0, 2))
-            randomMovement = str(random.randint(1, 1))
-            randomAggression = str(random.randint(0, 1))
-            randomSleepType = str(random.randint(0, 1))
-            randomColor = str(random.randint(1, 9))
-            randomEnergy = "99"
-            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
-            randomGeneticStrings.append(randomGeneticString)
+        # for n in range(self.numberAgents):
+        #     randomVision = str(random.randint(0, 5))
+        #     randomSmell = str(random.randint(0, 2))
+        #     randomMovement = str(random.randint(1, 1))
+        #     randomAggression = str(random.randint(0, 1))
+        #     randomSleepType = str(random.randint(0, 1))
+        #     randomColor = str(random.randint(1, 9))
+        #     randomEnergy = "99"
+        #     randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
+        #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
 
@@ -689,7 +689,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 9
+    numberOfAgents = 2
     s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
