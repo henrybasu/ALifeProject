@@ -30,8 +30,10 @@ class ALifeGUI:
         self.delayTime = 0.01
         self.ghostImage = PhotoImage(file='Ghost.png')
         randomGeneticStrings = []
-        randomGeneticStrings.append("12110299")
+        # randomGeneticStrings.append("12110299")
         randomGeneticStrings.append("11100599")
+        randomGeneticStrings.append("11100599")
+
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
