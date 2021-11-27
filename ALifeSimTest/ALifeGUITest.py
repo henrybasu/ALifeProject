@@ -28,23 +28,30 @@ class ALifeGUI:
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
+        self.ghostImage = PhotoImage(file='Ghost.png')
         randomGeneticStrings = []
-        randomGeneticStrings.append("12110299")
+        # randomGeneticStrings.append("12110299")
+        # randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("11100588")
         randomGeneticStrings.append("11100599")
-        # randomGeneticStrings.append("11000099")
-        # randomGeneticStrings.append("12100499")
-        # randomGeneticStrings.append("12100599")
-        # randomGeneticStrings.append("12100699")
-        # randomGeneticStrings.append("12100799")
-        # randomGeneticStrings.append("12100899")
-        # randomGeneticStrings.append("12100999")
+        randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("11100599")
+
+        # randomGeneticStrings.append("12110299")
+        # for n in range(self.numberAgents - 1):
+        #     randomGeneticStrings.append("11100599")
+
 
         """
         X0000000 - Vision [0]
         0X000000 - Smell [1]
         00X00000 - Movement [2]
         000X0000 - Aggression [3]
-        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (0) [4]
+        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
         00000X00 - Color [5]
         0000000X - Energy [6:7]
         """
@@ -65,7 +72,6 @@ class ALifeGUI:
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
         self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
-
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -276,7 +282,7 @@ class ALifeGUI:
         keepLooping = self._handleOneStep()
 
     def deleteAgent(self, agent):
-        self.canvas.delete()
+        self.canvas.delete(agent)
 
 
     def _handleOneStep(self):
@@ -300,6 +306,7 @@ class ALifeGUI:
             time.sleep(0.5)
         else:
             self._addMessage("Search continuing after " + str(count) + " steps.")
+            print("here")
             self.root.update()
             time.sleep(0.5)
 
@@ -361,28 +368,53 @@ class ALifeGUI:
         if len(self.sim.getAgents()) == 0:
             return False
         for agent in self.sim.getAgents():
-            print("ENERGY WE SEE: " + str(agent.getEnergy()))
-            if agent.getEnergy() <= 0:
-                print("MADE IT HERE")
-                id = agent.getVisId()
-                self.canvas.itemconfig(id, fill="white")
-                break
-
-
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
+
+            if agent.getVisId() is None:
+                offsetCoords = self._determineAgentCoords(agent)
+                coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+
+                agId = self.canvas.create_polygon(coords, outline="black", fill=agColor, width=2)
+                self.agentIdToPose[agId] = agent.getPose()
+                agent.setVisId(agId)
+
+                print("BABY ID: " + str(agent.getVisId()))
+
             id = agent.getVisId()
             self.canvas.itemconfig(id, fill=agColor)
-            (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
+
+
+            # (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
             (newRow, newCol, newHead) = agent.getPose()
             (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
             offsetCoords = self._determineAgentCoords(agent)
             coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
             flatCoords = [n for subl in coords for n in subl]
+            print("ID HERE: " + str(id))
             self.canvas.coords(id, flatCoords)
             self.canvas.lift(id)
 
             self.agentIdToPose[id] = agent.getPose()
+
+        for deadAgent in self.sim.getDeadAgents():
+            # finds dead agent tkinter object id
+            id = deadAgent[0].getVisId()
+
+            print("id: " + str(id))
+
+            # deletes the object
+            self.canvas.delete(id)
+
+            (newRow, newCol, newHead) = deadAgent[0].getPose()
+            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+
+            # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
+            # self.canvas.create_image(x1, y1, image=self.ghostImage)
+            ghostGuy = self.canvas.create_image((x1 + x2)/2, (y1 + y2) / 2, image=self.ghostImage)
+            self.canvas.lift(ghostGuy)
+
+
         self.currSteps += 1
         self.currStepsText.set(self.currSteps)
         return True
@@ -690,6 +722,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
-    s = ALifeGUI(10, numberOfAgents)
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

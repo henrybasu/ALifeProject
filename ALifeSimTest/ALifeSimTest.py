@@ -213,8 +213,9 @@ class ALifeSimTest(object):
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
 
-            if agent.energy <= 0:
-                print("here")
+            # if agent.energy <= 0:
+            #     print("here")
+            #     break
 
 
             # checks to see if there is a creature where the agent currently is
@@ -234,63 +235,71 @@ class ALifeSimTest(object):
             creatureHereRating = self._assessCreatureHere(agentR, agentC)
             # print("Creatures at current location: " + str(creatureHereRating))
 
-            creatureAheadRating = self._assessCreature(rAhead,cAhead)
+            creatureAheadRating = self._assessCreature(rAhead,cAhead, agent)
             # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
             # print("-------------------------------------------------")
             #TODO: replace 0s with foodHereRating and foodAheadRating
             # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
+
+            print("Agent is ready to breed: " + str(agent.getReadyToBreed()))
+
+
             action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time)
-            if action == 'eat':
-                newEnergy = self._foodEaten(agentR, agentC)
-                isOkay = agent.changeEnergy(newEnergy - 1)
+            if not agent.isDead:
 
-            elif action == 'attack':
-                self.attackCreature(self.agentList[i], agentR, agentC)
-                isOkay = agent.changeEnergy(-1)
+                if action == 'breed':
+                    print("MAKIN A BABY")
+                    self.makeABaby(self.agentMap[agentR, agentC][0], self.agentMap[agentR, agentC][1])
+                    isOkay = agent.changeEnergy(0)
 
-            elif action == 'forward':
-                agent.updatePose(rAhead, cAhead, agentH)
-                self.agentMap[agentR, agentC].remove(agent)
-                self.agentMap[rAhead, cAhead].append(agent)
-                agentR, agentC = rAhead, cAhead
-                isOkay = agent.changeEnergy(-1)
+                elif action == 'eat':
+                    newEnergy = self._foodEaten(agentR, agentC)
+                    isOkay = agent.changeEnergy(newEnergy - 1)
 
-            elif action == 'left':
-                agent.updatePose(agentR, agentC, self._leftTurn(agentH))
-                isOkay = agent.changeEnergy(-1)
+                elif action == 'attack':
+                    self.attackCreature(self.agentList[i], agentR, agentC)
+                    isOkay = agent.changeEnergy(0)
 
-            elif action == 'right':
-                agent.updatePose(agentR, agentC, self._rightTurn(agentH))
-                isOkay = agent.changeEnergy(-1)
+                elif action == 'forward':
+                    agent.updatePose(rAhead, cAhead, agentH)
+                    self.agentMap[agentR, agentC].remove(agent)
+                    self.agentMap[rAhead, cAhead].append(agent)
+                    agentR, agentC = rAhead, cAhead
+                    isOkay = agent.changeEnergy(0)
 
-            elif action == 'turnAround':
-                agent.updatePose(agentR, agentC, self._turnAround(agentH))
-                isOkay = agent.changeEnergy(-2)
+                elif action == 'left':
+                    agent.updatePose(agentR, agentC, self._leftTurn(agentH))
+                    isOkay = agent.changeEnergy(0)
 
-            else:
-                print("Unknown action:", action)
-                isOkay = agent.changeEnergy(0)
+                elif action == 'right':
+                    agent.updatePose(agentR, agentC, self._rightTurn(agentH))
+                    isOkay = agent.changeEnergy(0)
+
+                elif action == 'turnAround':
+                    agent.updatePose(agentR, agentC, self._turnAround(agentH))
+                    isOkay = agent.changeEnergy(0)
+
+                else:
+                    print("Unknown action:", action)
+                    isOkay = agent.changeEnergy(0)
 
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
             creatureHereRating = self._assessCreatureHere(agentR, agentC)
-            # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureHereRating after moving: " + str(creatureHereRating))
-            creatureAheadRating = self._assessCreature(rAhead, cAhead)
-            # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating after moving: " + str(creatureAheadRating))
-
-            if creatureAheadRating == 1:
-                print("CREATURE AHEAD")
+            creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
 
             print("--------------------------------------------------------------------------------------------")
 
-            # if agent.energy <= 0:
-            #     isOkay = False
+            if agent.getReadyToBreed() != 0:
+                agent.changeReadyToBreed(1)
+
+
+            if agent.energy <= 0:
+                isOkay = False
 
             if isOkay:
                 i = i + 1
             else:
-                print("Agent ran out of energy on step", self.stepNum)
-                print(self.agentList)
                 self.deadAgents.append((agent, self.stepNum))
                 self.agentList.pop(i)
                 self.agentMap[agentR, agentC].remove(agent)
@@ -325,24 +334,26 @@ class ALifeSimTest(object):
         else:
             return 2
 
-    def _assessCreature(self, row, col):
+    def _assessCreature(self, row, col, agent):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at location: (" + str(row) + "," + str(col) + ")")
         creatureAmt = self.agentMap[row, col]
-        #print("AgentMap: " + str(self.agentMap))
-        #print("Row and Col: " + str(row) + ", " + str(col))
+        # print("AgentMap: " + str(self.agentMap))
+        # print("Row and Col: " + str(row) + ", " + str(col))
         # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
-        #print(self.agentMap[row, col])
-        #print("self: " + str(self))
+        # print(self.agentMap[row, col])
+        # print("self: " + str(self))
 
         if creatureAmt == []:
             # print("no creature ahead")
             return 0
-        # elif creatureAmt == []:
-        #     return 0
-        else:
-            return 1
+
+        elif len(creatureAmt) >= 1:
+            for i in range(len(creatureAmt)-1):
+                if creatureAmt[i].getColor() != creatureAmt[i+1].getColor():
+                    return 1
+            return 2
 
     def _assessCreatureHere(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
@@ -358,9 +369,10 @@ class ALifeSimTest(object):
         if len(creatureAmt) <= 1:
             return 0
         else:
-            print("collision with another creature")
-            # del creatureAmt
-            return 1
+            for i in range(len(creatureAmt)-1):
+                if creatureAmt[i].getColor() != creatureAmt[i+1].getColor():
+                    return 1
+            return 2
 
     def _foodEaten(self, row, col):
         """Determines what, if any, food is eaten from the current given location. It returns the
@@ -415,22 +427,22 @@ class ALifeSimTest(object):
 
         if heading == "n":
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature((ownY - (int(agent.geneticString[0]) - i)) % self.gridSize, ownX))
+                visionList.append(self._assessCreature((ownY - (int(agent.geneticString[0]) - i)) % self.gridSize, ownX, agent))
             visionList.append("|  ^  |")
 
         elif heading == "s":
             visionList.append("|  v  |")
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature((ownY + i + 1) % self.gridSize, ownX))
+                visionList.append(self._assessCreature((ownY + i + 1) % self.gridSize, ownX, agent))
 
         elif heading == "e":
             visionList.append("|  >  |")
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature(ownY, (ownX + i + 1) % self.gridSize))
+                visionList.append(self._assessCreature(ownY, (ownX + i + 1) % self.gridSize, agent))
 
         elif heading == "w":
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize))
+                visionList.append(self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize, agent))
             visionList.append("|  <  |")
 
 
@@ -462,27 +474,34 @@ class ALifeSimTest(object):
 
         if heading == "n":
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature((ownY - (int(agent.geneticString[0]) - i)) % self.gridSize, ownX))
-                if visionList[i] != 0:
-                    return 1
+                visionList.append(self._assessCreature((ownY - (int(agent.geneticString[0]) - i)) % self.gridSize, ownX, agent))
+                # if visionList[i] != 0:
+                #     return 1
+                return visionList[i]
 
         elif heading == "s":
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature((ownY + i + 1) % self.gridSize, ownX))
-                if visionList[i] != 0:
-                    return 1
+                visionList.append(self._assessCreature((ownY + i + 1) % self.gridSize, ownX, agent))
+                # if visionList[i] != 0:
+                #     return 1
+                return visionList[i]
+
 
         elif heading == "e":
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature(ownY, (ownX + i + 1) % self.gridSize))
-                if visionList[i] != 0:
-                    return 1
+                visionList.append(self._assessCreature(ownY, (ownX + i + 1) % self.gridSize, agent))
+                # if visionList[i] != 0:
+                #     return 1
+                return visionList[i]
+
 
         elif heading == "w":
             for i in range(int(agent.geneticString[0])):
-                visionList.append(self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize))
-                if visionList[i] != 0:
-                    return 1
+                visionList.append(self._assessCreature(ownY, (ownX - (int(agent.geneticString[0]) - i)) % self.gridSize, agent))
+                # if visionList[i] != 0:
+                #     return 1
+                return visionList[i]
+
 
         # print("DON't SEE ANYONE")
         return 0
@@ -530,10 +549,10 @@ class ALifeSimTest(object):
         ownY, ownX, heading = agent.getPose()
         cellsSmelled = []
 
-        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX)
-        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX)
-        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize)
-        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize)
+        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX, agent)
+        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX, agent)
+        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize, agent)
+        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize, agent)
 
         cellsSmelled.append(cellAbove)
         cellsSmelled.append(cellBelow)
@@ -546,20 +565,20 @@ class ALifeSimTest(object):
         ownY, ownX, heading = agent.getPose()
         cellsSmelled = []
 
-        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX)
-        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX)
-        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize)
-        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize)
+        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX, agent)
+        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX, agent)
+        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize, agent)
+        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize, agent)
 
-        cellTwoAbove = self._assessCreature((ownY - 2) % self.gridSize, ownX)
-        cellTwoBelow = self._assessCreature((ownY + 2) % self.gridSize, ownX)
-        cellTwoRight = self._assessCreature(ownY, (ownX + 2) % self.gridSize)
-        cellTwoLeft = self._assessCreature(ownY, (ownX - 2) % self.gridSize)
+        cellTwoAbove = self._assessCreature((ownY - 2) % self.gridSize, ownX, agent)
+        cellTwoBelow = self._assessCreature((ownY + 2) % self.gridSize, ownX, agent)
+        cellTwoRight = self._assessCreature(ownY, (ownX + 2) % self.gridSize, agent)
+        cellTwoLeft = self._assessCreature(ownY, (ownX - 2) % self.gridSize, agent)
 
-        cellAboveLeft = self._assessCreature((ownY - 1) % self.gridSize, (ownX - 1) % self.gridSize)
-        cellAboveRight = self._assessCreature((ownY - 1) % self.gridSize, (ownX + 1) % self.gridSize)
-        cellBelowRight = self._assessCreature((ownY + 1) % self.gridSize, (ownX + 1) % self.gridSize)
-        cellBelowLeft = self._assessCreature((ownY + 1) % self.gridSize, (ownX - 1) % self.gridSize)
+        cellAboveLeft = self._assessCreature((ownY - 1) % self.gridSize, (ownX - 1) % self.gridSize, agent)
+        cellAboveRight = self._assessCreature((ownY - 1) % self.gridSize, (ownX + 1) % self.gridSize, agent)
+        cellBelowRight = self._assessCreature((ownY + 1) % self.gridSize, (ownX + 1) % self.gridSize, agent)
+        cellBelowLeft = self._assessCreature((ownY + 1) % self.gridSize, (ownX - 1) % self.gridSize, agent)
 
         cellsSmelled.append(cellAbove)
         cellsSmelled.append(cellBelow)
@@ -585,41 +604,42 @@ class ALifeSimTest(object):
         # actions for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
             cellsSmelled = self.smellRadius1(agent)
+
             if cellsSmelled[0] != 0 and heading == "n":
-                return "above"
+                return "above", cellsSmelled[0]
             elif cellsSmelled[1] != 0 and heading == "n":
-                return "below"
+                return "below", cellsSmelled[1]
             elif cellsSmelled[2] != 0 and heading == "n":
-                return "right"
+                return "right", cellsSmelled[2]
             elif cellsSmelled[3] != 0 and heading == "n":
-                return "left"
+                return "left", cellsSmelled[3]
 
             elif cellsSmelled[0] != 0 and heading == "s":
-                return "below"
+                return "below", cellsSmelled[0]
             elif cellsSmelled[1] != 0 and heading == "s":
-                return "above"
+                return "above", cellsSmelled[1]
             elif cellsSmelled[2] != 0 and heading == "s":
-                return "left"
+                return "left", cellsSmelled[2]
             elif cellsSmelled[3] != 0 and heading == "s":
-                return "right"
+                return "right", cellsSmelled[3]
 
             elif cellsSmelled[0] != 0 and heading == "e":
-                return "left"
+                return "left", cellsSmelled[0]
             elif cellsSmelled[1] != 0 and heading == "e":
-                return "right"
+                return "right", cellsSmelled[1]
             elif cellsSmelled[2] != 0 and heading == "e":
-                return "above"
+                return "above", cellsSmelled[2]
             elif cellsSmelled[3] != 0 and heading == "e":
-                return "below"
+                return "below", cellsSmelled[3]
 
             elif cellsSmelled[0] != 0 and heading == "w":
-                return "right"
+                return "right", cellsSmelled[0]
             elif cellsSmelled[1] != 0 and heading == "w":
-                return "left"
+                return "left", cellsSmelled[1]
             elif cellsSmelled[2] != 0 and heading == "w":
-                return "below"
+                return "below", cellsSmelled[2]
             elif cellsSmelled[3] != 0 and heading == "w":
-                return "above"
+                return "above", cellsSmelled[3]
             else:
                 return "none"
 
@@ -713,6 +733,7 @@ class ALifeSimTest(object):
                 deadCreature = self.agentsAt(row, col)[j]
 
                 deadCreature.changeEnergy(-100)
+                deadCreature.isDead = True
                 print("DEAD MAN ENERGY: " + str(deadCreature.energy))
                 # self.updateGeneticString(deadCreature, 5 )
 
@@ -720,6 +741,39 @@ class ALifeSimTest(object):
                 # self.deadAgents.append((deadCreature, self.stepNum))
                 # # self.agentList.pop(deadCreature)
                 # self.agentMap[row, col].remove(deadCreature)
+
+    def makeABaby(self, agent1, agent2):
+
+        if agent1.getReadyToBreed() == 0 and agent2.getReadyToBreed() == 0:
+            agentPose = agent1.getPose()
+            r, c, h = agentPose
+
+            agent1GeneticString = agent1.getGeneticString()
+            agent2GeneticString = agent2.getGeneticString()
+
+            print("Agent 1 Genetic String: " + str(agent1GeneticString))
+            print("Agent 2 Genetic String: " + str(agent2GeneticString))
+
+            babyGeneticStringPart1 = agent1GeneticString[:4]
+            babyGeneticStringPart2 = agent2GeneticString[4:]
+
+            print("Baby Genetic String 1: " + str(babyGeneticStringPart1))
+            print("Baby Genetic String 2: " + str(babyGeneticStringPart2))
+
+            babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
+
+            print("Baby Genetic String: " + str(babyGeneticString))
+
+
+            babyAgent = Agent(geneticString="11100699", initPose=agentPose)
+
+            self.agentList.append(babyAgent)
+            self.agentMap[r, c].append(babyAgent)
+
+
+            agent1.setReadyToBreed(24)
+            agent2.setReadyToBreed(24)
+
 
 
 
@@ -754,6 +808,8 @@ class Agent(object):
         self.row, self.col, self.heading = initPose
         self.whichScenarios = dict()
         self.visObjectId = None
+        self.isDead = False
+        self.readyToBreed = 10
 
         """
         X0000000 - Vision
@@ -790,11 +846,8 @@ class Agent(object):
         return self.energy
 
     def getColor(self):
-        if self.energy > 0:
-            return self.color
-        else:
-            print("HERE")
-            return 13
+        return self.color
+
 
     def colorNumberToText(self, color):
         """Returns the text value of the agent's color"""
@@ -823,6 +876,9 @@ class Agent(object):
         """Return the row, column, and heading of the agent."""
         return self.row, self.col, self.heading
 
+    def getReadyToBreed(self):
+        return self.readyToBreed
+
     def updatePose(self, row, col, heading):
         """Updates the agent's pose to a new position and heading"""
         self.row = row
@@ -838,6 +894,15 @@ class Agent(object):
             return False
         print(self.energy)
         return True
+
+    def changeIsDead(self, deadVal):
+        self.isDead = deadVal
+
+    def changeReadyToBreed(self, breedVal):
+        self.readyToBreed = self.readyToBreed - breedVal
+
+    def setReadyToBreed(self, breedVal):
+        self.readyToBreed = breedVal
 
     def respond(self, foodHere, foodAhead, creatureHere, creatureAhead):
         """
@@ -909,7 +974,7 @@ class Agent(object):
     def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
+                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             elif agent.Aggression == 1:
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             else:
@@ -919,26 +984,55 @@ class Agent(object):
             return "none"
 
 
-    def determineActionDocile(self, agent, isCreatureAhead, cellsSmelled):
+    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
         creaturesAround = cellsSmelled
 
-        if isCreatureAhead == 1:
+        # if the agent is on the same square as a friend
+        if isCreatureHere == 2:
+            if agent.getReadyToBreed() == 0:
+                return "breed"
+            else:
+                return random.choice(['left', 'right', 'turnAround', "forward"])
+
+        # if the agent sees an enemy on a square ahead
+        elif isCreatureAhead == 1:
             return random.choice(['left', 'right', 'turnAround'])
 
-        # if it can't see any creatures, and can't smell any creatures: go forwards
+        # if the agent sees a friend ahead
+        elif isCreatureAhead == 2:
+            # if they are ready to breed, go forward
+            if agent.getReadyToBreed() == 0:
+                return "forward"
+            # if they aren't, go anywhere
+            else:
+                return random.choice(['left', 'right', 'turnAround', "forward"])
+
+        # if it can't see any creatures, and can't smell any creatures: go anywhere
         elif isCreatureAhead == 0 and creaturesAround == "none":
             return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
-        # if it can't see any creatures, and but it can smell any creatures:
+        # if it can't see any creatures, and but it can smell creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
-            if creaturesAround == "above":
-                return random.choice(['left', 'right', 'turnAround'])
-            elif creaturesAround == "left":
-                return random.choice(['right', 'forward', 'turnAround'])
-            elif creaturesAround == "right":
-                return random.choice(['left', 'forward', 'turnAround'])
-            elif creaturesAround == "below":
-                return random.choice(['left', 'right', 'forward'])
+            if creaturesAround[1] == 1:
+                if creaturesAround[0] == "above":
+                    return random.choice(['left', 'right', 'turnAround'])
+                elif creaturesAround[0] == "left":
+                    return random.choice(['right', 'forward', 'turnAround'])
+                elif creaturesAround[0] == "right":
+                    return random.choice(['left', 'forward', 'turnAround'])
+                elif creaturesAround[0] == "below":
+                    return random.choice(['left', 'right', 'forward'])
+            elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
+                if creaturesAround[0] == "above":
+                    return "forward"
+                elif creaturesAround[0] == "left":
+                    return "left"
+                elif creaturesAround[0] == "right":
+                    return "right"
+                elif creaturesAround[0] == "below":
+                    return "turnAround"
+            else:
+                return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
@@ -986,7 +1080,7 @@ if __name__ == '__main__':
     for rounds in range(5):
         print("Round", rounds)
         sim.printGrid()
-        sim.printAgents()
+        # sim.printAgents()
         sim.step()
     totalScenarios = dict()
     for i in range(27):
