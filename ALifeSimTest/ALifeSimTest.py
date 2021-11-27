@@ -1,5 +1,7 @@
 
 import random
+import tkinter
+
 from ALifeGUITest import *
 from AgentTest import Agent
 
@@ -44,10 +46,9 @@ class ALifeSimTest(object):
             if geneticStrings is None:
                 pass
 
-
-
             self.agentList.append(nextAgent)
             self.agentMap[r, c].append(nextAgent)
+
 
     def getSize(self):
         """Returns the size of the grid"""
@@ -57,6 +58,7 @@ class ALifeSimTest(object):
     def getAgentNumber(self):
         """Returns the number of agents placed on the grid"""
         return self.numAgents
+
 
     def getAgents(self):
         """Returns the list of agents"""
@@ -134,6 +136,7 @@ class ALifeSimTest(object):
             print(agInCellC)
             print("-" * rowLen)
 
+
     def _agentStringCodes(self, row, col):
         """Produces three strings for the first three agents (if that many) sitting in
         the given cell."""
@@ -172,7 +175,6 @@ class ALifeSimTest(object):
         #     self.time += 1
         # else:
         #     self.time = 0
-
 
         # self._growFood()
         self._updateAgents()
@@ -252,26 +254,26 @@ class ALifeSimTest(object):
 
             elif action == 'attack':
                 self.attackCreature(self.agentList[i], agentR, agentC)
-                isOkay = agent.changeEnergy(-1)
+                isOkay = agent.changeEnergy(0) #TODO: Change this back to -1
 
             elif action == 'forward':
                 agent.updatePose(rAhead, cAhead, agentH)
                 self.agentMap[agentR, agentC].remove(agent)
                 self.agentMap[rAhead, cAhead].append(agent)
                 agentR, agentC = rAhead, cAhead
-                isOkay = agent.changeEnergy(-1)
+                isOkay = agent.changeEnergy(0) #TODO: Change this back to -1
 
             elif action == 'left':
                 agent.updatePose(agentR, agentC, self._leftTurn(agentH))
-                isOkay = agent.changeEnergy(-1)
+                isOkay = agent.changeEnergy(0) #TODO: Change this back to -1
 
             elif action == 'right':
                 agent.updatePose(agentR, agentC, self._rightTurn(agentH))
-                isOkay = agent.changeEnergy(-1)
+                isOkay = agent.changeEnergy(0) #TODO: Change this back to -1
 
             elif action == 'turnAround':
                 agent.updatePose(agentR, agentC, self._turnAround(agentH))
-                isOkay = agent.changeEnergy(-2)
+                isOkay = agent.changeEnergy(0) #TODO: Change this back to -2
 
             else:
                 print("Unknown action:", action)
@@ -731,11 +733,23 @@ class ALifeSimTest(object):
                 print("DEAD MAN ENERGY: " + str(deadCreature.energy))
                 # self.updateGeneticString(deadCreature, 5 )
 
+                self.deadAgents.append((deadCreature, self.stepNum))
+                print("agentList",self.agentList)
 
-                # self.deadAgents.append((deadCreature, self.stepNum))
-                # # self.agentList.pop(deadCreature)
-                # self.agentMap[row, col].remove(deadCreature)
+                if deadCreature in self.agentList:
+                    self.agentList.remove(deadCreature)
 
+                deadRow,deadCol,deadHeading=deadCreature.getPose()
+                # print("agentMap", self.agentMap)
+                if deadCreature in self.agentMap[deadRow,deadCol]:
+                    self.agentMap[row, col].remove(deadCreature)
+                    # print("agentMap",self.agentMap)
+                break
+
+
+    def removeFromGrid(self, object):
+        """Removes an object from the tkinter grid"""
+        object.grid_remove()
 
 # if __name__ == '__main__':
 #     sim = ALifeSimTest(50, 20)

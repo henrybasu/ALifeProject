@@ -214,18 +214,6 @@ class Agent(object):
             return 'forward'
 
 
-    def handleCollision(self, otherObject):
-        """Determines how to handle a collision with another object. Checks if the object is an agent, food, or part of
-        the environment, and returns the action to take."""
-        print("Collision with " + str(otherObject))
-        return
-
-
-    def death(self):
-        """"Deletes this agent from the agentList, appends it to the deadAgentsList, removes it from the map.
-        Keeps track of its genetic string & how long it survived."""
-        return
-
     def isAwake(self, sleepValue, time):
         if sleepValue == 0 and 6 <= time <= 18:
             return "awake"

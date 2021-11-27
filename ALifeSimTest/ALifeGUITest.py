@@ -74,7 +74,6 @@ class ALifeGUI:
         self.agentsLiving = 0
 
 
-
     def setupWidgets(self):
         """Set up all the parts of the GUI."""
         # Create title frame and main buttons
@@ -368,9 +367,9 @@ class ALifeGUI:
                 self.canvas.itemconfig(id, fill="white")
                 break
 
-
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
+            # print("agColor",agColor)
             id = agent.getVisId()
             self.canvas.itemconfig(id, fill=agColor)
             (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
@@ -546,11 +545,11 @@ class ALifeGUI:
         elif color == 0:
             return 'gray'
 
+
     def _UpdateAgentColor(self, color, energy):
         print("ENERGY: " + str(energy))
         if energy <= 0:
             color = 'black'
-
         else:
             color = self._setAgentColor(color)
 
@@ -610,8 +609,6 @@ class ALifeGUI:
         self.posToPatchId = {}
         self.patchIdToPos = {}
         self.agentIdToPose = {}
-
-
 
 
     # -------------------------------------------------
@@ -690,6 +687,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
-    s = ALifeGUI(10, numberOfAgents)
+    s = ALifeGUI(3, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
