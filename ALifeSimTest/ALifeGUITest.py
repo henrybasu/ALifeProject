@@ -48,18 +48,8 @@ class ALifeGUI:
         00000X00 - Color [5]
         0000000X - Energy [6:7]
         """
-        # for n in range(self.numberAgents):
-        #     randomVision = str(random.randint(0, 5))
-        #     randomSmell = str(random.randint(0, 2))
-        #     randomMovement = str(random.randint(1, 1))
-        #     randomAggression = str(random.randint(0, 1))
-        #     randomSleepType = str(random.randint(0, 1))
-        #     randomColor = str(random.randint(1, 9))
-        #     randomEnergy = "99"
-        #     randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
-        #     randomGeneticStrings.append(randomGeneticString)
-        #     print(randomGeneticString)
 
+        # randomGeneticStrings=self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
@@ -73,6 +63,21 @@ class ALifeGUI:
         self.avgTime = None
         self.agentsLiving = 0
 
+
+    def generateRandomGeneticStrings(self):
+        randomGeneticStrings=[]
+        for n in range(self.numberAgents):
+            randomVision = str(random.randint(0, 5))
+            randomSmell = str(random.randint(0, 2))
+            randomMovement = str(random.randint(1, 1))
+            randomAggression = str(random.randint(0, 1))
+            randomSleepType = str(random.randint(0, 1))
+            randomColor = str(random.randint(1, 9))
+            randomEnergy = "99"
+            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
+            randomGeneticStrings.append(randomGeneticString)
+            print(randomGeneticString)
+        return randomGeneticStrings
 
     def setupWidgets(self):
         """Set up all the parts of the GUI."""
@@ -136,6 +141,7 @@ class ALifeGUI:
         gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove")
         gridSetupFrame.grid(row=2, column=1, padx=5, pady=5, sticky=N)
 
+
     def _initGrid(self):
         """sets up the grid with current assigned dimensions, and number of agents
         done as a helper because it may need to be done over later"""
@@ -192,6 +198,8 @@ class ALifeGUI:
         self.runButton = Button(simFrame, text="Run simulation", command=self.runSimulation)
         self.runButton.grid(row=7, column=1, columnspan=2, pady=5)
 
+        self.gridButton = Button(simFrame, text="New Grid", command=self.resetGridWorld)
+        self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
 
 
     def _initSearchTools(self):
@@ -219,15 +227,15 @@ class ALifeGUI:
         places where the ruleString is set to a non-None value"""
         self._removeGridItems()
 
-        size = self.gridDimensionText.get()
-        ageNum = self.agentNum.get()
+        size = self.gridDim
+        ageNum = self.numberAgents
         try:
             self.gridDim = int(size)
             self.numberAgents = int(ageNum)
         except:
             self._postMessage("Dimension must be positive integer.")
             return
-        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, "00000000" * self.numberAgents)
+        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, self.generateRandomGeneticStrings())
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
@@ -344,8 +352,6 @@ class ALifeGUI:
         self.reportSimResult()
         self.root.update()
         time.sleep(.5)
-
-
 
 
     def stepSimulation(self):
@@ -554,9 +560,6 @@ class ALifeGUI:
             color = self._setAgentColor(color)
 
         return color
-
-
-
 
 
     def _disableChanges(self):
