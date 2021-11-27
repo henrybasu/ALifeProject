@@ -32,25 +32,24 @@ class Agent(object):
         self.whichScenarios = dict()
         self.visObjectId = None
 
-        """
-        X000000 - Vision Range
-        0X00000 - Jump Height
-        00X0000 - Move Speed
-        000X000 - Move Type
-        0000X00 - Sleep Type
-        00000X0 - Color
-        00000XX - Energy
-        """
-
         self.visionRange = int(self.geneticString[0])
-        self.jumpHeight = int(self.geneticString[1])
         self.moveSpeed = int(self.geneticString[2])
-        self.moveType = int(self.geneticString[3])
-        self.sleepType = int(self.geneticString[4])
+        self.Aggression = int(self.geneticString[3])
+        self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:7])
 
         self.score = 0
+
+        """
+        X0000000 - Vision
+        0X000000 - Smell
+        00X00000 - Movement Speed
+        000X0000 - Predator (0) or Prey (1)
+        0000X000 - Sleep Type
+        00000X00 - Color
+        000000XX - Energy
+        """
 
 
     def setVisId(self, id):
@@ -67,8 +66,21 @@ class Agent(object):
         """Returns the current energy value"""
         return self.energy
 
+
     def getColor(self):
+        "Returns the agent's color as a digit 0-9"
         return self.color
+
+
+    def getGeneticString(self):
+        """Returns the agent's genetic string"""
+        return self.geneticString
+
+
+    def getPose(self):
+        """Return the row, column, and heading of the agent."""
+        return self.row, self.col, self.heading
+
 
     def colorNumberToText(self, color):
         """Returns the text value of the agent's color"""
@@ -93,15 +105,13 @@ class Agent(object):
         elif color == 0:
             return 'teal'
 
-    def getPose(self):
-        """Return the row, column, and heading of the agent."""
-        return self.row, self.col, self.heading
 
     def updatePose(self, row, col, heading):
         """Updates the agent's pose to a new position and heading"""
         self.row = row
         self.col = col
         self.heading = heading
+
 
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
@@ -111,6 +121,7 @@ class Agent(object):
             return False
         print(self.energy)
         return True
+
 
     def respond(self, foodHere, foodAhead, creatureHere, creatureAhead):
         """
@@ -122,7 +133,8 @@ class Agent(object):
         """
         eLevel = self._assessEnergy()
         behavIndex = (3 ** 2) * foodHere + 3 * foodAhead + eLevel
-        return self.chooseAction(behavIndex)
+        # return self.chooseAction(behavIndex)
+        #TODO: Change this to use determineAction instead of chooseAction (chooseAction no longer exists)
 
 
     def _assessEnergy(self):
@@ -135,48 +147,17 @@ class Agent(object):
             return 2
 
 
-    def chooseAction(self, index):
-        """
-        Does the specified action.
-        :param action: one of 's' for stay, 'f' for forward, 'l' for left, 'r' for right, or 'a' for arbitrary
-        :return: returns the specified action, unless the action is 'a', in which case it picks an action at random.
-        """
-        if index in self.whichScenarios:
-            self.whichScenarios[index] += 1
-        else:
-            self.whichScenarios[index] = 1
-        action = 0
-        if action == 'a':
-            print("action chosen: a")
-            return random.choice(['eat', 'forward', 'left', 'right'])
-        elif action == 's':
-            print("action chosen: s")
-            return 'eat'
-        elif action == 'f':
-            print("action chosen: f")
-            return 'forward'
-        elif action == 'l':
-            print("action chosen: l")
-            return 'left'
-        elif action == 'r':
-            print("action chosen: r")
-            return 'right'
-        else:
-            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-            return 'forward'
+    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
+        if self.isAwake(agent.sleepValue, time) == "awake":
+            if agent.Aggression == 0:
+                return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
+            elif agent.Aggression == 1:
+                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
+            else:
+                print("SHOULD NOT GET HERE")
 
-        # action = self.geneticString[0]
-        # for i in range(len(self.geneticString[0])):
-        #     print("movement: " + str(i))
-        #     return 'forward'
-
-    def determineAction(self, agent, isCreatureAhead, cellsSmelled):
-        if agent.Aggression == 0:
-            return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
-        elif agent.Aggression == 1:
-            return "forward"
-        else:
-            print("SHOULD NOT GET HERE")
+        elif self.isAwake(agent.sleepValue, time) == "sleeping":
+            return "none"
 
 
     def determineActionDocile(self, agent, isCreatureAhead, cellsSmelled):
@@ -204,6 +185,42 @@ class Agent(object):
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
 
+    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
+        creaturesAround = cellsSmelled
+
+        if isCreatureHere == 1:
+            return "attack"
+
+        elif isCreatureAhead == 1:
+            return random.choice(['forward'])
+
+        # if it can't see any creatures, and can't smell any creatures: go forwards
+        elif isCreatureAhead == 0 and creaturesAround == "none":
+            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
+
+        # if it can't see any creatures, and but it can smell any creatures:
+        elif isCreatureAhead == 0 and creaturesAround != "none":
+            if creaturesAround == "above":
+                return random.choice(['forward'])
+            elif creaturesAround == "left":
+                return random.choice(['left'])
+            elif creaturesAround == "right":
+                return random.choice(['right'])
+            elif creaturesAround == "below":
+                return random.choice(['turnAround'])
+
+        else:
+            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
+            return 'forward'
+
+
+    def isAwake(self, sleepValue, time):
+        if sleepValue == 0 and 6 <= time <= 18:
+            return "awake"
+        elif sleepValue == 1 and (time < 6 or time > 18):
+            return "awake"
+        else:
+            return "sleeping"
 
 
     def __str__(self):

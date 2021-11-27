@@ -30,10 +30,7 @@ class ALifeGUI:
         self.delayTime = 0.01
         self.ghostImage = PhotoImage(file='Ghost.png')
         randomGeneticStrings = []
-        # randomGeneticStrings.append("12110299")
-        # randomGeneticStrings.append("11100599")
-        # randomGeneticStrings.append("11100588")
-        randomGeneticStrings.append("11100599")
+        randomGeneticStrings.append("12110299")
         randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
@@ -67,11 +64,13 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
+        # randomGeneticStrings=self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
         self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
+
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -80,6 +79,20 @@ class ALifeGUI:
         self.agentsLiving = 0
 
 
+    def generateRandomGeneticStrings(self):
+        randomGeneticStrings=[]
+        for n in range(self.numberAgents):
+            randomVision = str(random.randint(0, 5))
+            randomSmell = str(random.randint(0, 2))
+            randomMovement = str(random.randint(1, 1))
+            randomAggression = str(random.randint(0, 1))
+            randomSleepType = str(random.randint(0, 1))
+            randomColor = str(random.randint(1, 9))
+            randomEnergy = "99"
+            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
+            randomGeneticStrings.append(randomGeneticString)
+            print(randomGeneticString)
+        return randomGeneticStrings
 
     def setupWidgets(self):
         """Set up all the parts of the GUI."""
@@ -142,6 +155,31 @@ class ALifeGUI:
         """Sets up the tools for modifying the grid and the number of agents"""
         gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove")
         gridSetupFrame.grid(row=2, column=1, padx=5, pady=5, sticky=N)
+        editTitle = Label(gridSetupFrame, text="Sim Config", font="Arial 16 bold", anchor=CENTER)
+        editTitle.grid(row=0, column=1, padx=5, pady=5)
+
+        # Make a new subframe
+        makerFrame = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
+        makerFrame.grid(row=1, column=1, padx=5, pady=5)
+
+        sizeLabel = Label(makerFrame, text="Grid Dim")
+        self.gridDimensionText = IntVar()
+        self.gridDimensionText.set(str(self.gridDim))
+        self.rowsEntry = Entry(makerFrame, textvariable=self.gridDimensionText, width=4, justify=CENTER)
+        agentsLabel = Label(makerFrame, text="Agents")
+        self.agentNum = IntVar()
+        self.agentNum.set(self.numberAgents)
+        self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
+
+        self.gridButton = Button(gridSetupFrame, text="New Grid", command=self.resetGridWorld)
+        self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
+
+        sizeLabel.grid(row=1, column=3)
+        agentsLabel.grid(row=2, column=3)
+        self.rowsEntry.grid(row=1, column=4)
+        self.numAgents.grid(row=2, column=4)
+        self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
+
 
     def _initGrid(self):
         """sets up the grid with current assigned dimensions, and number of agents
@@ -165,7 +203,7 @@ class ALifeGUI:
         for each click of the "step" button"""
         simFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
         simFrame.grid(row=3, column=1, padx=5, pady=5)
-        simTitle = Label(simFrame, text="Sim Options", font="Arial 16 bold")
+        simTitle = Label(simFrame, text="Run config", font="Arial 16 bold")
         simTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
         # Sets the maximum
@@ -198,7 +236,6 @@ class ALifeGUI:
 
         self.runButton = Button(simFrame, text="Run simulation", command=self.runSimulation)
         self.runButton.grid(row=7, column=1, columnspan=2, pady=5)
-
 
 
     def _initSearchTools(self):
@@ -234,7 +271,7 @@ class ALifeGUI:
         except:
             self._postMessage("Dimension must be positive integer.")
             return
-        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, "00000000" * self.numberAgents)
+        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, self.generateRandomGeneticStrings())
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
@@ -281,9 +318,6 @@ class ALifeGUI:
         Otherwise, this is very similar to the previous function"""
         keepLooping = self._handleOneStep()
 
-    def deleteAgent(self, agent):
-        self.canvas.delete(agent)
-
 
     def _handleOneStep(self):
         """This helper helps both the run search and step search callbacks, by handling the
@@ -306,11 +340,11 @@ class ALifeGUI:
             time.sleep(0.5)
         else:
             self._addMessage("Search continuing after " + str(count) + " steps.")
-            print("here")
             self.root.update()
             time.sleep(0.5)
 
         return keepGoing
+
 
     def wrapUpSearch(self, nextState, nextValue):
         """This produces the ending statistics, finds and marks the final path, and then closes
@@ -354,8 +388,6 @@ class ALifeGUI:
         time.sleep(.5)
 
 
-
-
     def stepSimulation(self):
         """Runs one step of the simulation, then updates the grid with new colors and moving agents."""
         self.sim.step()
@@ -391,7 +423,6 @@ class ALifeGUI:
             offsetCoords = self._determineAgentCoords(agent)
             coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
             flatCoords = [n for subl in coords for n in subl]
-            print("ID HERE: " + str(id))
             self.canvas.coords(id, flatCoords)
             self.canvas.lift(id)
 
@@ -578,18 +609,15 @@ class ALifeGUI:
         elif color == 0:
             return 'gray'
 
+
     def _UpdateAgentColor(self, color, energy):
         print("ENERGY: " + str(energy))
         if energy <= 0:
             color = 'black'
-
         else:
             color = self._setAgentColor(color)
 
         return color
-
-
-
 
 
     def _disableChanges(self):
@@ -642,8 +670,6 @@ class ALifeGUI:
         self.posToPatchId = {}
         self.patchIdToPos = {}
         self.agentIdToPose = {}
-
-
 
 
     # -------------------------------------------------

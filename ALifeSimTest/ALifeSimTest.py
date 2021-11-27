@@ -1,6 +1,9 @@
 
 import random
+import tkinter
+
 from ALifeGUITest import *
+from AgentTest import Agent
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -43,10 +46,9 @@ class ALifeSimTest(object):
             if geneticStrings is None:
                 pass
 
-
-
             self.agentList.append(nextAgent)
             self.agentMap[r, c].append(nextAgent)
+
 
     def getSize(self):
         """Returns the size of the grid"""
@@ -57,18 +59,26 @@ class ALifeSimTest(object):
         """Returns the number of agents placed on the grid"""
         return self.numAgents
 
+
     def getAgents(self):
         """Returns the list of agents"""
         return self.agentList[:]
+
+
+    def getDeadAgents(self):
+        """Returns a list of the dead agents."""
+        return self.deadAgents
 
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
         return self.foodMap[row, col]
 
+
     def agentsAt(self, row, col):
         """Given a row and column, returns a list of the agents at that location."""
         return self.agentMap[row, col]
+
 
     def _placeFood(self):
         """Places food in random clumps so that roughly self.percentFood cells have food."""
@@ -95,6 +105,7 @@ class ALifeSimTest(object):
         col = random.randrange(self.gridSize)
         heading = random.choice(['n', 'e', 'w', 's'])
         return (row, col, heading)
+
 
     def _genRandomLoc(self):
         """Generates a random location on the foodMap with equal probability."""
@@ -124,6 +135,7 @@ class ALifeSimTest(object):
             print(agInCellB)
             print(agInCellC)
             print("-" * rowLen)
+
 
     def _agentStringCodes(self, row, col):
         """Produces three strings for the first three agents (if that many) sitting in
@@ -1075,25 +1087,25 @@ class Agent(object):
         return formStr.format(self.row, self.col, self.heading, self.energy)
 
 
-if __name__ == '__main__':
-    sim = ALifeSimTest(50, 20)
-    for rounds in range(5):
-        print("Round", rounds)
-        sim.printGrid()
-        # sim.printAgents()
-        sim.step()
-    totalScenarios = dict()
-    for i in range(27):
-        totalScenarios[i] = 0
-    for agents, when in sim.getDeadAgents():
-        for val in agents.whichScenarios:
-            totalScenarios[val] += agents.whichScenarios[val]
-    for agents in sim.agentList:
-        for val in agents.whichScenarios:
-            totalScenarios[val] += agents.whichScenarios[val]
-    vals = list(totalScenarios.keys())
-    vals.sort()
-    for val in vals:
-        print(val, totalScenarios[val])
+# if __name__ == '__main__':
+#     sim = ALifeSimTest(50, 20)
+#     for rounds in range(5):
+#         print("Round", rounds)
+#         sim.printGrid()
+#         # sim.printAgents()
+#         sim.step()
+#     totalScenarios = dict()
+#     for i in range(27):
+#         totalScenarios[i] = 0
+#     for agents, when in sim.getDeadAgents():
+#         for val in agents.whichScenarios:
+#             totalScenarios[val] += agents.whichScenarios[val]
+#     for agents in sim.agentList:
+#         for val in agents.whichScenarios:
+#             totalScenarios[val] += agents.whichScenarios[val]
+#     vals = list(totalScenarios.keys())
+#     vals.sort()
+#     for val in vals:
+#         print(val, totalScenarios[val])
 
 
