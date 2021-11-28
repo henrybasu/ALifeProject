@@ -29,10 +29,12 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         self.ghostImage = PhotoImage(file='Ghost.png')
+        self.TurnipImage = PhotoImage(file='trnip.png')
+
         randomGeneticStrings = []
-        # randomGeneticStrings.append("12110299")
-        randomGeneticStrings.append("11100599")
-        randomGeneticStrings.append("11100599")
+        # randomGeneticStrings.append("12100599")
+        # randomGeneticStrings.append("12110599")
+        # randomGeneticStrings.append("11110599")
 
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
@@ -66,7 +68,7 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
-        # randomGeneticStrings=self.generateRandomGeneticStrings()
+        randomGeneticStrings=self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
@@ -82,14 +84,14 @@ class ALifeGUI:
 
 
     def generateRandomGeneticStrings(self):
-        randomGeneticStrings=[]
+        randomGeneticStrings = []
         for n in range(self.numberAgents):
-            randomVision = str(random.randint(0, 5))
+            randomVision = str(random.randint(1, 2))
             randomSmell = str(random.randint(0, 2))
             randomMovement = str(random.randint(1, 1))
             randomAggression = str(random.randint(0, 1))
-            randomSleepType = str(random.randint(0, 1))
-            randomColor = str(random.randint(1, 9))
+            randomSleepType = str(random.randint(0, 0))
+            randomColor = str(random.randint(3, 6))
             randomEnergy = "99"
             randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
             randomGeneticStrings.append(randomGeneticString)
@@ -409,11 +411,16 @@ class ALifeGUI:
                 offsetCoords = self._determineAgentCoords(agent)
                 coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
 
-                agId = self.canvas.create_polygon(coords, outline="black", fill=agColor, width=2)
+                if agent.getAggression() == 1:
+                    agentOutlineColor = "red"
+                else:
+                    agentOutlineColor = "blue"
+                coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+                agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=2)
                 self.agentIdToPose[agId] = agent.getPose()
                 agent.setVisId(agId)
 
-                print("BABY ID: " + str(agent.getVisId()))
+                # print("BABY ID: " + str(agent.getVisId()))
 
             id = agent.getVisId()
             self.canvas.itemconfig(id, fill=agColor)
@@ -433,8 +440,6 @@ class ALifeGUI:
         for deadAgent in self.sim.getDeadAgents():
             # finds dead agent tkinter object id
             id = deadAgent[0].getVisId()
-
-            print("id: " + str(id))
 
             # deletes the object
             self.canvas.delete(id)
@@ -508,8 +513,12 @@ class ALifeGUI:
                     self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
                     agColor = self._setAgentColor(ag.getColor())
+                    if ag.getAggression() == 1:
+                        agOutlineColor = "red"
+                    else:
+                        agOutlineColor = "blue"
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                    agId = self.canvas.create_polygon(coords, outline="black", fill=agColor, width=2)
+                    agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=2)
                     self.agentIdToPose[agId] = ag.getPose()
                     # print('orig coords:', coords)
                     # print("agent pose:", ag.getPose())
@@ -613,7 +622,6 @@ class ALifeGUI:
 
 
     def _UpdateAgentColor(self, color, energy):
-        print("ENERGY: " + str(energy))
         if energy <= 0:
             color = 'black'
         else:
