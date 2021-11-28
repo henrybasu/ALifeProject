@@ -12,15 +12,15 @@ class Agent(object):
         :param initLoc:   tuple giving agent's initial location
         :param initEnergy: integer initial energy
         :param geneticString: string to determine agent's behavior
-        :param stepSpawned: the simulation step the agent was created in
+        :param stepSpawned: integer giving the simulation step the agent was created in
         """
-        self.geneticString = geneticString
         self.row, self.col, self.heading = initPose
-        self.whichScenarios = dict()
+        self.geneticString = geneticString
+        # self.whichScenarios = dict()
+        self.stepSpawned = stepSpawned
         self.visObjectId = None
         self.isDead = False
         self.readyToBreed = 10
-        self.stepSpawned = stepSpawned
 
         """
         X0000000 - Vision
@@ -62,6 +62,8 @@ class Agent(object):
     def getAggression(self):
         return self.Aggression
 
+    def getGeneticString(self):
+        return self.geneticString
 
     def colorNumberToText(self, color):
         """Returns the text value of the agent's color"""
@@ -292,9 +294,6 @@ class Agent(object):
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
-
-    def getGeneticString(self):
-        return self.geneticString
 
 
     def __str__(self):
