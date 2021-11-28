@@ -4,6 +4,7 @@ import tkinter
 
 from ALifeGUITest import *
 from AgentTest import Agent
+from ObjectTest import Object
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -29,14 +30,17 @@ class ALifeSimTest(object):
         self.agentMap = dict()
         for row in range(gridSize):
             for col in range(gridSize):
-                self.objectMap[row, col] = 0
+                self.objectMap[row, col] = []
                 self.foodMap[row, col] = 0
                 self.agentMap[row, col] = []
-        self.deadAgents = []
+
+        self.objectList = []
         self.agentList = []
+        self.deadAgents = []
         self.stepNum = 0
         self.verbose = False
 
+        self._placeObjects()
         # self._placeFood()
         self._placeAgents()
 
@@ -54,16 +58,21 @@ class ALifeSimTest(object):
         """Returns the list of agents"""
         return self.agentList[:]
 
+    def getObjects(self):
+        """Returns the list of agents"""
+        return self.objectList[:]
 
     def getDeadAgents(self):
         """Returns a list of the dead agents."""
         return self.deadAgents
 
+    def objectsAt(self, row, col):
+        """Given a row and column, returns a list of the agents at that location."""
+        return self.objectMap[row, col]
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
         return self.foodMap[row, col]
-
 
     def agentsAt(self, row, col):
         """Given a row and column, returns a list of the agents at that location."""
@@ -92,6 +101,13 @@ class ALifeSimTest(object):
 
             self.agentList.append(nextAgent)
             self.agentMap[r, c].append(nextAgent)
+
+    def _placeObjects(self):
+        objectPose = self._genRandomPose()
+        r, c, h = objectPose
+        nextObject = Object(initPose=(r,c),geneticString="00")
+        self.objectList.append(nextObject)
+        self.objectMap[r, c].append(nextObject)
 
 
     def _addFoodClump(self):

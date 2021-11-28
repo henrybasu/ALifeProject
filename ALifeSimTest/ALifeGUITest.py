@@ -403,13 +403,39 @@ class ALifeGUI:
                 self.canvas.itemconfig(patchId, fill=cellColor)
         if len(self.sim.getAgents()) == 0:
             return False
+
+        for object in self.sim.getObjects():
+            #TODO: Double-check this code to place objects in the GUI
+            obColor = object.colorNumberToText(object.getColor())
+
+            if object.getVisId() is None:
+                offsetCoords = self._determineObjectCoords(object)
+                coords = [(0 + x, 0 + y) for (x, y) in offsetCoords]
+                # print(coords)
+                # print(obColor)
+                obId = self.canvas.create_polygon(coords, fill=obColor, width=2)
+                self.agentIdToPose[obId] = object.getPose()
+                object.setVisId(obId)
+
+            id = object.getVisId()
+            self.canvas.itemconfig(id, fill=obColor)
+
+            (newRow, newCol) = object.getPose()
+            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+            offsetCoords = self._determineObjectCoords(object)
+            coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+            flatCoords = [n for subl in coords for n in subl]
+            self.canvas.coords(id, flatCoords)
+            self.canvas.lift(id)
+
+            self.agentIdToPose[id] = object.getPose()
+
         for agent in self.sim.getAgents():
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
 
             if agent.getVisId() is None:
                 offsetCoords = self._determineAgentCoords(agent)
-                coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
 
                 if agent.getAggression() == 1:
                     agentOutlineColor = "red"
@@ -509,6 +535,15 @@ class ALifeGUI:
                 self.patchIdToPos[currId] = (row, col)
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
+                objects = self.sim.objectsAt(row,col)
+                for ob in objects:
+                    self.canvas.update()
+                    obColor = ob.colorNumberToText(ob.getColor())
+                    offsetCoords = self._determineObjectCoords(ob)
+                    coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+                    obId = self.canvas.create_polygon(coords, fill=obColor, width=2)
+                    self.agentIdToPose[obId] = ob.getPose()
+                    ob.setVisId(obId)
                 for ag in agents:
                     self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
@@ -524,6 +559,16 @@ class ALifeGUI:
                     # print("agent pose:", ag.getPose())
                     ag.setVisId(agId)
 
+    def _determineObjectCoords(self, object):
+        """gives offset coordinates based on the direction the agent is
+        pointing."""
+        (agr, agc) = object.getPose()
+        oneSixth = self.cellSize / 6
+        fiveSixths = 5 * oneSixth
+        half = self.cellSize / 2
+        quarter = self.cellSize / 4
+        threeQ = 3 * quarter
+        return [(half, oneSixth), (quarter, fiveSixths), (threeQ, fiveSixths)]
 
 
     def _determineAgentCoords(self, agent):
@@ -597,8 +642,8 @@ class ALifeGUI:
             color = "#%02x%02x%02x" % (redColor, 0, 0)
         return color
 
-    def _setAgentColor(self, color):
 
+    def _setAgentColor(self, color):
         if color == 1:
             return 'black'
         elif color == 2:
