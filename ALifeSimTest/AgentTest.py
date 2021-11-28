@@ -20,7 +20,7 @@ class Agent(object):
 
     ARBITRARY_BEHAVIOR = "a" * 27
 
-    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000"):
+    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000", stepSpawned=0):
         """
         Sets up an agent with a ruleset, location, and energy
         :param ruleset:   string describing behaviors of agent in different scenarios
@@ -33,6 +33,7 @@ class Agent(object):
         self.visObjectId = None
         self.isDead = False
         self.readyToBreed = 10
+        self.stepSpawned = stepSpawned
 
         """
         X0000000 - Vision

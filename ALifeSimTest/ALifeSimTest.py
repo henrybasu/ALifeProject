@@ -158,13 +158,13 @@ class ALifeSimTest(object):
         """Prints the current location, heading, energy, step spawned, and step died of each agent."""
         #TODO: Add steps created
         print("===== Live Agents =====")
-        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepLast")
+        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepDied")
         for agent in self.agentList:
-            print(agent, "       ", "x", "        ", "x")
+            print(agent, "       ", "x", "         ", "x")
         print("===== Dead Agents =====")
-        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepLast")
-        for agent,step in self.deadAgents:
-            print(agent, "       ", "x", "        ", step)
+        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepDied")
+        for agent,stepDied in self.deadAgents:
+            print(agent, "       ", "x", "         ", stepDied)
 
 
     def step(self):
@@ -803,7 +803,7 @@ class ALifeSimTest(object):
 
             babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
 
-            babyAgent = Agent(geneticString=babyGeneticString, initPose=agentPose)
+            babyAgent = Agent(geneticString=babyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)
 
             self.agentList.append(babyAgent)
             self.agentMap[r, c].append(babyAgent)
