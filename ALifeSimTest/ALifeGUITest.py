@@ -404,31 +404,30 @@ class ALifeGUI:
         if len(self.sim.getAgents()) == 0:
             return False
 
-        for object in self.sim.getObjects():
-            #TODO: Double-check this code to place objects in the GUI
-            obColor = object.colorNumberToText(object.getColor())
-
-            if object.getVisId() is None:
-                offsetCoords = self._determineObjectCoords(object)
-                coords = [(0 + x, 0 + y) for (x, y) in offsetCoords]
-                # print(coords)
-                # print(obColor)
-                obId = self.canvas.create_polygon(coords, fill=obColor, width=2)
-                self.agentIdToPose[obId] = object.getPose()
-                object.setVisId(obId)
-
-            id = object.getVisId()
-            self.canvas.itemconfig(id, fill=obColor)
-
-            (newRow, newCol) = object.getPose()
-            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
-            offsetCoords = self._determineObjectCoords(object)
-            coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-            flatCoords = [n for subl in coords for n in subl]
-            self.canvas.coords(id, flatCoords)
-            self.canvas.lift(id)
-
-            self.agentIdToPose[id] = object.getPose()
+        # for object in self.sim.getObjects():
+        #     #TODO: Double-check this code to place objects in the GUI / is it necessary (since objects don't move)
+        #     obColor = object.colorNumberToText(object.getColor())
+        #     if object.getVisId() is None:
+        #         offsetCoords = self._determineObjectCoords(object)
+        #         coords = [(0 + x, 0 + y) for (x, y) in offsetCoords]
+        #         # print(coords)
+        #         # print(obColor)
+        #         obId = self.canvas.create_polygon(coords, fill=obColor, width=2)
+        #         self.agentIdToPose[obId] = object.getPose()
+        #         object.setVisId(obId)
+        #
+        #     id = object.getVisId()
+        #     self.canvas.itemconfig(id, fill=obColor)
+        #
+        #     (newRow, newCol) = object.getPose()
+        #     (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+        #     offsetCoords = self._determineObjectCoords(object)
+        #     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+        #     flatCoords = [n for subl in coords for n in subl]
+        #     self.canvas.coords(id, flatCoords)
+        #     self.canvas.lift(id)
+        #
+        #     self.agentIdToPose[id] = object.getPose()
 
         for agent in self.sim.getAgents():
             # agColor = self._determineAgentColor(agent.getEnergy())
@@ -540,8 +539,10 @@ class ALifeGUI:
                     self.canvas.update()
                     obColor = ob.colorNumberToText(ob.getColor())
                     offsetCoords = self._determineObjectCoords(ob)
-                    coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                    obId = self.canvas.create_polygon(coords, fill=obColor, width=2)
+                    print(offsetCoords)
+                    coords = [x1+offsetCoords[0], y1+offsetCoords[1], x2-offsetCoords[2], y2-offsetCoords[3]]
+                    print(coords)
+                    obId = self.canvas.create_rectangle(coords, fill=obColor, width=2)
                     self.agentIdToPose[obId] = ob.getPose()
                     ob.setVisId(obId)
                 for ag in agents:
@@ -562,13 +563,12 @@ class ALifeGUI:
     def _determineObjectCoords(self, object):
         """gives offset coordinates based on the direction the agent is
         pointing."""
-        (agr, agc) = object.getPose()
         oneSixth = self.cellSize / 6
         fiveSixths = 5 * oneSixth
         half = self.cellSize / 2
         quarter = self.cellSize / 4
         threeQ = 3 * quarter
-        return [(half, oneSixth), (quarter, fiveSixths), (threeQ, fiveSixths)]
+        return [oneSixth,oneSixth,oneSixth,oneSixth]
 
 
     def _determineAgentCoords(self, agent):
