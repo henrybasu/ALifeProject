@@ -1,6 +1,7 @@
 import random
+from ObjectTest import Object
 
-class Agent(object):
+class Agent(Object):
     """An agent has a geneticString that governs its behavior, given by a string, and it has an amount of energy and a
     location on the agentMap (given when created and then updated)."""
 
@@ -41,52 +42,15 @@ class Agent(object):
 
         self.score = 0
 
-
-    def setVisId(self, id):
-        """Set the tkinter id so the object knows it"""
-        self.visObjectId = id
-
-
-    def getVisId(self):
-        """return the tkinter object id"""
-        return self.visObjectId
-
-
     def getEnergy(self):
         """Returns the current energy value"""
         return self.energy
-
-    def getColor(self):
-        return self.color
 
     def getAggression(self):
         return self.Aggression
 
     def getGeneticString(self):
         return self.geneticString
-
-    def colorNumberToText(self, color):
-        """Returns the text value of the agent's color"""
-        if color == 1:
-            return 'black'
-        elif color == 2:
-            return 'red'
-        elif color == 3:
-            return 'orange'
-        elif color == 4:
-            return 'yellow'
-        elif color == 5:
-            return 'blue'
-        elif color == 6:
-            return 'green'
-        elif color == 7:
-            return 'purple'
-        elif color == 8:
-            return 'brown'
-        elif color == 9:
-            return 'pink'
-        elif color == 0:
-            return 'gray'
 
     def getPose(self):
         """Return the row, column, and heading of the agent."""
@@ -641,7 +605,7 @@ class Agent(object):
 
 
         if int(smellRadius) == 1:
-            cellsSmelled = sim.smellRadius1(self)
+            cellsSmelled = self.smellRadius1(sim)
             print(cellsSmelled)
 
             print("\t" + str(cellsSmelled[0]) + "\t")
@@ -649,7 +613,7 @@ class Agent(object):
             print("\t" + str(cellsSmelled[1]) + "\t")
 
         elif int(smellRadius) == 2:
-            cellsSmelled = sim.smellRadius2(self)
+            cellsSmelled = self.smellRadius2(sim)
             print(cellsSmelled)
 
             print("\t\t" + str(cellsSmelled[4]) + "\t\t")
