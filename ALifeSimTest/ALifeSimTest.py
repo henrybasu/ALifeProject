@@ -22,34 +22,23 @@ class ALifeSimTest(object):
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
         self.numAgents = numAgents
+        self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
+        self.objectMap = dict()
         self.foodMap = dict()
         self.agentMap = dict()
         for row in range(gridSize):
             for col in range(gridSize):
+                self.objectMap[row, col] = 0
                 self.foodMap[row, col] = 0
                 self.agentMap[row, col] = []
-        # self._placeFood()
         self.deadAgents = []
         self.agentList = []
         self.stepNum = 0
         self.verbose = False
 
-        for i in range(numAgents):
-            agentPose = self._genRandomPose()
-            r, c, h = agentPose
-
-            if geneticStrings is None or len(geneticStrings) <= i:
-                nextAgent = Agent(initPose = agentPose)
-            else:
-                nextAgent = Agent(geneticString=geneticStrings[i], initPose = agentPose)
-
-            if geneticStrings is None:
-                pass
-
-            self.agentList.append(nextAgent)
-            self.agentMap[r, c].append(nextAgent)
-
+        # self._placeFood()
+        self._placeAgents()
 
     def getSize(self):
         """Returns the size of the grid"""
@@ -87,6 +76,22 @@ class ALifeSimTest(object):
         foodClumps = int(self.FOOD_PERCENT * totalCells)
         for i in range(foodClumps):
             self._addFoodClump()
+
+    def _placeAgents(self):
+        for i in range(self.numAgents):
+            agentPose = self._genRandomPose()
+            r, c, h = agentPose
+
+            if self.initialGeneticStrings is None or len(self.initialGeneticStrings) <= i:
+                nextAgent = Agent(initPose = agentPose)
+            else:
+                nextAgent = Agent(geneticString=self.initialGeneticStrings[i], initPose = agentPose)
+
+            if self.initialGeneticStrings is None:
+                pass
+
+            self.agentList.append(nextAgent)
+            self.agentMap[r, c].append(nextAgent)
 
 
     def _addFoodClump(self):
