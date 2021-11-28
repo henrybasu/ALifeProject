@@ -13,7 +13,7 @@ from tkinter import *
 import tkinter.filedialog as tkFileDialog
 
 import ALifeSimTest
-from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
+from LocalSearchSolverTest import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
 class ALifeGUI:

@@ -154,20 +154,16 @@ class ALifeSimTest(object):
 
 
     def printAgents(self):
-        """Prints the current location, heading, and energy of each agent."""
+        """Prints the current location, heading, energy, step spawned, and step died of each agent."""
+        #TODO: Add steps created
         print("===== Live Agents =====")
-        print("       Row  Col  Hed   Energy")
+        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepLast")
         for agent in self.agentList:
-            print(agent)
+            print(agent, "     ", agent.geneticString, "       ", "x", "       ", "x")
         print("===== Dead Agents =====")
-        print("       Row  Col  Hed   Energy")
+        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepLast")
         for agent,step in self.deadAgents:
-            print(agent, "died in step", step)
-
-
-    def getDeadAgents(self):
-        """Returns a list of the dead agents."""
-        return self.deadAgents
+            print(agent, "     ", agent.geneticString, "       ", "x", "       ", step)
 
 
     def step(self):
@@ -184,6 +180,7 @@ class ALifeSimTest(object):
 
         # self._growFood()
         self._updateAgents()
+        self.printAgents()
 
 
         for i in range(len(self.agentList)):
