@@ -166,21 +166,27 @@ class ALifeGUI:
         makerFrame = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
         makerFrame.grid(row=1, column=1, padx=5, pady=5)
 
-        sizeLabel = Label(makerFrame, text="Grid Dim")
-        self.gridDimensionText = IntVar()
-        self.gridDimensionText.set(str(self.gridDim))
-        self.rowsEntry = Entry(makerFrame, textvariable=self.gridDimensionText, width=4, justify=CENTER)
+        sizeLabel1 = Label(makerFrame, text="Grid Dim")
+        sizeLabel2 = Label(makerFrame, text="x")
+        self.rowDimensionText = IntVar()
+        self.rowDimensionText.set(str(self.gridDim))
+        self.colDimensionText = IntVar()
+        self.colDimensionText.set(str(self.gridDim))
+        self.rowsEntry = Entry(makerFrame, textvariable=self.rowDimensionText, width=4, justify=CENTER)
+        self.colsEntry = Entry(makerFrame, textvariable=self.colDimensionText, width=4, justify=CENTER)
         agentsLabel = Label(makerFrame, text="Agents")
         self.agentNum = IntVar()
         self.agentNum.set(self.numberAgents)
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
-        self.gridButton = Button(gridSetupFrame, text="New Grid", command=self.resetGridWorld)
+        self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
 
-        sizeLabel.grid(row=1, column=3)
+        sizeLabel1.grid(row=1, column=3)
+        sizeLabel2.grid(row=1, column=5)
         agentsLabel.grid(row=2, column=3)
         self.rowsEntry.grid(row=1, column=4)
+        self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
 
@@ -267,7 +273,9 @@ class ALifeGUI:
         places where the ruleString is set to a non-None value"""
         self._removeGridItems()
 
-        size = self.gridDimensionText.get()
+        rowSize = self.rowDimensionText.get()
+        colSize = self.colDimensionText.get()
+        size = self.rowDimensionText.get()
         ageNum = self.agentNum.get()
         try:
             self.gridDim = int(size)
@@ -539,9 +547,9 @@ class ALifeGUI:
                     self.canvas.update()
                     obColor = ob.colorNumberToText(ob.getColor())
                     offsetCoords = self._determineObjectCoords(ob)
-                    print(offsetCoords)
+                    # print(offsetCoords)
                     coords = [x1+offsetCoords[0], y1+offsetCoords[1], x2-offsetCoords[2], y2-offsetCoords[3]]
-                    print(coords)
+                    # print(coords)
                     obId = self.canvas.create_rectangle(coords, fill=obColor, width=2)
                     self.agentIdToPose[obId] = ob.getPose()
                     ob.setVisId(obId)
