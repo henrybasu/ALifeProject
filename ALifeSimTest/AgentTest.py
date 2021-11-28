@@ -310,5 +310,5 @@ class Agent(object):
 
 
     def __str__(self):
-        formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}"
-        return formStr.format(self.row, self.col, self.heading, self.energy)
+        formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}      {4}"
+        return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString)

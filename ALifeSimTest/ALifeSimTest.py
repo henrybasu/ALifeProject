@@ -160,11 +160,11 @@ class ALifeSimTest(object):
         print("===== Live Agents =====")
         print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepLast")
         for agent in self.agentList:
-            print(agent, "     ", agent.geneticString, "       ", "x", "       ", "x")
+            print(agent, "       ", "x", "        ", "x")
         print("===== Dead Agents =====")
         print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepLast")
         for agent,step in self.deadAgents:
-            print(agent, "     ", agent.geneticString, "       ", "x", "       ", step)
+            print(agent, "       ", "x", "        ", step)
 
 
     def step(self):
@@ -181,7 +181,7 @@ class ALifeSimTest(object):
 
         # self._growFood()
         self._updateAgents()
-        self.printAgents()
+        # self.printAgents()
 
 
         # for i in range(len(self.agentList)):
@@ -193,6 +193,7 @@ class ALifeSimTest(object):
         #     print("~ Smell ~")
         #     self._printSmell(self.agentList[i])
         #     print(self.areCreaturesInSmellRadius(self.agentList[i]))
+
 
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
@@ -320,6 +321,7 @@ class ALifeSimTest(object):
                 self.deadAgents.append((agent, self.stepNum))
                 self.agentList.pop(i)
                 self.agentMap[agentR, agentC].remove(agent)
+
 
     def _computeAhead(self, row, col, heading, moveSpeed):
         """Determine the cell that is one space ahead of current cell, given the heading."""

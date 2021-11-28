@@ -29,7 +29,7 @@ class ALifeGUI:
         self.currSteps = 0
         self.delayTime = 0.01
         self.ghostImage = PhotoImage(file='Ghost.png')
-        self.TurnipImage = PhotoImage(file='trnip.png')
+        # self.TurnipImage = PhotoImage(file='trnip.png')
 
         randomGeneticStrings = []
         # randomGeneticStrings.append("12100599")
