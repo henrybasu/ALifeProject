@@ -33,6 +33,7 @@ class ALifeSimTest(object):
         self.deadAgents = []
         self.agentList = []
         self.stepNum = 0
+        self.verbose = False
 
         for i in range(numAgents):
             agentPose = self._genRandomPose()
@@ -186,13 +187,15 @@ class ALifeSimTest(object):
         self._updateAgents()
 
 
-        for i in range(len(self.agentList)):
-            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
-            print("~ Vision ~")
-            self._printVision(self.agentList[i])
-            print("~ Smell ~")
-            self._printSmell(self.agentList[i])
-            print(self.areCreaturesInSmellRadius(self.agentList[i]))
+        # for i in range(len(self.agentList)):
+        #     print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+        #     print("~ Energy ~")
+        #     print(self.agentList[i].getEnergy())
+        #     print("~ Vision ~")
+        #     self._printVision(self.agentList[i])
+        #     print("~ Smell ~")
+        #     self._printSmell(self.agentList[i])
+        #     print(self.areCreaturesInSmellRadius(self.agentList[i]))
 
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
@@ -211,15 +214,19 @@ class ALifeSimTest(object):
     def _updateAgents(self):
         """Updates the position and energy of every agent based on its chosen action."""
         i = 0
-        print("aLifeSim object is using _updateAgents() for step " + str(self.stepNum))
-        print("--------------------------------------------------------------------------------------------")
-        while i < len(self.agentList):
-            print("")
-            print("")
-            print("*************** AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ***************")
+        if self.verbose:
+            print("aLifeSim object is using _updateAgents() for step " + str(self.stepNum))
 
-            # print("x, y, heading: " + str(self.agentList[i].getPose()))
-            # print(self.agentList[i].geneticString)
+        if self.verbose:
+            print("--------------------------------------------------------------------------------------------")
+        while i < len(self.agentList):
+            if self.verbose:
+                print("")
+                print("")
+                print("*************** AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ***************")
+
+                # print("x, y, heading: " + str(self.agentList[i].getPose()))
+                # print(self.agentList[i].geneticString)
 
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
@@ -253,14 +260,14 @@ class ALifeSimTest(object):
             #TODO: replace 0s with foodHereRating and foodAheadRating
             # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
 
-            print("Agent is ready to breed: " + str(agent.getReadyToBreed()))
+            # print("Agent is ready to breed: " + str(agent.getReadyToBreed()))
 
 
-            action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time)
             if not agent.isDead:
 
+                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time)
+
                 if action == 'breed':
-                    print("MAKIN A BABY")
                     self.makeABaby(self.agentMap[agentR, agentC][0], self.agentMap[agentR, agentC][1])
                     isOkay = agent.changeEnergy(0)
 
@@ -295,15 +302,16 @@ class ALifeSimTest(object):
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
 
-            agentR, agentC, agentH = agent.getPose()
-            rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
-            creatureHereRating = self._assessCreatureHere(agentR, agentC)
-            creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
+                agentR, agentC, agentH = agent.getPose()
+                rAhead, cAhead = self._computeAhead(agentR, agentC, agentH, agent.moveSpeed)
+                creatureHereRating = self._assessCreatureHere(agentR, agentC)
+                creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
 
-            print("--------------------------------------------------------------------------------------------")
+                if self.verbose:
+                    print("--------------------------------------------------------------------------------------------")
 
-            if agent.getReadyToBreed() != 0:
-                agent.changeReadyToBreed(1)
+                if agent.getReadyToBreed() != 0:
+                    agent.changeReadyToBreed(1)
 
 
             if agent.energy <= 0:
@@ -362,10 +370,11 @@ class ALifeSimTest(object):
             return 0
 
         elif len(creatureAmt) >= 1:
-            for i in range(len(creatureAmt)-1):
-                if creatureAmt[i].getColor() != creatureAmt[i+1].getColor():
-                    return 1
-            return 2
+            for i in range(len(creatureAmt)):
+                if agent.getColor() == creatureAmt[i].getColor():
+                    print("TRUE")
+                    return 2
+            return 1
 
     def _assessCreatureHere(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
@@ -657,102 +666,129 @@ class ALifeSimTest(object):
 
         elif int(smellRadius) == 2:
             cellsSmelled = self.smellRadius2(agent)
-            if (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "n":
-                return "above"
-            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "n":
-                return "below"
-            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "n":
-                return "right"
-            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "n":
-                return "left"
+            if cellsSmelled[0] != 0 and heading == "n":
+                return "above", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "n":
+                return "below", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "n":
+                return "right", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "n":
+                return "left", cellsSmelled[3]
 
-            elif (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "s":
-                return "below"
-            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "s":
-                return "above"
-            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "s":
-                return "left"
-            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "s":
-                return "right"
+            elif cellsSmelled[0] != 0 and heading == "s":
+                return "below", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "s":
+                return "above", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "s":
+                return "left", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "s":
+                return "right", cellsSmelled[3]
 
-            elif (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "e":
-                return "left"
-            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "e":
-                return "right"
-            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "e":
-                return "above"
-            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "e":
-                return "below"
+            elif cellsSmelled[0] != 0 and heading == "e":
+                return "left", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "e":
+                return "right", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "e":
+                return "above", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "e":
+                return "below", cellsSmelled[3]
 
-            elif (cellsSmelled[0] != 0 or cellsSmelled[4] != 0) and heading == "w":
-                return "right"
-            elif (cellsSmelled[1] != 0 or cellsSmelled[5] != 0) and heading == "w":
-                return "left"
-            elif (cellsSmelled[2] != 0 or cellsSmelled[6] != 0) and heading == "w":
-                return "below"
-            elif (cellsSmelled[3] != 0 or cellsSmelled[7] != 0) and heading == "w":
-                return "above"
+            elif cellsSmelled[0] != 0 and heading == "w":
+                return "right", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "w":
+                return "left", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "w":
+                return "below", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "w":
+                return "above", cellsSmelled[3]
+
+            elif (cellsSmelled[4] != 0) and heading == "n":
+                return "above", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "n":
+                return "below", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "n":
+                return "right", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "n":
+                return "left", cellsSmelled[7]
+
+            elif (cellsSmelled[4] != 0) and heading == "s":
+                return "below", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "s":
+                return "above", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "s":
+                return "left", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "s":
+                return "right", cellsSmelled[7]
+
+            elif (cellsSmelled[4] != 0) and heading == "e":
+                return "left", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "e":
+                return "right", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "e":
+                return "above", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "e":
+                return "below", cellsSmelled[7]
+
+            elif (cellsSmelled[4] != 0) and heading == "w":
+                return "right", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "w":
+                return "left", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "w":
+                return "below", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "w":
+                return "above", cellsSmelled[7]
 
             elif cellsSmelled[8] != 0 and heading == "n":
-                return random.choice(["above", "left"])
+                return random.choice(["above", "left"]), cellsSmelled[8]
             elif cellsSmelled[9] != 0 and heading == "n":
-                return random.choice(["above", "right"])
+                return random.choice(["above", "right"]), cellsSmelled[9]
             elif cellsSmelled[10] != 0 and heading == "n":
-                return random.choice(["below", "left"])
+                return random.choice(["below", "left"]), cellsSmelled[10]
             elif cellsSmelled[11] != 0 and heading == "n":
-                return random.choice(["below", "right"])
+                return random.choice(["below", "right"]), cellsSmelled[11]
 
             elif cellsSmelled[8] != 0 and heading == "s":
-                return random.choice(["below", "right"])
+                return random.choice(["below", "right"]), cellsSmelled[8]
             elif cellsSmelled[9] != 0 and heading == "s":
-                return random.choice(["below", "left"])
+                return random.choice(["below", "left"]), cellsSmelled[9]
             elif cellsSmelled[10] != 0 and heading == "s":
-                return random.choice(["above", "right"])
+                return random.choice(["above", "right"]), cellsSmelled[10]
             elif cellsSmelled[11] != 0 and heading == "s":
-                return random.choice(["above", "left"])
+                return random.choice(["above", "left"]), cellsSmelled[11]
 
             elif cellsSmelled[8] != 0 and heading == "e":
-                return random.choice(["below", "left"])
+                return random.choice(["below", "left"]), cellsSmelled[8]
             elif cellsSmelled[9] != 0 and heading == "e":
-                return random.choice(["above", "left"])
+                return random.choice(["above", "left"]), cellsSmelled[9]
             elif cellsSmelled[10] != 0 and heading == "e":
-                return random.choice(["below", "right"])
+                return random.choice(["below", "right"]), cellsSmelled[10]
             elif cellsSmelled[11] != 0 and heading == "e":
-                return random.choice(["above", "right"])
+                return random.choice(["above", "right"]), cellsSmelled[11]
 
             elif cellsSmelled[8] != 0 and heading == "w":
-                return random.choice(["above", "right"])
+                return random.choice(["above", "right"]), cellsSmelled[8]
             elif cellsSmelled[9] != 0 and heading == "w":
-                return random.choice(["below", "right"])
+                return random.choice(["below", "right"]), cellsSmelled[9]
             elif cellsSmelled[10] != 0 and heading == "w":
-                return random.choice(["above", "left"])
+                return random.choice(["above", "left"]), cellsSmelled[10]
             elif cellsSmelled[11] != 0 and heading == "w":
-                return random.choice(["below", "left"])
+                return random.choice(["below", "left"]), cellsSmelled[11]
 
             else:
                 return "none"
 
         else:
-            return "NO SMELL"
+            return "none"
 
     def attackCreature(self, agent, row, col):
         for j in range(len(self.agentsAt(row, col))):
-            print(self.agentsAt(row, col)[j].geneticString)
 
-            print(self.agentsAt(row, col)[j].geneticString[3])
-            if int(self.agentsAt(row, col)[j].geneticString[3]) == 0:
-                print("DEAD MAN")
+            if int(self.agentsAt(row, col)[j].getColor()) != agent.getColor():
                 deadCreature = self.agentsAt(row, col)[j]
 
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
-                print("DEAD MAN ENERGY: " + str(deadCreature.energy))
-                # self.updateGeneticString(deadCreature, 5 )
 
-
-                # self.deadAgents.append((deadCreature, self.stepNum))
-                # # self.agentList.pop(deadCreature)
-                # self.agentMap[row, col].remove(deadCreature)
 
     def makeABaby(self, agent1, agent2):
 
@@ -763,21 +799,12 @@ class ALifeSimTest(object):
             agent1GeneticString = agent1.getGeneticString()
             agent2GeneticString = agent2.getGeneticString()
 
-            print("Agent 1 Genetic String: " + str(agent1GeneticString))
-            print("Agent 2 Genetic String: " + str(agent2GeneticString))
-
             babyGeneticStringPart1 = agent1GeneticString[:4]
             babyGeneticStringPart2 = agent2GeneticString[4:]
 
-            print("Baby Genetic String 1: " + str(babyGeneticStringPart1))
-            print("Baby Genetic String 2: " + str(babyGeneticStringPart2))
-
             babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
 
-            print("Baby Genetic String: " + str(babyGeneticString))
-
-
-            babyAgent = Agent(geneticString="11100699", initPose=agentPose)
+            babyAgent = Agent(geneticString=babyGeneticString, initPose=agentPose)
 
             self.agentList.append(babyAgent)
             self.agentMap[r, c].append(babyAgent)
@@ -785,327 +812,3 @@ class ALifeSimTest(object):
 
             agent1.setReadyToBreed(24)
             agent2.setReadyToBreed(24)
-
-
-
-
-class Agent(object):
-    """An agent has a ruleset that governs its behavior, given by a string (random behavior is the
-    default), and it has an amount of energy and a location on the foodMap (given when created and then updated).
-
-    Agent behavior: The agent can see the cell it is on, plus the cell ahead of it.
-    It can distinguish three values on each cell: no food, a little bit of food, and plentiful food.
-
-    It also can evaluate its own energy level: low, medium, high and incorporate that into its decision-making.
-
-    That gives it 27 different scenarios (3 for food here * 3 for food ahead * 3 for energy level).
-
-    For each scenario the agent has five possible behaviors: stay, move, left, right, and random.
-    If the agent "stays", then it doesn't move or turn, and if there ss food here the agent will eat.
-    If the agent "moves", then it doesn't eat, it moves forward one square in the direction it is facing.
-    If the agent does "left", then it stays put, doesn't eat, but turns left in place.
-    If the agent does "right", then it stays put, doesn't eat, but turns right in place.
-    If the agent does "arbitrary", then it randomly chooses one of the other actions, all equally likely."""
-
-    ARBITRARY_BEHAVIOR = "a" * 27
-
-    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000"):
-        """
-        Sets up an agent with a ruleset, location, and energy
-        :param ruleset:   string describing behaviors of agent in different scenarios
-        :param initLoc:   tuple giving agent's initial location
-        :param initEnergy: integer initial energy
-        """
-        self.geneticString = geneticString
-        self.row, self.col, self.heading = initPose
-        self.whichScenarios = dict()
-        self.visObjectId = None
-        self.isDead = False
-        self.readyToBreed = 10
-
-        """
-        X0000000 - Vision
-        0X000000 - Smell
-        00X00000 - Movement
-        000X0000 - Predator (0) or Prey (1)
-        0000X000 - 
-        00000X00 - Color
-        000000XX - Energy
-        """
-
-        self.visionRange = int(self.geneticString[0])
-        self.moveSpeed = int(self.geneticString[2])
-        self.Aggression = int(self.geneticString[3])
-        self.sleepValue = int(self.geneticString[4])
-        self.color = int(self.geneticString[5])
-        self.energy = int(self.geneticString[6:])
-
-        self.score = 0
-
-
-    def setVisId(self, id):
-        """Set the tkinter id so the object knows it"""
-        self.visObjectId = id
-
-
-    def getVisId(self):
-        """return the tkinter object id"""
-        return self.visObjectId
-
-
-    def getEnergy(self):
-        """Returns the current energy value"""
-        return self.energy
-
-    def getColor(self):
-        return self.color
-
-
-    def colorNumberToText(self, color):
-        """Returns the text value of the agent's color"""
-        if color == 1:
-            return 'black'
-        elif color == 2:
-            return 'red'
-        elif color == 3:
-            return 'orange'
-        elif color == 4:
-            return 'yellow'
-        elif color == 5:
-            return 'blue'
-        elif color == 6:
-            return 'green'
-        elif color == 7:
-            return 'purple'
-        elif color == 8:
-            return 'brown'
-        elif color == 9:
-            return 'pink'
-        elif color == 0:
-            return 'gray'
-
-    def getPose(self):
-        """Return the row, column, and heading of the agent."""
-        return self.row, self.col, self.heading
-
-    def getReadyToBreed(self):
-        return self.readyToBreed
-
-    def updatePose(self, row, col, heading):
-        """Updates the agent's pose to a new position and heading"""
-        self.row = row
-        self.col = col
-        self.heading = heading
-
-    def changeEnergy(self, changeVal):
-        """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
-        or below: the agent "dies" in that case."""
-        self.energy += changeVal
-        print("ENERGY LEVEL: " + str(self.energy))
-        if self.energy <= 0:
-            return False
-        print(self.energy)
-        return True
-
-    def changeIsDead(self, deadVal):
-        self.isDead = deadVal
-
-    def changeReadyToBreed(self, breedVal):
-        self.readyToBreed = self.readyToBreed - breedVal
-
-    def setReadyToBreed(self, breedVal):
-        self.readyToBreed = breedVal
-
-    def respond(self, foodHere, foodAhead, creatureHere, creatureAhead):
-        """
-        This performs the action the rules would require, given how much food is here and food ahead, and
-        the internal energy level
-        :param foodHere: 0, 1, or 2, where 0 = no food, 1 = some food, 2 = plentiful food
-        :param foodAhead: same as foodHere, but for cell ahead of agent
-        :return: None
-        """
-        eLevel = self._assessEnergy()
-        behavIndex = (3 ** 2) * foodHere + 3 * foodAhead + eLevel
-        return self.chooseAction(behavIndex)
-
-
-    def _assessEnergy(self):
-        """Converts energy level into 0 for low, 1 for medium, and 2 for high amounts of energy."""
-        if self.energy < 20:
-            return 0
-        elif self.energy < 60:
-            return 1
-        else:
-            return 2
-
-
-    def chooseAction(self, index):
-        """
-        Does the specified action.
-        :param action: one of 's' for stay, 'f' for forward, 'l' for left, 'r' for right, or 'a' for arbitrary
-        :return: returns the specified action, unless the action is 'a', in which case it picks an action at random.
-        """
-        if index in self.whichScenarios:
-            self.whichScenarios[index] += 1
-        else:
-            self.whichScenarios[index] = 1
-        action = 0
-        if action == 'a':
-            print("action chosen: a")
-            return random.choice(['eat', 'forward', 'left', 'right'])
-        elif action == 's':
-            print("action chosen: s")
-            return 'eat'
-        elif action == 'f':
-            print("action chosen: f")
-            return 'forward'
-        elif action == 'l':
-            print("action chosen: l")
-            return 'left'
-        elif action == 'r':
-            print("action chosen: r")
-            return 'right'
-        else:
-            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-            return 'forward'
-
-        # action = self.geneticString[0]
-        # for i in range(len(self.geneticString[0])):
-        #     print("movement: " + str(i))
-        #     return 'forward'
-
-    def isAwake(self, sleepValue, time):
-        if sleepValue == 0 and 6 <= time <= 18:
-            return "awake"
-        elif sleepValue == 1 and (time < 6 or time > 18):
-            return "awake"
-        else:
-            return "sleeping"
-
-
-    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
-        if self.isAwake(agent.sleepValue, time) == "awake":
-            if agent.Aggression == 0:
-                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
-            elif agent.Aggression == 1:
-                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
-            else:
-                print("SHOULD NOT GET HERE")
-
-        elif self.isAwake(agent.sleepValue, time) == "sleeping":
-            return "none"
-
-
-    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
-        creaturesAround = cellsSmelled
-
-        # if the agent is on the same square as a friend
-        if isCreatureHere == 2:
-            if agent.getReadyToBreed() == 0:
-                return "breed"
-            else:
-                return random.choice(['left', 'right', 'turnAround', "forward"])
-
-        # if the agent sees an enemy on a square ahead
-        elif isCreatureAhead == 1:
-            return random.choice(['left', 'right', 'turnAround'])
-
-        # if the agent sees a friend ahead
-        elif isCreatureAhead == 2:
-            # if they are ready to breed, go forward
-            if agent.getReadyToBreed() == 0:
-                return "forward"
-            # if they aren't, go anywhere
-            else:
-                return random.choice(['left', 'right', 'turnAround', "forward"])
-
-        # if it can't see any creatures, and can't smell any creatures: go anywhere
-        elif isCreatureAhead == 0 and creaturesAround == "none":
-            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
-
-        # if it can't see any creatures, and but it can smell creatures:
-        elif isCreatureAhead == 0 and creaturesAround != "none":
-            if creaturesAround[1] == 1:
-                if creaturesAround[0] == "above":
-                    return random.choice(['left', 'right', 'turnAround'])
-                elif creaturesAround[0] == "left":
-                    return random.choice(['right', 'forward', 'turnAround'])
-                elif creaturesAround[0] == "right":
-                    return random.choice(['left', 'forward', 'turnAround'])
-                elif creaturesAround[0] == "below":
-                    return random.choice(['left', 'right', 'forward'])
-            elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
-                if creaturesAround[0] == "above":
-                    return "forward"
-                elif creaturesAround[0] == "left":
-                    return "left"
-                elif creaturesAround[0] == "right":
-                    return "right"
-                elif creaturesAround[0] == "below":
-                    return "turnAround"
-            else:
-                return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
-
-        else:
-            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-            return 'forward'
-
-    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
-        creaturesAround = cellsSmelled
-
-        if isCreatureHere == 1:
-            return "attack"
-
-        elif isCreatureAhead == 1:
-            return random.choice(['forward'])
-
-        # if it can't see any creatures, and can't smell any creatures: go forwards
-        elif isCreatureAhead == 0 and creaturesAround == "none":
-            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
-
-        # if it can't see any creatures, and but it can smell any creatures:
-        elif isCreatureAhead == 0 and creaturesAround != "none":
-            if creaturesAround == "above":
-                return random.choice(['forward'])
-            elif creaturesAround == "left":
-                return random.choice(['left'])
-            elif creaturesAround == "right":
-                return random.choice(['right'])
-            elif creaturesAround == "below":
-                return random.choice(['turnAround'])
-
-        else:
-            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-            return 'forward'
-
-    def getGeneticString(self):
-        return self.geneticString
-
-
-    def __str__(self):
-        formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}"
-        return formStr.format(self.row, self.col, self.heading, self.energy)
-
-
-# if __name__ == '__main__':
-#     sim = ALifeSimTest(50, 20)
-#     for rounds in range(5):
-#         print("Round", rounds)
-#         sim.printGrid()
-#         # sim.printAgents()
-#         sim.step()
-#     totalScenarios = dict()
-#     for i in range(27):
-#         totalScenarios[i] = 0
-#     for agents, when in sim.getDeadAgents():
-#         for val in agents.whichScenarios:
-#             totalScenarios[val] += agents.whichScenarios[val]
-#     for agents in sim.agentList:
-#         for val in agents.whichScenarios:
-#             totalScenarios[val] += agents.whichScenarios[val]
-#     vals = list(totalScenarios.keys())
-#     vals.sort()
-#     for val in vals:
-#         print(val, totalScenarios[val])
-
-

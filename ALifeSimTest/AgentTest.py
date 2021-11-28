@@ -31,25 +31,27 @@ class Agent(object):
         self.row, self.col, self.heading = initPose
         self.whichScenarios = dict()
         self.visObjectId = None
+        self.isDead = False
+        self.readyToBreed = 10
+
+        """
+        X0000000 - Vision
+        0X000000 - Smell
+        00X00000 - Movement
+        000X0000 - Predator (0) or Prey (1)
+        0000X000 - 
+        00000X00 - Color
+        000000XX - Energy
+        """
 
         self.visionRange = int(self.geneticString[0])
         self.moveSpeed = int(self.geneticString[2])
         self.Aggression = int(self.geneticString[3])
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
-        self.energy = int(self.geneticString[6:7])
+        self.energy = int(self.geneticString[6:])
 
         self.score = 0
-
-        """
-        X0000000 - Vision
-        0X000000 - Smell
-        00X00000 - Movement Speed
-        000X0000 - Predator (0) or Prey (1)
-        0000X000 - Sleep Type
-        00000X00 - Color
-        000000XX - Energy
-        """
 
 
     def setVisId(self, id):
@@ -66,20 +68,11 @@ class Agent(object):
         """Returns the current energy value"""
         return self.energy
 
-
     def getColor(self):
-        "Returns the agent's color as a digit 0-9"
         return self.color
 
-
-    def getGeneticString(self):
-        """Returns the agent's genetic string"""
-        return self.geneticString
-
-
-    def getPose(self):
-        """Return the row, column, and heading of the agent."""
-        return self.row, self.col, self.heading
+    def getAggression(self):
+        return self.Aggression
 
 
     def colorNumberToText(self, color):
@@ -103,8 +96,14 @@ class Agent(object):
         elif color == 9:
             return 'pink'
         elif color == 0:
-            return 'teal'
+            return 'gray'
 
+    def getPose(self):
+        """Return the row, column, and heading of the agent."""
+        return self.row, self.col, self.heading
+
+    def getReadyToBreed(self):
+        return self.readyToBreed
 
     def updatePose(self, row, col, heading):
         """Updates the agent's pose to a new position and heading"""
@@ -112,16 +111,22 @@ class Agent(object):
         self.col = col
         self.heading = heading
 
-
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
         or below: the agent "dies" in that case."""
         self.energy += changeVal
         if self.energy <= 0:
             return False
-        print(self.energy)
         return True
 
+    def changeIsDead(self, deadVal):
+        self.isDead = deadVal
+
+    def changeReadyToBreed(self, breedVal):
+        self.readyToBreed = self.readyToBreed - breedVal
+
+    def setReadyToBreed(self, breedVal):
+        self.readyToBreed = breedVal
 
     def respond(self, foodHere, foodAhead, creatureHere, creatureAhead):
         """
@@ -133,8 +138,7 @@ class Agent(object):
         """
         eLevel = self._assessEnergy()
         behavIndex = (3 ** 2) * foodHere + 3 * foodAhead + eLevel
-        # return self.chooseAction(behavIndex)
-        #TODO: Change this to use determineAction instead of chooseAction (chooseAction no longer exists)
+        return self.chooseAction(behavIndex)
 
 
     def _assessEnergy(self):
@@ -147,10 +151,49 @@ class Agent(object):
             return 2
 
 
+    def chooseAction(self, index):
+        """
+        Does the specified action.
+        :param action: one of 's' for stay, 'f' for forward, 'l' for left, 'r' for right, or 'a' for arbitrary
+        :return: returns the specified action, unless the action is 'a', in which case it picks an action at random.
+        """
+        if index in self.whichScenarios:
+            self.whichScenarios[index] += 1
+        else:
+            self.whichScenarios[index] = 1
+        action = 0
+        if action == 'a':
+            return random.choice(['eat', 'forward', 'left', 'right'])
+        elif action == 's':
+            return 'eat'
+        elif action == 'f':
+            return 'forward'
+        elif action == 'l':
+            return 'left'
+        elif action == 'r':
+            return 'right'
+        else:
+            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
+            return 'forward'
+
+        # action = self.geneticString[0]
+        # for i in range(len(self.geneticString[0])):
+        #     print("movement: " + str(i))
+        #     return 'forward'
+
+    def isAwake(self, sleepValue, time):
+        if sleepValue == 0 and 6 <= time <= 18:
+            return "awake"
+        elif sleepValue == 1 and (time < 6 or time > 18):
+            return "awake"
+        else:
+            return "sleeping"
+
+
     def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                return self.determineActionDocile(agent, isCreatureAhead, cellsSmelled)
+                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             elif agent.Aggression == 1:
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             else:
@@ -160,26 +203,55 @@ class Agent(object):
             return "none"
 
 
-    def determineActionDocile(self, agent, isCreatureAhead, cellsSmelled):
+    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
         creaturesAround = cellsSmelled
 
-        if isCreatureAhead == 1:
+        # if the agent is on the same square as a friend
+        if isCreatureHere == 2:
+            if agent.getReadyToBreed() == 0:
+                return "breed"
+            else:
+                return random.choice(['left', 'right', 'turnAround', "forward"])
+
+        # if the agent sees an enemy on a square ahead
+        elif isCreatureAhead == 1:
             return random.choice(['left', 'right', 'turnAround'])
 
-        # if it can't see any creatures, and can't smell any creatures: go forwards
+        # if the agent sees a friend ahead
+        elif isCreatureAhead == 2:
+            # if they are ready to breed, go forward
+            if agent.getReadyToBreed() == 0:
+                return "forward"
+            # if they aren't, go anywhere
+            else:
+                return random.choice(['left', 'right', 'turnAround', "forward"])
+
+        # if it can't see any creatures, and can't smell any creatures: go anywhere
         elif isCreatureAhead == 0 and creaturesAround == "none":
             return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
-        # if it can't see any creatures, and but it can smell any creatures:
+        # if it can't see any creatures, and but it can smell creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
-            if creaturesAround == "above":
-                return random.choice(['left', 'right', 'turnAround'])
-            elif creaturesAround == "left":
-                return random.choice(['right', 'forward', 'turnAround'])
-            elif creaturesAround == "right":
-                return random.choice(['left', 'forward', 'turnAround'])
-            elif creaturesAround == "below":
-                return random.choice(['left', 'right', 'forward'])
+            if creaturesAround[1] == 1:
+                if creaturesAround[0] == "above":
+                    return random.choice(['left', 'right', 'turnAround'])
+                elif creaturesAround[0] == "left":
+                    return random.choice(['right', 'forward', 'turnAround'])
+                elif creaturesAround[0] == "right":
+                    return random.choice(['left', 'forward', 'turnAround'])
+                elif creaturesAround[0] == "below":
+                    return random.choice(['left', 'right', 'forward'])
+            elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
+                if creaturesAround[0] == "above":
+                    return "forward"
+                elif creaturesAround[0] == "left":
+                    return "left"
+                elif creaturesAround[0] == "right":
+                    return "right"
+                elif creaturesAround[0] == "below":
+                    return "turnAround"
+            else:
+                return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
@@ -191,36 +263,50 @@ class Agent(object):
         if isCreatureHere == 1:
             return "attack"
 
+        # if the agent is on the same square as a friend
+        elif isCreatureHere == 2:
+            if agent.getReadyToBreed() == 0:
+                return "breed"
+            else:
+                return random.choice(['left', 'right', 'turnAround', "forward"])
+
         elif isCreatureAhead == 1:
             return random.choice(['forward'])
 
-        # if it can't see any creatures, and can't smell any creatures: go forwards
+        # if it can't see any creatures, and can't smell any creatures: go anywhere
         elif isCreatureAhead == 0 and creaturesAround == "none":
             return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
         # if it can't see any creatures, and but it can smell any creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
-            if creaturesAround == "above":
-                return random.choice(['forward'])
-            elif creaturesAround == "left":
-                return random.choice(['left'])
-            elif creaturesAround == "right":
-                return random.choice(['right'])
-            elif creaturesAround == "below":
-                return random.choice(['turnAround'])
+
+            if creaturesAround[1] == 1:
+                if creaturesAround[0] == "above":
+                    return random.choice(['forward'])
+                elif creaturesAround[0] == "left":
+                    return random.choice(['left'])
+                elif creaturesAround[0] == "right":
+                    return random.choice(['right'])
+                elif creaturesAround[0] == "below":
+                    return random.choice(['turnAround'])
+            elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
+                if creaturesAround[0] == "above":
+                    return "forward"
+                elif creaturesAround[0] == "left":
+                    return "left"
+                elif creaturesAround[0] == "right":
+                    return "right"
+                elif creaturesAround[0] == "below":
+                    return "turnAround"
+            else:
+                return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
         else:
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
 
-
-    def isAwake(self, sleepValue, time):
-        if sleepValue == 0 and 6 <= time <= 18:
-            return "awake"
-        elif sleepValue == 1 and (time < 6 or time > 18):
-            return "awake"
-        else:
-            return "sleeping"
+    def getGeneticString(self):
+        return self.geneticString
 
 
     def __str__(self):
