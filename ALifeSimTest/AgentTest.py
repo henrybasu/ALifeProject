@@ -1,31 +1,18 @@
 import random
 
 class Agent(object):
-    """An agent has a ruleset that governs its behavior, given by a string (random behavior is the
-    default), and it has an amount of energy and a location on the foodMap (given when created and then updated).
-
-    Agent behavior: The agent can see the cell it is on, plus the cell ahead of it.
-    It can distinguish three values on each cell: no food, a little bit of food, and plentiful food.
-
-    It also can evaluate its own energy level: low, medium, high and incorporate that into its decision-making.
-
-    That gives it 27 different scenarios (3 for food here * 3 for food ahead * 3 for energy level).
-
-    For each scenario the agent has five possible behaviors: stay, move, left, right, and random.
-    If the agent "stays", then it doesn't move or turn, and if there ss food here the agent will eat.
-    If the agent "moves", then it doesn't eat, it moves forward one square in the direction it is facing.
-    If the agent does "left", then it stays put, doesn't eat, but turns left in place.
-    If the agent does "right", then it stays put, doesn't eat, but turns right in place.
-    If the agent does "arbitrary", then it randomly chooses one of the other actions, all equally likely."""
+    """An agent has a geneticString that governs its behavior, given by a string, and it has an amount of energy and a
+    location on the agentMap (given when created and then updated)."""
 
     ARBITRARY_BEHAVIOR = "a" * 27
 
     def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000", stepSpawned=0):
         """
-        Sets up an agent with a ruleset, location, and energy
-        :param ruleset:   string describing behaviors of agent in different scenarios
+        Sets up an agent with a location, energy, geneticString, and step created
         :param initLoc:   tuple giving agent's initial location
         :param initEnergy: integer initial energy
+        :param geneticString: string to determine agent's behavior
+        :param stepSpawned: the simulation step the agent was created in
         """
         self.geneticString = geneticString
         self.row, self.col, self.heading = initPose

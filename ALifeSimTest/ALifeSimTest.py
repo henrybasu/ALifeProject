@@ -798,6 +798,7 @@ class ALifeSimTest(object):
             agent1GeneticString = agent1.getGeneticString()
             agent2GeneticString = agent2.getGeneticString()
 
+            # TODO: if we extend geneticString's length, this will need to be changed.
             babyGeneticStringPart1 = agent1GeneticString[:4]
             babyGeneticStringPart2 = agent2GeneticString[4:]
 
