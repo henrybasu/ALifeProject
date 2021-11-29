@@ -75,7 +75,6 @@ class ALifeGUI:
         print("--------------------------------------------------------------------------------------------")
         self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
 
-
         # Variables to hold the results of a simulation
         self.minTime = None
         self.maxTime = None

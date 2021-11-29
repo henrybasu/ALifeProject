@@ -2,13 +2,13 @@ import random
 from ObjectTest import Object
 
 class Agent(Object):
-    """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by a string, and it has an amount of energy and a
-    location on the agentMap (given when created and then updated)."""
+    """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
+    a string, and it has an amount of energy and a location on the agentMap (given when created and then updated)."""
 
     def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000", stepSpawned=0):
         """
         Sets up an agent with a location, energy, geneticString, and step created
-        :param initLoc:   tuple giving agent's initial location
+        :param initPose:   tuple giving agent's initial location
         :param initEnergy: integer initial energy
         :param geneticString: string to determine agent's behavior
         :param stepSpawned: integer giving the simulation step the agent was created in

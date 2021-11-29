@@ -1,34 +1,21 @@
 class Object(object):
     """A template to represent any object in the ALife simulation."""
 
-    def __init__(self, initPose = (0, 0), geneticString = "00", stepSpawned=0):
+    def __init__(self, initPose = (0, 0), geneticString = "", stepSpawned=0):
         """
         Sets up an agent with a location, energy, geneticString, and step created
         :param initLoc: tuple giving object's initial location
-        :param geneticString: string giving the object's type and color classifications
+        :param geneticString: string giving the object's genetic string
         :param stepSpawned: integer giving the simulation step the object was created in
         """
         self.row, self.col = initPose
         self.geneticString = geneticString
         self.stepSpawned = stepSpawned
         self.visObjectId = None
+        self.color = ""
 
-        """
-        X0 - object type (ex. tree) 
-        0X - color
-        """
-        """
-        objectType key: 
-        1 - block w/ height=1
-        2 - water
-        3 - food
-        4 - 
-        5 - 
-        """
-
-        self.objectType = int(self.geneticString[0])
-        self.color = int(self.geneticString[1])
-
+    def getColor(self):
+        return self.color
 
     def setVisId(self, id):
         """Set the tkinter id so the object knows it"""
@@ -37,9 +24,6 @@ class Object(object):
     def getVisId(self):
         """return the tkinter object id"""
         return self.visObjectId
-
-    def getColor(self):
-        return self.color
 
     def colorNumberToText(self, color):
         """Returns the text value of the object's color"""
@@ -67,9 +51,6 @@ class Object(object):
     def getPose(self):
         """Return the row and column of the agent."""
         return self.row, self.col
-
-    def determineAction(self):
-          return
 
 
     def __str__(self):
