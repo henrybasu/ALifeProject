@@ -190,10 +190,10 @@ class Agent(object):
             return "sleeping"
 
 
-    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
+    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
+                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere)
             elif agent.Aggression == 1:
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             else:
@@ -203,8 +203,9 @@ class Agent(object):
             return "none"
 
 
-    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
+    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere):
         creaturesAround = cellsSmelled
+        print("Creatures around: " + str(creaturesAround))
 
         # if the agent is on the same square as a friend
         if isCreatureHere == 2:
@@ -212,6 +213,9 @@ class Agent(object):
                 return "breed"
             else:
                 return random.choice(['left', 'right', 'turnAround', "forward"])
+
+        elif isFoodHere == 1:
+            return "eat"
 
         # if the agent sees an enemy on a square ahead
         elif isCreatureAhead == 1:
@@ -230,6 +234,7 @@ class Agent(object):
         elif isCreatureAhead == 0 and creaturesAround == "none":
             return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
+
         # if it can't see any creatures, and but it can smell creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
             if creaturesAround[1] == 1:
@@ -241,7 +246,7 @@ class Agent(object):
                     return random.choice(['left', 'forward', 'turnAround'])
                 elif creaturesAround[0] == "below":
                     return random.choice(['left', 'right', 'forward'])
-            elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
+            elif (creaturesAround[1] == 2 and agent.getReadyToBreed()) or creaturesAround[1] == 3:
                 if creaturesAround[0] == "above":
                     return "forward"
                 elif creaturesAround[0] == "left":

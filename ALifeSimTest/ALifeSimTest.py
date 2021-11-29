@@ -14,7 +14,7 @@ class ALifeSimTest(object):
     FOOD_PERCENT = 0.10
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
-    MAX_FOOD = 20
+    MAX_FOOD = 1
     time = 12
 
     def __init__(self, gridSize, numAgents, geneticStrings):
@@ -22,15 +22,21 @@ class ALifeSimTest(object):
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
         self.numAgents = numAgents
-        self.maxFood = 0
+        self.maxFood = 10
         self.foodMap = dict()
         self.agentMap = dict()
         for row in range(gridSize):
             for col in range(gridSize):
                 self.foodMap[row, col] = 0
                 self.agentMap[row, col] = []
-        # self._placeFood()
+
+
+        self._placeFood()
+        # self.printGrid()
+
+
         self.deadAgents = []
+        self.eatenFood = []
         self.agentList = []
         self.stepNum = 0
         self.verbose = False
@@ -40,7 +46,7 @@ class ALifeSimTest(object):
             r, c, h = agentPose
 
             if geneticStrings is None or len(geneticStrings) <= i:
-                nextAgent = Agent(initPose = agentPose)
+                nextAgent = Agent(initPose=agentPose)
             else:
                 nextAgent = Agent(geneticString=geneticStrings[i], initPose = agentPose)
 
@@ -89,15 +95,20 @@ class ALifeSimTest(object):
             self._addFoodClump()
 
 
+    # def _addFoodClump(self):
+    #     """Adds a clump of food at a random location."""
+    #     (randRow, randCol) = self._genRandomLoc()
+    #     for deltaR in range(-1, 2):
+    #         offsetR = (randRow + deltaR) % self.gridSize
+    #         for deltaC in range(-1, 2):
+    #             offsetC = (randCol + deltaC) % self.gridSize
+    #             foodAmt = 20 - (5 * (abs(deltaR) + abs(deltaC)))
+    #             self.foodMap[offsetR, offsetC] += foodAmt
+
     def _addFoodClump(self):
         """Adds a clump of food at a random location."""
         (randRow, randCol) = self._genRandomLoc()
-        for deltaR in range(-1, 2):
-            offsetR = (randRow + deltaR) % self.gridSize
-            for deltaC in range(-1, 2):
-                offsetC = (randCol + deltaC) % self.gridSize
-                foodAmt = 20 - (5 * (abs(deltaR) + abs(deltaC)))
-                self.foodMap[offsetR, offsetC] += foodAmt
+        self.foodMap[randRow, randCol] += 1
 
 
     def _genRandomPose(self):
@@ -186,16 +197,19 @@ class ALifeSimTest(object):
         # self._growFood()
         self._updateAgents()
 
-
-        # for i in range(len(self.agentList)):
-        #     print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+        for i in range(len(self.agentList)):
+            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
         #     print("~ Energy ~")
         #     print(self.agentList[i].getEnergy())
         #     print("~ Vision ~")
         #     self._printVision(self.agentList[i])
-        #     print("~ Smell ~")
-        #     self._printSmell(self.agentList[i])
-        #     print(self.areCreaturesInSmellRadius(self.agentList[i]))
+            print("~ Smell Food ~")
+            self._printSmell(self.agentList[i], "food")
+
+            # print("~ Smell Agent ~")
+            # self._printSmell(self.agentList[i], "agent")
+            # print(self.detectSmellRadius(self.agentList[i]), "agent")
+
 
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
@@ -240,11 +254,15 @@ class ALifeSimTest(object):
             # checks to see if there is a creature where the agent currently is
             isCreatureHere = self._assessCreatureHere(agentR, agentC)
 
+            # checks to see if there is food where the agent currently is
+            isFoodHere = self.foodAt(agentR, agentC)
+
             # checks to see if there is a creature in the agent's vision
             isCreatureAhead = self._areCreaturesInVision(self.agentList[i])
 
             # checks to see if there is a creature in the agent's smell radius
-            canSmellCreature = self.areCreaturesInSmellRadius(self.agentList[i])
+            canSmellCreature = self.detectSmellRadius(agent)
+
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
@@ -265,15 +283,15 @@ class ALifeSimTest(object):
 
             if not agent.isDead:
 
-                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time)
+                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere)
 
                 if action == 'breed':
                     self.makeABaby(self.agentMap[agentR, agentC][0], self.agentMap[agentR, agentC][1])
                     isOkay = agent.changeEnergy(0)
 
                 elif action == 'eat':
-                    newEnergy = self._foodEaten(agentR, agentC)
-                    isOkay = agent.changeEnergy(newEnergy - 1)
+                    self._foodEaten(agentR, agentC)
+                    isOkay = agent.changeEnergy(0)
 
                 elif action == 'attack':
                     self.attackCreature(self.agentList[i], agentR, agentC)
@@ -342,17 +360,15 @@ class ALifeSimTest(object):
     def _assessFood(self, row, col):
         """Given a row and column, examine the amount of food there, and divide it into
         no food, some food, and plentiful food: returning 0, 1, or 2."""
-        print("AssessFood")
+        # print("AssessFood")
         foodAmt = self.foodMap[row, col]
         #print("FoodMap: " + str(self.foodMap))
-        print("Row and Col: " + str(row) + ", " + str(col))
-        print("FoodMap[row,col] " + str(self.foodMap[row, col]))
+        # print("Row and Col: " + str(row) + ", " + str(col))
+        # print("FoodMap[row,col] " + str(self.foodMap[row, col]))
         if foodAmt == 0:
             return 0
-        elif foodAmt < 20:
-            return 1
         else:
-            return 2
+            return 3
 
     def _assessCreature(self, row, col, agent):
         """Given a row and column, examine the amount of creatures there, and divide it into
@@ -399,12 +415,10 @@ class ALifeSimTest(object):
         """Determines what, if any, food is eaten from the current given location. It returns the
         energy value of the food eaten, and updates the foodMap."""
         foodAtCell = self.foodMap[row, col]
-        if foodAtCell <= 10:
+        if foodAtCell == 1:
             self.foodMap[row, col] = 0
-            return foodAtCell
-        else:
-            self.foodMap[row, col] -= 10
-            return 10
+
+
 
 
     def _leftTurn(self, heading):
@@ -527,7 +541,7 @@ class ALifeSimTest(object):
         # print("DON't SEE ANYONE")
         return 0
 
-    def _printSmell(self, agent):
+    def _printSmell(self, agent, type):
         smellRadius = agent.geneticString[1]
         ownY, ownX, heading = agent.getPose()
 
@@ -544,7 +558,11 @@ class ALifeSimTest(object):
 
 
         if int(smellRadius) == 1:
-            cellsSmelled = self.smellRadius1(agent)
+            if type == "agent":
+                cellsSmelled = self.smellRadiusCreature1(agent)
+            else:
+                cellsSmelled = self.smellRadiusFood1(agent)
+            # cellsSmelled = self.smellRadiusCreature1(agent)
             print(cellsSmelled)
 
             print("\t" + str(cellsSmelled[0]) + "\t")
@@ -552,7 +570,11 @@ class ALifeSimTest(object):
             print("\t" + str(cellsSmelled[1]) + "\t")
 
         elif int(smellRadius) == 2:
-            cellsSmelled = self.smellRadius2(agent)
+            if type == "agent":
+                cellsSmelled = self.smellRadiusCreature2(agent)
+            else:
+                cellsSmelled = self.smellRadiusFood2(agent)
+            # cellsSmelled = self.smellRadiusCreature2(agent)
             print(cellsSmelled)
 
             print("\t\t" + str(cellsSmelled[4]) + "\t\t")
@@ -564,9 +586,79 @@ class ALifeSimTest(object):
             print("NO SMELL")
 
 
+    def combineStrings(self, creatureString, foodString, agent):
+        finalString = []
+        for i in range(len(creatureString)):
+            if foodString[i] != 0 & creatureString[i] != 0:
+                if agent.getEnergy() < 15:
+                    finalString.append(foodString[i])
+                else:
+                    finalString.append(foodString[i])
+            elif foodString[i] != 0 and creatureString[i] == 0:
+                finalString.append(foodString[i])
+            elif creatureString[i] != 0 and foodString[i] == 0:
+                finalString.append(creatureString[i])
+            else:
+                finalString.append(0)
+
+        print("final String: " + str(finalString))
+        return finalString
 
 
-    def smellRadius1(self, agent):
+    def smellRadiusFood1(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessFood((ownY - 1) % self.gridSize, ownX)
+        cellBelow = self._assessFood((ownY + 1) % self.gridSize, ownX)
+        cellRight = self._assessFood(ownY, (ownX + 1) % self.gridSize)
+        cellLeft = self._assessFood(ownY, (ownX - 1) % self.gridSize)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        return cellsSmelled
+
+    def smellRadiusFood2(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessFood((ownY - 1) % self.gridSize, ownX)
+        cellBelow = self._assessFood((ownY + 1) % self.gridSize, ownX)
+        cellRight = self._assessFood(ownY, (ownX + 1) % self.gridSize)
+        cellLeft = self._assessFood(ownY, (ownX - 1) % self.gridSize)
+
+        cellTwoAbove = self._assessFood((ownY - 2) % self.gridSize, ownX)
+        cellTwoBelow = self._assessFood((ownY + 2) % self.gridSize, ownX)
+        cellTwoRight = self._assessFood(ownY, (ownX + 2) % self.gridSize)
+        cellTwoLeft = self._assessFood(ownY, (ownX - 2) % self.gridSize)
+
+        cellAboveLeft = self._assessFood((ownY - 1) % self.gridSize, (ownX - 1) % self.gridSize)
+        cellAboveRight = self._assessFood((ownY - 1) % self.gridSize, (ownX + 1) % self.gridSize)
+        cellBelowRight = self._assessFood((ownY + 1) % self.gridSize, (ownX + 1) % self.gridSize)
+        cellBelowLeft = self._assessFood((ownY + 1) % self.gridSize, (ownX - 1) % self.gridSize)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        cellsSmelled.append(cellTwoAbove)
+        cellsSmelled.append(cellTwoBelow)
+        cellsSmelled.append(cellTwoRight)
+        cellsSmelled.append(cellTwoLeft)
+
+        cellsSmelled.append(cellAboveLeft)
+        cellsSmelled.append(cellAboveRight)
+        cellsSmelled.append(cellBelowLeft)
+        cellsSmelled.append(cellBelowRight)
+
+        return cellsSmelled
+
+
+    def smellRadiusCreature1(self, agent):
         ownY, ownX, heading = agent.getPose()
         cellsSmelled = []
 
@@ -582,7 +674,7 @@ class ALifeSimTest(object):
 
         return cellsSmelled
 
-    def smellRadius2(self, agent):
+    def smellRadiusCreature2(self, agent):
         ownY, ownX, heading = agent.getPose()
         cellsSmelled = []
 
@@ -618,13 +710,17 @@ class ALifeSimTest(object):
 
         return cellsSmelled
 
-    def areCreaturesInSmellRadius(self, agent):
+    def detectSmellRadius(self, agent):
         ownY, ownX, heading = agent.getPose()
         smellRadius = agent.geneticString[1]
 
         # actions for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
-            cellsSmelled = self.smellRadius1(agent)
+
+            creaturesSmelled = self.smellRadiusCreature1(agent)
+            foodSmelled = self.smellRadiusFood1(agent)
+
+            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, agent)
 
             if cellsSmelled[0] != 0 and heading == "n":
                 return "above", cellsSmelled[0]
@@ -665,7 +761,11 @@ class ALifeSimTest(object):
                 return "none"
 
         elif int(smellRadius) == 2:
-            cellsSmelled = self.smellRadius2(agent)
+            creaturesSmelled = self.smellRadiusCreature2(agent)
+            foodSmelled = self.smellRadiusFood2(agent)
+
+            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, agent)
+
             if cellsSmelled[0] != 0 and heading == "n":
                 return "above", cellsSmelled[0]
             elif cellsSmelled[1] != 0 and heading == "n":

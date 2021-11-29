@@ -32,8 +32,8 @@ class ALifeGUI:
         self.TurnipImage = PhotoImage(file='trnip.png')
 
         randomGeneticStrings = []
-        # randomGeneticStrings.append("12100599")
-        # randomGeneticStrings.append("12110599")
+        randomGeneticStrings.append("12100599")
+        # randomGeneticStrings.append("12100299")
         # randomGeneticStrings.append("11110599")
 
         # randomGeneticStrings.append("11100599")
@@ -68,7 +68,7 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
-        randomGeneticStrings=self.generateRandomGeneticStrings()
+        # randomGeneticStrings = self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
@@ -398,6 +398,12 @@ class ALifeGUI:
         for row in range(self.gridDim):
             for col in range(self.gridDim):
                 food = self.sim.foodAt(row, col)
+
+                if food != 0:
+                    (x1, y1, x2, y2) = self._posToCoords(row, col)
+                    turnipImage = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.TurnipImage)
+                    self.canvas.lift(turnipImage)
+
                 cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
                 patchId = self.posToPatchId[row, col]
                 self.canvas.itemconfig(patchId, fill=cellColor)
@@ -504,13 +510,14 @@ class ALifeGUI:
             for col in range(self.gridDim):
                 (x1, y1, x2, y2) = self._posToCoords(row, col)
                 food = self.sim.foodAt(row, col)
+
                 cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
                 currId = self.canvas.create_rectangle(x1, y1, x2, y2, fill=cellColor)
                 self.patchIdToPos[currId] = (row, col)
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
                 for ag in agents:
-                    self.canvas.update()
+                    # self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
                     agColor = self._setAgentColor(ag.getColor())
                     if ag.getAggression() == 1:
@@ -757,7 +764,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
+    numberOfAgents = 1
     s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
