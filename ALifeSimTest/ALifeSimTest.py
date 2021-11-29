@@ -5,6 +5,7 @@ import tkinter
 from ALifeGUITest import *
 from AgentTest import Agent
 from ObjectTest import Object
+from StoneTest import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -40,7 +41,7 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeObjects()
+        self._placeStones()
         # self._placeFood()
         self._placeAgents()
 
@@ -102,10 +103,10 @@ class ALifeSimTest(object):
             self.agentList.append(nextAgent)
             self.agentMap[r, c].append(nextAgent)
 
-    def _placeObjects(self):
+    def _placeStones(self):
         objectPose = self._genRandomPose()
         r, c, h = objectPose
-        nextObject = Object(initPose=(r,c),geneticString="00")
+        nextObject = Stone(initPose=(r,c),geneticString="00")
         self.objectList.append(nextObject)
         self.objectMap[r, c].append(nextObject)
 
