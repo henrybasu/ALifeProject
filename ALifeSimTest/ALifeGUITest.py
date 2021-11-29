@@ -28,8 +28,8 @@ class ALifeGUI:
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
-        self.ghostImage = PhotoImage(file='Ghost.png')
-        # self.TurnipImage = PhotoImage(file='trnip.png')
+        self.ghostImage = PhotoImage(file='images/Ghost.png')
+        # self.TurnipImage = PhotoImage(file='images/trnip.png')
 
         randomGeneticStrings = []
         # randomGeneticStrings.append("12100599")
