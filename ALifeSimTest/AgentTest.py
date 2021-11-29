@@ -5,8 +5,6 @@ class Agent(Object):
     """An agent has a geneticString that governs its behavior, given by a string, and it has an amount of energy and a
     location on the agentMap (given when created and then updated)."""
 
-    ARBITRARY_BEHAVIOR = "a" * 27
-
     def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000", stepSpawned=0):
         """
         Sets up an agent with a location, energy, geneticString, and step created
@@ -15,11 +13,12 @@ class Agent(Object):
         :param geneticString: string to determine agent's behavior
         :param stepSpawned: integer giving the simulation step the agent was created in
         """
+        super().__init__()
         self.row, self.col, self.heading = initPose
         self.geneticString = geneticString
         # self.whichScenarios = dict()
-        self.stepSpawned = stepSpawned
-        self.visObjectId = None
+        # self.stepSpawned = stepSpawned
+        # self.visObjectId = None
         self.isDead = False
         self.readyToBreed = 10
 
@@ -39,8 +38,7 @@ class Agent(Object):
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:])
-
-        self.score = 0
+        # self.score = 0
 
     def getEnergy(self):
         """Returns the current energy value"""

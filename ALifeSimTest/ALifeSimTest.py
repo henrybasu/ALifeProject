@@ -210,9 +210,9 @@ class ALifeSimTest(object):
         #     print("~ Energy ~")
         #     print(self.agentList[i].getEnergy())
         #     print("~ Vision ~")
-        #     self.agentList[0]._printVision(self)
+        #     self.agentList[i]._printVision(self)
         #     print("~ Smell ~")
-        self.agentList[0]._printSmell(self)
+        #     self.agentList[i]._printSmell(self)
         #     print(self.agentList[i].areCreaturesInSmellRadius(self))
 
 
