@@ -1,5 +1,5 @@
 class Object(object):
-    """A template to represent a non-living object in the ALife simulation."""
+    """A template to represent any object in the ALife simulation."""
 
     def __init__(self, initPose = (0, 0), geneticString = "00", stepSpawned=0):
         """
