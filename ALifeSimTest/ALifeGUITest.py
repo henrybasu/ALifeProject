@@ -167,13 +167,13 @@ class ALifeGUI:
         makerFrame.grid(row=1, column=1, padx=5, pady=5)
 
         sizeLabel1 = Label(makerFrame, text="Grid Dim")
-        sizeLabel2 = Label(makerFrame, text="x")
+        # sizeLabel2 = Label(makerFrame, text="x") #TODO: Reimplement this
         self.rowDimensionText = IntVar()
         self.rowDimensionText.set(str(self.gridDim))
         self.colDimensionText = IntVar()
         self.colDimensionText.set(str(self.gridDim))
         self.rowsEntry = Entry(makerFrame, textvariable=self.rowDimensionText, width=4, justify=CENTER)
-        self.colsEntry = Entry(makerFrame, textvariable=self.colDimensionText, width=4, justify=CENTER)
+        # self.colsEntry = Entry(makerFrame, textvariable=self.colDimensionText, width=4, justify=CENTER)
         agentsLabel = Label(makerFrame, text="Agents")
         self.agentNum = IntVar()
         self.agentNum.set(self.numberAgents)
@@ -183,10 +183,10 @@ class ALifeGUI:
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
 
         sizeLabel1.grid(row=1, column=3)
-        sizeLabel2.grid(row=1, column=5)
+        # sizeLabel2.grid(row=1, column=5)
         agentsLabel.grid(row=2, column=3)
         self.rowsEntry.grid(row=1, column=4)
-        self.colsEntry.grid(row=1, column=6)
+        # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
 
