@@ -412,7 +412,7 @@ class ALifeSimTest(object):
         energy value of the food eaten, and updates the foodMap."""
         foodAtCell = self.foodMap[row, col]
         if foodAtCell == 1:
-            self.foodMap[row, col] = -1
+            self.foodMap[row, col] = 0
 
 
 
@@ -440,3 +440,343 @@ class ALifeSimTest(object):
 
             agent1.setReadyToBreed(24)
             agent2.setReadyToBreed(24)
+
+
+    def combineStrings(self, creatureString, foodString, agent):
+        finalString = []
+        for i in range(len(creatureString)):
+            if foodString[i] != 0 & creatureString[i] != 0:
+                if agent.getEnergy() < 15:
+                    finalString.append(foodString[i])
+                else:
+                    finalString.append(foodString[i])
+            elif foodString[i] != 0 and creatureString[i] == 0:
+                finalString.append(foodString[i])
+            elif creatureString[i] != 0 and foodString[i] == 0:
+                finalString.append(creatureString[i])
+            else:
+                finalString.append(0)
+
+        print("final String: " + str(finalString))
+        return finalString
+
+
+    def smellRadiusFood1(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessFood((ownY - 1) % self.gridSize, ownX)
+        cellBelow = self._assessFood((ownY + 1) % self.gridSize, ownX)
+        cellRight = self._assessFood(ownY, (ownX + 1) % self.gridSize)
+        cellLeft = self._assessFood(ownY, (ownX - 1) % self.gridSize)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        return cellsSmelled
+
+    def smellRadiusFood2(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessFood((ownY - 1) % self.gridSize, ownX)
+        cellBelow = self._assessFood((ownY + 1) % self.gridSize, ownX)
+        cellRight = self._assessFood(ownY, (ownX + 1) % self.gridSize)
+        cellLeft = self._assessFood(ownY, (ownX - 1) % self.gridSize)
+
+        cellTwoAbove = self._assessFood((ownY - 2) % self.gridSize, ownX)
+        cellTwoBelow = self._assessFood((ownY + 2) % self.gridSize, ownX)
+        cellTwoRight = self._assessFood(ownY, (ownX + 2) % self.gridSize)
+        cellTwoLeft = self._assessFood(ownY, (ownX - 2) % self.gridSize)
+
+        cellAboveLeft = self._assessFood((ownY - 1) % self.gridSize, (ownX - 1) % self.gridSize)
+        cellAboveRight = self._assessFood((ownY - 1) % self.gridSize, (ownX + 1) % self.gridSize)
+        cellBelowRight = self._assessFood((ownY + 1) % self.gridSize, (ownX + 1) % self.gridSize)
+        cellBelowLeft = self._assessFood((ownY + 1) % self.gridSize, (ownX - 1) % self.gridSize)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        cellsSmelled.append(cellTwoAbove)
+        cellsSmelled.append(cellTwoBelow)
+        cellsSmelled.append(cellTwoRight)
+        cellsSmelled.append(cellTwoLeft)
+
+        cellsSmelled.append(cellAboveLeft)
+        cellsSmelled.append(cellAboveRight)
+        cellsSmelled.append(cellBelowLeft)
+        cellsSmelled.append(cellBelowRight)
+
+        return cellsSmelled
+
+
+    def smellRadiusCreature1(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX, agent)
+        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX, agent)
+        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize, agent)
+        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize, agent)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        return cellsSmelled
+
+    def smellRadiusCreature2(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        cellsSmelled = []
+
+        cellAbove = self._assessCreature((ownY - 1) % self.gridSize, ownX, agent)
+        cellBelow = self._assessCreature((ownY + 1) % self.gridSize, ownX, agent)
+        cellRight = self._assessCreature(ownY, (ownX + 1) % self.gridSize, agent)
+        cellLeft = self._assessCreature(ownY, (ownX - 1) % self.gridSize, agent)
+
+        cellTwoAbove = self._assessCreature((ownY - 2) % self.gridSize, ownX, agent)
+        cellTwoBelow = self._assessCreature((ownY + 2) % self.gridSize, ownX, agent)
+        cellTwoRight = self._assessCreature(ownY, (ownX + 2) % self.gridSize, agent)
+        cellTwoLeft = self._assessCreature(ownY, (ownX - 2) % self.gridSize, agent)
+
+        cellAboveLeft = self._assessCreature((ownY - 1) % self.gridSize, (ownX - 1) % self.gridSize, agent)
+        cellAboveRight = self._assessCreature((ownY - 1) % self.gridSize, (ownX + 1) % self.gridSize, agent)
+        cellBelowRight = self._assessCreature((ownY + 1) % self.gridSize, (ownX + 1) % self.gridSize, agent)
+        cellBelowLeft = self._assessCreature((ownY + 1) % self.gridSize, (ownX - 1) % self.gridSize, agent)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        cellsSmelled.append(cellTwoAbove)
+        cellsSmelled.append(cellTwoBelow)
+        cellsSmelled.append(cellTwoRight)
+        cellsSmelled.append(cellTwoLeft)
+
+        cellsSmelled.append(cellAboveLeft)
+        cellsSmelled.append(cellAboveRight)
+        cellsSmelled.append(cellBelowLeft)
+        cellsSmelled.append(cellBelowRight)
+
+        return cellsSmelled
+
+    def detectSmellRadius(self, agent):
+        ownY, ownX, heading = agent.getPose()
+        smellRadius = agent.geneticString[1]
+
+        # actions for if the agent has a smell radius of 1
+        if int(smellRadius) == 1:
+
+            creaturesSmelled = self.smellRadiusCreature1(agent)
+            foodSmelled = self.smellRadiusFood1(agent)
+
+            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, agent)
+
+            if cellsSmelled[0] != 0 and heading == "n":
+                return "above", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "n":
+                return "below", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "n":
+                return "right", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "n":
+                return "left", cellsSmelled[3]
+
+            elif cellsSmelled[0] != 0 and heading == "s":
+                return "below", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "s":
+                return "above", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "s":
+                return "left", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "s":
+                return "right", cellsSmelled[3]
+
+            elif cellsSmelled[0] != 0 and heading == "e":
+                return "left", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "e":
+                return "right", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "e":
+                return "above", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "e":
+                return "below", cellsSmelled[3]
+
+            elif cellsSmelled[0] != 0 and heading == "w":
+                return "right", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "w":
+                return "left", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "w":
+                return "below", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "w":
+                return "above", cellsSmelled[3]
+            else:
+                return "none"
+
+        elif int(smellRadius) == 2:
+            creaturesSmelled = self.smellRadiusCreature2(agent)
+            foodSmelled = self.smellRadiusFood2(agent)
+
+            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, agent)
+
+            if cellsSmelled[0] != 0 and heading == "n":
+                return "above", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "n":
+                return "below", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "n":
+                return "right", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "n":
+                return "left", cellsSmelled[3]
+
+            elif cellsSmelled[0] != 0 and heading == "s":
+                return "below", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "s":
+                return "above", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "s":
+                return "left", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "s":
+                return "right", cellsSmelled[3]
+
+            elif cellsSmelled[0] != 0 and heading == "e":
+                return "left", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "e":
+                return "right", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "e":
+                return "above", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "e":
+                return "below", cellsSmelled[3]
+
+            elif cellsSmelled[0] != 0 and heading == "w":
+                return "right", cellsSmelled[0]
+            elif cellsSmelled[1] != 0 and heading == "w":
+                return "left", cellsSmelled[1]
+            elif cellsSmelled[2] != 0 and heading == "w":
+                return "below", cellsSmelled[2]
+            elif cellsSmelled[3] != 0 and heading == "w":
+                return "above", cellsSmelled[3]
+
+            elif (cellsSmelled[4] != 0) and heading == "n":
+                return "above", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "n":
+                return "below", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "n":
+                return "right", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "n":
+                return "left", cellsSmelled[7]
+
+            elif (cellsSmelled[4] != 0) and heading == "s":
+                return "below", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "s":
+                return "above", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "s":
+                return "left", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "s":
+                return "right", cellsSmelled[7]
+
+            elif (cellsSmelled[4] != 0) and heading == "e":
+                return "left", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "e":
+                return "right", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "e":
+                return "above", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "e":
+                return "below", cellsSmelled[7]
+
+            elif (cellsSmelled[4] != 0) and heading == "w":
+                return "right", cellsSmelled[4]
+            elif (cellsSmelled[5] != 0) and heading == "w":
+                return "left", cellsSmelled[5]
+            elif (cellsSmelled[6] != 0) and heading == "w":
+                return "below", cellsSmelled[6]
+            elif (cellsSmelled[7] != 0) and heading == "w":
+                return "above", cellsSmelled[7]
+
+            elif cellsSmelled[8] != 0 and heading == "n":
+                return random.choice(["above", "left"]), cellsSmelled[8]
+            elif cellsSmelled[9] != 0 and heading == "n":
+                return random.choice(["above", "right"]), cellsSmelled[9]
+            elif cellsSmelled[10] != 0 and heading == "n":
+                return random.choice(["below", "left"]), cellsSmelled[10]
+            elif cellsSmelled[11] != 0 and heading == "n":
+                return random.choice(["below", "right"]), cellsSmelled[11]
+
+            elif cellsSmelled[8] != 0 and heading == "s":
+                return random.choice(["below", "right"]), cellsSmelled[8]
+            elif cellsSmelled[9] != 0 and heading == "s":
+                return random.choice(["below", "left"]), cellsSmelled[9]
+            elif cellsSmelled[10] != 0 and heading == "s":
+                return random.choice(["above", "right"]), cellsSmelled[10]
+            elif cellsSmelled[11] != 0 and heading == "s":
+                return random.choice(["above", "left"]), cellsSmelled[11]
+
+            elif cellsSmelled[8] != 0 and heading == "e":
+                return random.choice(["below", "left"]), cellsSmelled[8]
+            elif cellsSmelled[9] != 0 and heading == "e":
+                return random.choice(["above", "left"]), cellsSmelled[9]
+            elif cellsSmelled[10] != 0 and heading == "e":
+                return random.choice(["below", "right"]), cellsSmelled[10]
+            elif cellsSmelled[11] != 0 and heading == "e":
+                return random.choice(["above", "right"]), cellsSmelled[11]
+
+            elif cellsSmelled[8] != 0 and heading == "w":
+                return random.choice(["above", "right"]), cellsSmelled[8]
+            elif cellsSmelled[9] != 0 and heading == "w":
+                return random.choice(["below", "right"]), cellsSmelled[9]
+            elif cellsSmelled[10] != 0 and heading == "w":
+                return random.choice(["above", "left"]), cellsSmelled[10]
+            elif cellsSmelled[11] != 0 and heading == "w":
+                return random.choice(["below", "left"]), cellsSmelled[11]
+
+            else:
+                return "none"
+
+        else:
+            return "none"
+
+
+    def _printSmell(self, agent, type):
+        smellRadius = agent.geneticString[1]
+        ownY, ownX, heading = agent.getPose()
+
+        if heading == "n":
+            direction = "^"
+        elif heading == "s":
+            direction = "v"
+        elif heading == "e":
+            direction = ">"
+        elif heading == "w":
+            direction = "<"
+        else:
+            direction = "x"
+
+
+        if int(smellRadius) == 1:
+            if type == "agent":
+                cellsSmelled = self.smellRadiusCreature1(agent)
+            else:
+                cellsSmelled = self.smellRadiusFood1(agent)
+            # cellsSmelled = self.smellRadiusCreature1(agent)
+            print(cellsSmelled)
+
+            print("\t" + str(cellsSmelled[0]) + "\t")
+            print(str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2]))
+            print("\t" + str(cellsSmelled[1]) + "\t")
+
+        elif int(smellRadius) == 2:
+            if type == "agent":
+                cellsSmelled = self.smellRadiusCreature2(agent)
+            else:
+                cellsSmelled = self.smellRadiusFood2(agent)
+            # cellsSmelled = self.smellRadiusCreature2(agent)
+            print(cellsSmelled)
+
+            print("\t\t" + str(cellsSmelled[4]) + "\t\t")
+            print("\t" + str(cellsSmelled[8]) + "\t" + str(cellsSmelled[0]) + " \t" + str(cellsSmelled[9]))
+            print(str(cellsSmelled[7]) + "\t" + str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2])+ " \t" + str(cellsSmelled[6]))
+            print("\t" + str(cellsSmelled[10]) + "\t" + str(cellsSmelled[1]) + " \t" + str(cellsSmelled[11]))
+            print("\t\t" + str(cellsSmelled[5]) + "\t\t")
+        else:
+            print("NO SMELL")
