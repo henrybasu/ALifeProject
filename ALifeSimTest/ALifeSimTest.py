@@ -30,11 +30,13 @@ class ALifeSimTest(object):
         self.stoneMap = dict()
         self.foodMap = dict()
         self.agentMap = dict()
+        self.globalMap = dict()
         for row in range(gridSize):
             for col in range(gridSize):
                 self.stoneMap[row, col] = []
                 self.foodMap[row, col] = []
                 self.agentMap[row, col] = []
+                self.globalMap[row, col] = []
 
         # self.printGrid()
 
@@ -92,6 +94,9 @@ class ALifeSimTest(object):
         """Given a row and column, returns a list of the agents at that location."""
         return self.agentMap[row, col]
 
+    def objectsAt(self, row, col):
+        return self.globalMap[row, col]
+
 
     def _placeFood(self):
         """Places food in random clumps so that roughly self.percentFood cells have food."""
@@ -105,6 +110,12 @@ class ALifeSimTest(object):
             agentPose = self._genRandomPose()
             r, c, h = agentPose
 
+            while True:
+                if len(self.globalMap[r, c]) != 0:
+                    (r, c, h) = self._genRandomPose()
+                else:
+                    break
+
             if self.initialGeneticStrings is None or len(self.initialGeneticStrings) <= i:
                 nextAgent = Agent(initPose = agentPose)
             else:
@@ -115,20 +126,34 @@ class ALifeSimTest(object):
 
             self.agentList.append(nextAgent)
             self.agentMap[r, c].append(nextAgent)
+            self.globalMap[r, c].append(nextAgent)
 
     def _placeStones(self):
-        r, c, h = self._genRandomPose()
-        nextStone = Stone(initPose=(r,c),geneticString="00")
+        (randRow, randCol) = self._genRandomLoc()
+        while True:
+            if len(self.globalMap[randRow, randCol]) != 0:
+                (randRow, randCol) = self._genRandomLoc()
+            else:
+                break
+        nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
         self.stoneList.append(nextStone)
-        self.stoneMap[r, c].append(nextStone)
+        self.stoneMap[randRow, randCol].append(nextStone)
+        self.globalMap[randRow, randCol].append(nextStone)
 
 
     def _addFoodClump(self):
         """Adds a clump of food at a random location."""
         (randRow, randCol) = self._genRandomLoc()
+        while True:
+            if len(self.globalMap[randRow, randCol]) != 0:
+                (randRow, randCol) = self._genRandomLoc()
+            else:
+                break
+
         nextFood = Food(initPose=(randRow, randCol))
         self.foodList.append(nextFood)
         self.foodMap[randRow, randCol].append(nextFood)
+        self.globalMap[randRow, randCol].append(nextFood)
 
 
     def _genRandomPose(self):
@@ -148,25 +173,41 @@ class ALifeSimTest(object):
 
     def printGrid(self):
         """Prints the foodMap, giving each square 3 places"""
-        rowLen = 5 * self.gridSize + 1
-        cellStr = "{0:<4d}|"
-        print("-" * rowLen)
+        # rowLen = 5 * self.gridSize + 1
+        # cellStr = "{0:<4d}|"
+        # print("-" * rowLen)
+        # for row in range(self.gridSize):
+        #     foodStr = "|"
+        #     agInCellA = "|"
+        #     agInCellB = "|"
+        #     agInCellC = "|"
+        #     for col in range(self.gridSize):
+        #         sA, sB, sC = self._agentStringCodes(row, col)
+        #         agInCellA += sA
+        #         agInCellB += sB
+        #         agInCellC += sC
+        #         foodStr += cellStr.format(self.foodMap[row, col])
+        #     print(foodStr)
+        #     print(agInCellA)
+        #     print(agInCellB)
+        #     print(agInCellC)
+        #     print("-" * rowLen)
+
         for row in range(self.gridSize):
-            foodStr = "|"
-            agInCellA = "|"
-            agInCellB = "|"
-            agInCellC = "|"
             for col in range(self.gridSize):
-                sA, sB, sC = self._agentStringCodes(row, col)
-                agInCellA += sA
-                agInCellB += sB
-                agInCellC += sC
-                foodStr += cellStr.format(self.foodMap[row, col])
-            print(foodStr)
-            print(agInCellA)
-            print(agInCellB)
-            print(agInCellC)
-            print("-" * rowLen)
+                if len(self.stoneMap[row, col]) > 0:
+                    print("|   s   |", end="")
+                elif len(self.agentMap[row, col]) > 1:
+                    print("|  " + str(len(self.agentMap[row, col])) + " a  |", end="")
+                elif len(self.foodMap[row, col]) > 0 and len(self.agentMap[row, col]) > 0:
+                    print("|  f a  |", end="")
+                elif len(self.foodMap[row, col]) > 0:
+                    print("|   f   |", end="")
+                elif len(self.agentMap[row, col]) > 0:
+                    print("|   a   |", end="")
+                else:
+                    print("|       |", end="")
+            print("\n")
 
 
     def _agentStringCodes(self, row, col):
@@ -209,10 +250,9 @@ class ALifeSimTest(object):
         # else:
         #     self.time = 0
 
-
         self._growFood()
         self._updateAgents()
-        print(self.foodMap)
+        # print(self.foodMap)
 
         for i in range(len(self.agentList)):
             print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
@@ -226,6 +266,9 @@ class ALifeSimTest(object):
             # print("~ Smell Agent ~")
             # self.agentList[i]._printSmell(self, "agent")
             # print(self.agentList[i].detectSmellRadius(self), "agent")
+
+        self.printGrid()
+
 
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
@@ -300,6 +343,7 @@ class ALifeSimTest(object):
             if not agent.isDead:
 
                 action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere)
+                print("action: ", action)
 
                 if action == 'breed':
                     self.makeABaby(self.agentMap[agentR, agentC][0], self.agentMap[agentR, agentC][1])
@@ -315,7 +359,11 @@ class ALifeSimTest(object):
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
-                    self.agentMap[agentR, agentC].remove(agent)
+                    print("Agent Map: ", self.agentMap[agentR, agentC])
+                    print("agent:", agent)
+                    print("Coords: ", agentR, agentC)
+                    if len(self.agentMap[agentR, agentC]) != 0:
+                        self.agentMap[agentR, agentC].remove(agent)
                     self.agentMap[rAhead, cAhead].append(agent)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(0)
@@ -392,6 +440,8 @@ class ALifeSimTest(object):
                     print("TRUE")
                     return 2
             return 1
+
+
 
     def _assessCreatureHere(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into

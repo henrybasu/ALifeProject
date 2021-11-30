@@ -32,7 +32,7 @@ class ALifeGUI:
         self.TurnipImage = PhotoImage(file='images/trnip.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("12100599")
+        randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("12110299")
         randomGeneticStrings.append("11110599")
 
@@ -832,10 +832,6 @@ class ALifeGUI:
             col = self.gridDim - 1
             
         return (int(row), int(col))
-
-
-
-
 
 
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded

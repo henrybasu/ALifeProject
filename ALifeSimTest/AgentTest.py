@@ -438,7 +438,7 @@ class Agent(Object):
 
     def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere):
         creaturesAround = cellsSmelled
-        print("Creatures around: " + str(creaturesAround))
+        # print("Creatures around: " + str(creaturesAround))
 
         # if the agent is on the same square as a friend
         if isCreatureHere == 2:
@@ -590,6 +590,24 @@ class Agent(Object):
 
         print("\n")
 
+
+    def _assess(self, sim):
+        ownY, ownX, heading = self.getPose()
+        cellsSmelled = []
+        cellAbove = sim.objectsAt((ownY - 1) % sim.gridSize, ownX)
+        cellBelow = sim.objectsAt((ownY + 1) % sim.gridSize, ownX)
+        cellRight = sim.objectsAt(ownY, (ownX + 1) % sim.gridSize)
+        cellLeft = sim.objectsAt(ownY, (ownX - 1) % sim.gridSize)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+        print("cellsSmelled: ", cellsSmelled)
+
+        return cellsSmelled
+
+
     def smellRadiusFood1(self, sim):
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
@@ -703,7 +721,7 @@ class Agent(Object):
         if int(smellRadius) == 1:
 
             creaturesSmelled = self.smellRadiusCreature1(sim)
-            foodSmelled = self.smellRadiusFood1(sim)
+            foodSmelled = self._assess(sim)
 
             cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
 
@@ -882,9 +900,9 @@ class Agent(Object):
 
         if int(smellRadius) == 1:
             if type == "agent":
-                cellsSmelled = self.smellRadiusCreature1(sim)
+                cellsSmelled = self._assess(sim)
             else:
-                cellsSmelled = self.smellRadiusFood1(sim)
+                cellsSmelled = self._assess(sim)
             # cellsSmelled = self.smellRadiusCreature1(agent)
             print(cellsSmelled)
 
@@ -924,7 +942,7 @@ class Agent(Object):
             else:
                 finalString.append(0)
 
-        print("final String: " + str(finalString))
+        # print("final String: " + str(finalString))
         return finalString
 
     def __str__(self):
