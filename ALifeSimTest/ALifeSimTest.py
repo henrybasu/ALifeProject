@@ -203,7 +203,7 @@ class ALifeSimTest(object):
 
         # self._growFood()
         self._updateAgents()
-        # self.printAgents()
+        print(self.foodMap)
 
 
         # for i in range(len(self.agentList)):
