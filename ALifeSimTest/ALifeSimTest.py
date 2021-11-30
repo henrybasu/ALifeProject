@@ -3,9 +3,10 @@ import random
 import tkinter
 
 from ALifeGUITest import *
-from AgentTest import Agent
-from ObjectTest import Object
+from AgentTest import *
+from ObjectTest import *
 from StoneTest import *
+from FoodTest import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -35,12 +36,9 @@ class ALifeSimTest(object):
                 self.foodMap[row, col] = 0
                 self.agentMap[row, col] = []
 
-
-        self._placeFood()
         # self.printGrid()
 
-
-
+        self.foodList = []
         self.objectList = []
         self.agentList = []
         self.deadAgents = []
@@ -50,7 +48,7 @@ class ALifeSimTest(object):
         self.verbose = False
 
         self._placeStones()
-        # self._placeFood()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -61,7 +59,6 @@ class ALifeSimTest(object):
     def getAgentNumber(self):
         """Returns the number of agents placed on the grid"""
         return self.numAgents
-
 
     def getAgents(self):
         """Returns the list of agents"""
@@ -112,8 +109,7 @@ class ALifeSimTest(object):
             self.agentMap[r, c].append(nextAgent)
 
     def _placeStones(self):
-        objectPose = self._genRandomPose()
-        r, c, h = objectPose
+        r, c, h = self._genRandomPose()
         nextObject = Stone(initPose=(r,c),geneticString="00")
         self.objectList.append(nextObject)
         self.objectMap[r, c].append(nextObject)
@@ -122,7 +118,9 @@ class ALifeSimTest(object):
     def _addFoodClump(self):
         """Adds a clump of food at a random location."""
         (randRow, randCol) = self._genRandomLoc()
-        self.foodMap[randRow, randCol] += 1
+        nextFood = Food(initPose=(randRow, randCol))
+        self.foodList.append(nextFood)
+        self.foodMap[randRow, randCol] = 1
 
 
     def _genRandomPose(self):
