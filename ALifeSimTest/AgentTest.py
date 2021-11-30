@@ -424,10 +424,10 @@ class Agent(Object):
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
-    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time):
+    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
+                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere)
             elif agent.Aggression == 1:
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
             else:
@@ -437,8 +437,9 @@ class Agent(Object):
             return "none"
 
 
-    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled):
+    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere):
         creaturesAround = cellsSmelled
+        print("Creatures around: " + str(creaturesAround))
 
         # if the agent is on the same square as a friend
         if isCreatureHere == 2:
@@ -446,6 +447,9 @@ class Agent(Object):
                 return "breed"
             else:
                 return random.choice(['left', 'right', 'turnAround', "forward"])
+
+        elif isFoodHere == 1:
+            return "eat"
 
         # if the agent sees an enemy on a square ahead
         elif isCreatureAhead == 1:
@@ -464,6 +468,7 @@ class Agent(Object):
         elif isCreatureAhead == 0 and creaturesAround == "none":
             return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
 
+
         # if it can't see any creatures, and but it can smell creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
             if creaturesAround[1] == 1:
@@ -475,7 +480,7 @@ class Agent(Object):
                     return random.choice(['left', 'forward', 'turnAround'])
                 elif creaturesAround[0] == "below":
                     return random.choice(['left', 'right', 'forward'])
-            elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
+            elif (creaturesAround[1] == 2 and agent.getReadyToBreed()) or creaturesAround[1] == 3:
                 if creaturesAround[0] == "above":
                     return "forward"
                 elif creaturesAround[0] == "left":
@@ -586,41 +591,44 @@ class Agent(Object):
 
         print("\n")
 
-    def _printSmell(self, sim):
-        smellRadius = self.geneticString[1]
-        ownY, ownX, heading = self.getPose()
+    # def _printSmell(self, sim):
+    #     smellRadius = self.geneticString[1]
+    #     ownY, ownX, heading = self.getPose()
+    #
+    #     if heading == "n":
+    #         direction = "^"
+    #     elif heading == "s":
+    #         direction = "v"
+    #     elif heading == "e":
+    #         direction = ">"
+    #     elif heading == "w":
+    #         direction = "<"
+    #     else:
+    #         direction = "x"
+    #
+    #
+    #     if int(smellRadius) == 1:
+    #         cellsSmelled = self.smellRadius1(sim)
+    #         print(cellsSmelled)
+    #
+    #         print("\t" + str(cellsSmelled[0]) + "\t")
+    #         print(str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2]))
+    #         print("\t" + str(cellsSmelled[1]) + "\t")
+    #
+    #     elif int(smellRadius) == 2:
+    #         cellsSmelled = self.smellRadius2(sim)
+    #         print(cellsSmelled)
+    #
+    #         print("\t\t" + str(cellsSmelled[4]) + "\t\t")
+    #         print("\t" + str(cellsSmelled[8]) + "\t" + str(cellsSmelled[0]) + " \t" + str(cellsSmelled[9]))
+    #         print(str(cellsSmelled[7]) + "\t" + str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2])+ " \t" + str(cellsSmelled[6]))
+    #         print("\t" + str(cellsSmelled[10]) + "\t" + str(cellsSmelled[1]) + " \t" + str(cellsSmelled[11]))
+    #         print("\t\t" + str(cellsSmelled[5]) + "\t\t")
+    #     else:
+    #         print("NO SMELL")
 
-        if heading == "n":
-            direction = "^"
-        elif heading == "s":
-            direction = "v"
-        elif heading == "e":
-            direction = ">"
-        elif heading == "w":
-            direction = "<"
-        else:
-            direction = "x"
 
 
-        if int(smellRadius) == 1:
-            cellsSmelled = self.smellRadius1(sim)
-            print(cellsSmelled)
-
-            print("\t" + str(cellsSmelled[0]) + "\t")
-            print(str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2]))
-            print("\t" + str(cellsSmelled[1]) + "\t")
-
-        elif int(smellRadius) == 2:
-            cellsSmelled = self.smellRadius2(sim)
-            print(cellsSmelled)
-
-            print("\t\t" + str(cellsSmelled[4]) + "\t\t")
-            print("\t" + str(cellsSmelled[8]) + "\t" + str(cellsSmelled[0]) + " \t" + str(cellsSmelled[9]))
-            print(str(cellsSmelled[7]) + "\t" + str(cellsSmelled[3]) + "   " + direction + " \t" + str(cellsSmelled[2])+ " \t" + str(cellsSmelled[6]))
-            print("\t" + str(cellsSmelled[10]) + "\t" + str(cellsSmelled[1]) + " \t" + str(cellsSmelled[11]))
-            print("\t\t" + str(cellsSmelled[5]) + "\t\t")
-        else:
-            print("NO SMELL")
 
     def __str__(self):
         formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}      {4}"
