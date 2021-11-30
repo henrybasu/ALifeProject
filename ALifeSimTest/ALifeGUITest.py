@@ -13,7 +13,7 @@ from tkinter import *
 import tkinter.filedialog as tkFileDialog
 
 import ALifeSimTest
-from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
+from LocalSearchSolverTest import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
 class ALifeGUI:
@@ -28,8 +28,8 @@ class ALifeGUI:
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
-        self.ghostImage = PhotoImage(file='Ghost.png')
-        self.TurnipImage = PhotoImage(file='trnip.png')
+        self.ghostImage = PhotoImage(file='images/Ghost.png')
+        # self.TurnipImage = PhotoImage(file='images/trnip.png')
 
         randomGeneticStrings = []
         randomGeneticStrings.append("12100599")
@@ -74,7 +74,6 @@ class ALifeGUI:
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
         self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
-
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -166,21 +165,27 @@ class ALifeGUI:
         makerFrame = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
         makerFrame.grid(row=1, column=1, padx=5, pady=5)
 
-        sizeLabel = Label(makerFrame, text="Grid Dim")
-        self.gridDimensionText = IntVar()
-        self.gridDimensionText.set(str(self.gridDim))
-        self.rowsEntry = Entry(makerFrame, textvariable=self.gridDimensionText, width=4, justify=CENTER)
+        sizeLabel1 = Label(makerFrame, text="Grid Dim")
+        # sizeLabel2 = Label(makerFrame, text="x") #TODO: Reimplement this
+        self.rowDimensionText = IntVar()
+        self.rowDimensionText.set(str(self.gridDim))
+        self.colDimensionText = IntVar()
+        self.colDimensionText.set(str(self.gridDim))
+        self.rowsEntry = Entry(makerFrame, textvariable=self.rowDimensionText, width=4, justify=CENTER)
+        # self.colsEntry = Entry(makerFrame, textvariable=self.colDimensionText, width=4, justify=CENTER)
         agentsLabel = Label(makerFrame, text="Agents")
         self.agentNum = IntVar()
         self.agentNum.set(self.numberAgents)
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
-        self.gridButton = Button(gridSetupFrame, text="New Grid", command=self.resetGridWorld)
+        self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
 
-        sizeLabel.grid(row=1, column=3)
+        sizeLabel1.grid(row=1, column=3)
+        # sizeLabel2.grid(row=1, column=5)
         agentsLabel.grid(row=2, column=3)
         self.rowsEntry.grid(row=1, column=4)
+        # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
 
@@ -267,7 +272,9 @@ class ALifeGUI:
         places where the ruleString is set to a non-None value"""
         self._removeGridItems()
 
-        size = self.gridDimensionText.get()
+        rowSize = self.rowDimensionText.get()
+        colSize = self.colDimensionText.get()
+        size = self.rowDimensionText.get()
         ageNum = self.agentNum.get()
         try:
             self.gridDim = int(size)
@@ -412,13 +419,38 @@ class ALifeGUI:
                 self.canvas.itemconfig(patchId, fill=cellColor)
         if len(self.sim.getAgents()) == 0:
             return False
+
+        # for object in self.sim.getObjects():
+        #     #TODO: Double-check this code to place objects in the GUI / is it necessary (since objects don't move)
+        #     obColor = object.colorNumberToText(object.getColor())
+        #     if object.getVisId() is None:
+        #         offsetCoords = self._determineObjectCoords(object)
+        #         coords = [(0 + x, 0 + y) for (x, y) in offsetCoords]
+        #         # print(coords)
+        #         # print(obColor)
+        #         obId = self.canvas.create_polygon(coords, fill=obColor, width=2)
+        #         self.agentIdToPose[obId] = object.getPose()
+        #         object.setVisId(obId)
+        #
+        #     id = object.getVisId()
+        #     self.canvas.itemconfig(id, fill=obColor)
+        #
+        #     (newRow, newCol) = object.getPose()
+        #     (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+        #     offsetCoords = self._determineObjectCoords(object)
+        #     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+        #     flatCoords = [n for subl in coords for n in subl]
+        #     self.canvas.coords(id, flatCoords)
+        #     self.canvas.lift(id)
+        #
+        #     self.agentIdToPose[id] = object.getPose()
+
         for agent in self.sim.getAgents():
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
 
             if agent.getVisId() is None:
                 offsetCoords = self._determineAgentCoords(agent)
-                coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
 
                 if agent.getAggression() == 1:
                     agentOutlineColor = "red"
@@ -519,6 +551,17 @@ class ALifeGUI:
                 self.patchIdToPos[currId] = (row, col)
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
+                objects = self.sim.objectsAt(row,col)
+                for ob in objects:
+                    self.canvas.update()
+                    obColor = ob.colorNumberToText(ob.getColor())
+                    offsetCoords = self._determineObjectCoords(ob)
+                    # print(offsetCoords)
+                    coords = [x1+offsetCoords[0], y1+offsetCoords[1], x2-offsetCoords[2], y2-offsetCoords[3]]
+                    # print(coords)
+                    obId = self.canvas.create_rectangle(coords, fill=obColor, width=2)
+                    self.agentIdToPose[obId] = ob.getPose()
+                    ob.setVisId(obId)
                 for ag in agents:
                     # self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
@@ -534,6 +577,15 @@ class ALifeGUI:
                     # print("agent pose:", ag.getPose())
                     ag.setVisId(agId)
 
+    def _determineObjectCoords(self, object):
+        """gives offset coordinates based on the direction the agent is
+        pointing."""
+        oneSixth = self.cellSize / 6
+        fiveSixths = 5 * oneSixth
+        half = self.cellSize / 2
+        quarter = self.cellSize / 4
+        threeQ = 3 * quarter
+        return [oneSixth,oneSixth,oneSixth,oneSixth]
 
 
     def _determineAgentCoords(self, agent):
@@ -607,8 +659,8 @@ class ALifeGUI:
             color = "#%02x%02x%02x" % (redColor, 0, 0)
         return color
 
-    def _setAgentColor(self, color):
 
+    def _setAgentColor(self, color):
         if color == 1:
             return 'black'
         elif color == 2:
