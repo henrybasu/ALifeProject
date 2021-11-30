@@ -30,23 +30,23 @@ class Object(object):
         if color == 1:
             return 'black'
         elif color == 2:
-            return 'black'
+            return 'red'
         elif color == 3:
-            return 'black'
+            return 'orange'
         elif color == 4:
-            return 'black'
+            return 'yellow'
         elif color == 5:
-            return 'black'
+            return 'blue'
         elif color == 6:
-            return 'black'
+            return 'green'
         elif color == 7:
-            return 'black'
+            return 'purple'
         elif color == 8:
-            return 'black'
+            return 'brown'
         elif color == 9:
-            return 'black'
+            return 'pink'
         elif color == 0:
-            return 'black'
+            return 'gray'
 
     def getPose(self):
         """Return the row and column of the agent."""

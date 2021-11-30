@@ -420,7 +420,6 @@ class Agent(Object):
         for j in range(len(sim.agentsAt(row, col))):
             if int(sim.agentsAt(row, col)[j].getColor()) != self.getColor():
                 deadCreature = sim.agentsAt(row, col)[j]
-
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
@@ -448,7 +447,7 @@ class Agent(Object):
             else:
                 return random.choice(['left', 'right', 'turnAround', "forward"])
 
-        elif isFoodHere == 1:
+        elif len(isFoodHere) > 0:
             return "eat"
 
         # if the agent sees an enemy on a square ahead

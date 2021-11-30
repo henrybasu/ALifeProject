@@ -3,9 +3,10 @@ import random
 import tkinter
 
 from ALifeGUITest import *
-from AgentTest import Agent
-from ObjectTest import Object
+from AgentTest import *
+from ObjectTest import *
 from StoneTest import *
+from FoodTest import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -26,22 +27,19 @@ class ALifeSimTest(object):
         self.numAgents = numAgents
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
-        self.objectMap = dict()
+        self.stoneMap = dict()
         self.foodMap = dict()
         self.agentMap = dict()
         for row in range(gridSize):
             for col in range(gridSize):
-                self.objectMap[row, col] = []
-                self.foodMap[row, col] = 0
+                self.stoneMap[row, col] = []
+                self.foodMap[row, col] = []
                 self.agentMap[row, col] = []
 
-
-        self._placeFood()
         # self.printGrid()
 
-
-
-        self.objectList = []
+        self.foodList = []
+        self.stoneList = []
         self.agentList = []
         self.deadAgents = []
         self.eatenFood = []
@@ -50,7 +48,7 @@ class ALifeSimTest(object):
         self.verbose = False
 
         self._placeStones()
-        # self._placeFood()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -62,22 +60,29 @@ class ALifeSimTest(object):
         """Returns the number of agents placed on the grid"""
         return self.numAgents
 
+    def getFood(self):
+        """Returns the list of agents"""
+        return self.foodList[:]
 
     def getAgents(self):
         """Returns the list of agents"""
         return self.agentList[:]
 
-    def getObjects(self):
+    def getStones(self):
         """Returns the list of agents"""
-        return self.objectList[:]
+        return self.stoneList[:]
 
     def getDeadAgents(self):
         """Returns a list of the dead agents."""
         return self.deadAgents
 
-    def objectsAt(self, row, col):
-        """Given a row and column, returns a list of the agents at that location."""
-        return self.objectMap[row, col]
+    def getEatenFood(self):
+        """Returns a list of the dead agents."""
+        return self.eatenFood
+
+    def stonesAt(self, row, col):
+        """Given a row and column, returns a list of the stones at that location."""
+        return self.stoneMap[row, col]
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
@@ -112,17 +117,18 @@ class ALifeSimTest(object):
             self.agentMap[r, c].append(nextAgent)
 
     def _placeStones(self):
-        objectPose = self._genRandomPose()
-        r, c, h = objectPose
-        nextObject = Stone(initPose=(r,c),geneticString="00")
-        self.objectList.append(nextObject)
-        self.objectMap[r, c].append(nextObject)
+        r, c, h = self._genRandomPose()
+        nextStone = Stone(initPose=(r,c),geneticString="00")
+        self.stoneList.append(nextStone)
+        self.stoneMap[r, c].append(nextStone)
 
 
     def _addFoodClump(self):
         """Adds a clump of food at a random location."""
         (randRow, randCol) = self._genRandomLoc()
-        self.foodMap[randRow, randCol] += 1
+        nextFood = Food(initPose=(randRow, randCol))
+        self.foodList.append(nextFood)
+        self.foodMap[randRow, randCol].append(nextFood)
 
 
     def _genRandomPose(self):
@@ -226,11 +232,11 @@ class ALifeSimTest(object):
         # Grow food
         for cell in self.foodMap:
             foodAmt = self.foodMap[cell]
-            if foodAmt < self.MAX_FOOD:
-                newAmt = int(foodAmt * self.GROWTH_RATE)
-                self.foodMap[cell] += newAmt
-                if self.foodMap[cell] > self.MAX_FOOD:
-                    self.foodMap[cell] = self.MAX_FOOD
+            # if foodAmt < self.MAX_FOOD:
+            #     newAmt = int(foodAmt * self.GROWTH_RATE)
+            #     self.foodMap[cell] += newAmt
+            #     if self.foodMap[cell] > self.MAX_FOOD:
+            #         self.foodMap[cell] = self.MAX_FOOD
         newClump = random.random()
         if newClump <= self.NEW_FOOD_PERCENT:
             self._addFoodClump()
@@ -360,10 +366,10 @@ class ALifeSimTest(object):
         #print("FoodMap: " + str(self.foodMap))
         # print("Row and Col: " + str(row) + ", " + str(col))
         # print("FoodMap[row,col] " + str(self.foodMap[row, col]))
-        if foodAmt == 0:
-            return 0
-        else:
+        if len(foodAmt) > 0:
             return 3
+        else:
+            return 0
 
     def _assessCreature(self, row, col, agent):
         """Given a row and column, examine the amount of creatures there, and divide it into
@@ -410,8 +416,19 @@ class ALifeSimTest(object):
         """Determines what, if any, food is eaten from the current given location. It returns the
         energy value of the food eaten, and updates the foodMap."""
         foodAtCell = self.foodMap[row, col]
-        if foodAtCell == 1:
-            self.foodMap[row, col] = 0
+        print("foodlist", self.foodList)
+        print("FoodAtCell:" , foodAtCell)
+        # print("foodmap", self.foodMap)
+        if len(foodAtCell) > 0:
+            self.eatenFood.append(foodAtCell)
+            self.foodMap[row, col] = []
+            # self.foodList.remove(foodAtCell)
+        for i in range(len(self.foodList)):
+            print("self.foodList[",i,"]",self.foodList[i])
+            if foodAtCell == self.foodList[i]:
+                self.foodList.pop(i)
+                print("foodlist", self.foodList)
+
 
     def makeABaby(self, agent1, agent2):
 
