@@ -194,7 +194,7 @@ class ALifeSimTest(object):
         #     self.time = 0
 
 
-        # self._growFood()
+        self._growFood()
         self._updateAgents()
 
         for i in range(len(self.agentList)):
@@ -416,7 +416,7 @@ class ALifeSimTest(object):
         energy value of the food eaten, and updates the foodMap."""
         foodAtCell = self.foodMap[row, col]
         if foodAtCell == 1:
-            self.foodMap[row, col] = 0
+            self.foodMap[row, col] = -1
 
 
 

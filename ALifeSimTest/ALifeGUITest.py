@@ -33,7 +33,7 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("12100599")
-        # randomGeneticStrings.append("12100299")
+        # randomGeneticStrings.append("12110299")
         # randomGeneticStrings.append("11110599")
 
         # randomGeneticStrings.append("11100599")
@@ -399,10 +399,13 @@ class ALifeGUI:
             for col in range(self.gridDim):
                 food = self.sim.foodAt(row, col)
 
-                if food != 0:
+                if food == 1:
                     (x1, y1, x2, y2) = self._posToCoords(row, col)
                     turnipImage = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.TurnipImage)
                     self.canvas.lift(turnipImage)
+
+
+
 
                 cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
                 patchId = self.posToPatchId[row, col]
