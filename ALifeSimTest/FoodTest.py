@@ -12,3 +12,7 @@ class Food(Object):
         """
         super().__init__()
         self.geneticString = geneticString
+
+    def __str__(self):
+        formStr = "Food: {0:>3d}  {1:>3d}  {2}"
+        return formStr.format(self.row, self.col, self.geneticString)

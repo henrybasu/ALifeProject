@@ -402,21 +402,19 @@ class ALifeGUI:
     def stepSimulation(self):
         """Runs one step of the simulation, then updates the grid with new colors and moving agents."""
         self.sim.step()
-        for row in range(self.gridDim):
-            for col in range(self.gridDim):
-                food = self.sim.foodAt(row, col)
+        # for row in range(self.gridDim):
+        #     for col in range(self.gridDim):
+        #         food = self.sim.foodAt(row, col)
+        #
+        #         if food == 1:
+        #             (x1, y1, x2, y2) = self._posToCoords(row, col)
+        #             turnipImage = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.TurnipImage)
+        #             self.canvas.lift(turnipImage)
+        #
+        #         cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
+        #         patchId = self.posToPatchId[row, col]
+        #         self.canvas.itemconfig(patchId, fill=cellColor)
 
-                if food == 1:
-                    (x1, y1, x2, y2) = self._posToCoords(row, col)
-                    turnipImage = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.TurnipImage)
-                    self.canvas.lift(turnipImage)
-
-
-
-
-                cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
-                patchId = self.posToPatchId[row, col]
-                self.canvas.itemconfig(patchId, fill=cellColor)
         if len(self.sim.getAgents()) == 0:
             return False
 
@@ -477,6 +475,21 @@ class ALifeGUI:
             self.canvas.lift(id)
 
             self.agentIdToPose[id] = agent.getPose()
+
+        for eatenFood in self.sim.getEatenFood():
+            # finds dead agent tkinter object id
+            id = eatenFood[0].getVisId()
+
+            # deletes the object
+            self.canvas.delete(id)
+
+            (newRow, newCol) = eatenFood[0].getPose()
+            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+
+            # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
+            # self.canvas.create_image(x1, y1, image=self.ghostImage)
+            # ghostGuy = self.canvas.create_image((x1 + x2)/2, (y1 + y2) / 2, image=self.ghostImage)
+            # self.canvas.lift(ghostGuy)
 
         for deadAgent in self.sim.getDeadAgents():
             # finds dead agent tkinter object id
@@ -551,7 +564,16 @@ class ALifeGUI:
                 self.patchIdToPos[currId] = (row, col)
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
-                objects = self.sim.objectsAt(row,col)
+                objects = self.sim.stonesAt(row,col)
+                # print(agents)
+                # print(self.sim.foodAt(row,col))
+                food = self.sim.foodAt(row,col)
+                for fd in food:
+                    self.canvas.update()
+                    coords = [(x1 + x2)/2, (y1 + y2) / 2]
+                    fdId = self.canvas.create_image(coords, image=self.TurnipImage)
+                    self.agentIdToPose[fdId] = fd.getPose()
+                    fd.setVisId(fdId)
                 for ob in objects:
                     self.canvas.update()
                     obColor = ob.colorNumberToText(ob.getColor())
