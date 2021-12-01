@@ -452,8 +452,6 @@ class ALifeSimTest(object):
                     return 2
             return 1
 
-
-
     def _assessCreatureHere(self, row, col):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
@@ -497,7 +495,7 @@ class ALifeSimTest(object):
             for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
                     self.foodMap[row, col] = []
-                    self.globalMap[row, col] = []
+                    self.globalMap[row, col] = [] #TODO: what if there is something else on that square other than food?
 
             for i in range(len(self.foodList)):
                 if foodAtCell == self.foodList[i]:
@@ -506,7 +504,6 @@ class ALifeSimTest(object):
 
 
     def makeABaby(self, agent1, agent2):
-
         if agent1.getReadyToBreed() == 0 and agent2.getReadyToBreed() == 0:
             agentPose = agent1.getPose()
             r, c, h = agentPose
