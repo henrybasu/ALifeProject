@@ -423,12 +423,12 @@ class Agent(Object):
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
-    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere):
+    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere, detectedRocks):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere)
+                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks)
             elif agent.Aggression == 1:
-                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled)
+                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks)
             else:
                 print("SHOULD NOT GET HERE")
 
@@ -436,23 +436,39 @@ class Agent(Object):
             return "none"
 
 
-    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere):
-        creaturesAround = cellsSmelled
+    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks):
         # print("Creatures around: " + str(creaturesAround))
+
+
 
         # if the agent is on the same square as a friend
         if isCreatureHere == 2:
             if agent.getReadyToBreed() == 0:
                 return "breed"
             else:
-                return random.choice(['left', 'right', 'turnAround', "forward"])
+                if detectedRocks[0] == -1:
+                    return random.choice(['left', 'right', 'turnAround'])
+                elif detectedRocks[1] == -1:
+                    return random.choice(['left', 'right', 'forward'])
+                elif detectedRocks[2] == -1:
+                    return random.choice(['left', 'forward', 'turnAround'])
+                elif detectedRocks[3] == -1:
+                    return random.choice(['forward', 'right', 'turnAround'])
+
 
         elif len(isFoodHere) > 0:
             return "eat"
 
         # if the agent sees an enemy on a square ahead
         elif isCreatureAhead == 1:
-            return random.choice(['left', 'right', 'turnAround'])
+            if detectedRocks[0] == -1:
+                return random.choice(['left', 'right', 'turnAround'])
+            elif detectedRocks[1] == -1:
+                return random.choice(['left', 'right'])
+            elif detectedRocks[2] == -1:
+                return random.choice(['left', 'turnAround'])
+            elif detectedRocks[3] == -1:
+                return random.choice(['right', 'turnAround'])
 
         # if the agent sees a friend ahead
         elif isCreatureAhead == 2:
@@ -461,32 +477,89 @@ class Agent(Object):
                 return "forward"
             # if they aren't, go anywhere
             else:
-                return random.choice(['left', 'right', 'turnAround', "forward"])
+                if detectedRocks[0] == -1:
+                    return random.choice(['left', 'right', 'turnAround'])
+                elif detectedRocks[1] == -1:
+                    return random.choice(['left', 'right', 'forward'])
+                elif detectedRocks[2] == -1:
+                    return random.choice(['left', 'forward', 'turnAround'])
+                elif detectedRocks[3] == -1:
+                    return random.choice(['forward', 'right', 'turnAround'])
 
         # if it can't see any creatures, and can't smell any creatures: go anywhere
-        elif isCreatureAhead == 0 and creaturesAround == "none":
-            return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
+        elif isCreatureAhead == 0 and cellsSmelled == "none":
+            if detectedRocks[0] == -1:
+                return random.choice(['left', 'right', 'turnAround'])
+            elif detectedRocks[1] == -1:
+                return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
+            elif detectedRocks[2] == -1:
+                return random.choice(['left', 'forward', 'turnAround', 'forward', 'forward'])
+            elif detectedRocks[3] == -1:
+                return random.choice(['forward', 'right', 'turnAround', 'forward', 'forward'])
+            else:
+                return random.choice(['forward', 'right', 'turnAround', 'forward', 'forward', 'left'])
 
 
         # if it can't see any creatures, and but it can smell creatures:
-        elif isCreatureAhead == 0 and creaturesAround != "none":
-            if creaturesAround[1] == 1:
-                if creaturesAround[0] == "above":
-                    return random.choice(['left', 'right', 'turnAround'])
-                elif creaturesAround[0] == "left":
-                    return random.choice(['right', 'forward', 'turnAround'])
-                elif creaturesAround[0] == "right":
-                    return random.choice(['left', 'forward', 'turnAround'])
-                elif creaturesAround[0] == "below":
-                    return random.choice(['left', 'right', 'forward'])
-            elif (creaturesAround[1] == 2 and agent.getReadyToBreed()) or creaturesAround[1] == 3:
-                if creaturesAround[0] == "above":
+        elif isCreatureAhead == 0 and cellsSmelled != "none":
+            print("MADE IT HERE")
+            if cellsSmelled[1] == 1:
+                if cellsSmelled[0] == "above":
+                    if detectedRocks[0] == -1:
+                        return random.choice(['left', 'right', 'turnAround'])
+                    elif detectedRocks[1] == -1:
+                        return random.choice(['left', 'right'])
+                    elif detectedRocks[2] == -1:
+                        return random.choice(['left', 'turnAround'])
+                    elif detectedRocks[3] == -1:
+                        return random.choice(['right', 'turnAround'])
+                    else:
+                        return random.choice(['left', 'right', 'turnAround'])
+
+                elif cellsSmelled[0] == "left":
+                    if detectedRocks[0] == -1:
+                        return random.choice(['right', 'turnAround'])
+                    elif detectedRocks[1] == -1:
+                        return random.choice(['forward', 'right', 'forward'])
+                    elif detectedRocks[2] == -1:
+                        return random.choice(['turnAround', 'forward', 'forward'])
+                    elif detectedRocks[3] == -1:
+                        return random.choice(['right', 'forward', 'forward', 'turnAround'])
+                    else:
+                        return random.choice(['right', 'forward', 'forward', 'turnAround'])
+
+                elif cellsSmelled[0] == "right":
+                    if detectedRocks[0] == -1:
+                        return random.choice(['left', 'turnAround'])
+                    elif detectedRocks[1] == -1:
+                        return random.choice(['forward', 'left', 'forward'])
+                    elif detectedRocks[2] == -1:
+                        return random.choice(['turnAround', 'left', 'forward', 'forward'])
+                    elif detectedRocks[3] == -1:
+                        return random.choice(['turnAround', 'forward', 'forward'])
+                    else:
+                        return random.choice(['turnAround', 'left', 'forward', 'forward'])
+
+                elif cellsSmelled[0] == "below":
+                    if detectedRocks[0] == -1:
+                        return random.choice(['right', 'left'])
+                    elif detectedRocks[1] == -1:
+                        return random.choice(['forward', 'right', 'left', 'forward'])
+                    elif detectedRocks[2] == -1:
+                        return random.choice(['left', 'forward', 'forward'])
+                    elif detectedRocks[3] == -1:
+                        return random.choice(['right', 'forward', 'forward'])
+                    else:
+                        return random.choice(['forward', 'right', 'left', 'forward'])
+
+            elif (cellsSmelled[1] == 2 and agent.getReadyToBreed()) or cellsSmelled[1] == 3:
+                if cellsSmelled[0] == "above":
                     return "forward"
-                elif creaturesAround[0] == "left":
+                elif cellsSmelled[0] == "left":
                     return "left"
-                elif creaturesAround[0] == "right":
+                elif cellsSmelled[0] == "right":
                     return "right"
-                elif creaturesAround[0] == "below":
+                elif cellsSmelled[0] == "below":
                     return "turnAround"
             else:
                 return random.choice(['left', 'right', 'forward', 'forward', 'forward'])
@@ -603,8 +676,6 @@ class Agent(Object):
         cellsSmelled.append(cellBelow)
         cellsSmelled.append(cellRight)
         cellsSmelled.append(cellLeft)
-        print("cellsSmelled: ", cellsSmelled)
-
         return cellsSmelled
 
     def smellRadiusGlobal2(self, sim):
@@ -641,6 +712,8 @@ class Agent(Object):
         cellsSmelled.append(cellBelowLeft)
         cellsSmelled.append(cellBelowRight)
 
+        print("Cells Smelled: ", cellsSmelled)
+
         return cellsSmelled
 
     def detectSmellRadius(self, sim):
@@ -649,10 +722,11 @@ class Agent(Object):
 
         # actions for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
-            # creaturesSmelled = self.smellRadiusGlobal1(sim)
-            # foodSmelled = self.smellRadiusGlobal1(sim)
-            # cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
-            cellsSmelled = self.smellRadiusGlobal1(sim)
+
+            creaturesSmelled = self.smellRadiusGlobal1(sim)
+            foodSmelled = self.smellRadiusGlobal1(sim)
+
+            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
 
             if cellsSmelled[0] != 0 and heading == "n":
                 return "above", cellsSmelled[0]
@@ -693,118 +767,115 @@ class Agent(Object):
                 return "none"
 
         elif int(smellRadius) == 2:
-            # creaturesSmelled = self.smellRadiusGlobal2(sim)
-            # foodSmelled = self.smellRadiusGlobal2(sim)
-            # cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
-
             cellsSmelled = self.smellRadiusGlobal2(sim)
 
-            if cellsSmelled[0] != 0 and heading == "n":
+
+            if cellsSmelled[0] > 0 and heading == "n":
                 return "above", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "n":
+            elif cellsSmelled[1] > 0 and heading == "n":
                 return "below", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "n":
+            elif cellsSmelled[2] > 0 and heading == "n":
                 return "right", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "n":
+            elif cellsSmelled[3] > 0 and heading == "n":
                 return "left", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "s":
+            elif cellsSmelled[0] > 0 and heading == "s":
                 return "below", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "s":
+            elif cellsSmelled[1] > 0 and heading == "s":
                 return "above", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "s":
+            elif cellsSmelled[2] > 0 and heading == "s":
                 return "left", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "s":
+            elif cellsSmelled[3] > 0 and heading == "s":
                 return "right", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "e":
+            elif cellsSmelled[0] > 0 and heading == "e":
                 return "left", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "e":
+            elif cellsSmelled[1] > 0 and heading == "e":
                 return "right", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "e":
+            elif cellsSmelled[2] > 0 and heading == "e":
                 return "above", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "e":
+            elif cellsSmelled[3] > 0 and heading == "e":
                 return "below", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "w":
+            elif cellsSmelled[0] > 0 and heading == "w":
                 return "right", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "w":
+            elif cellsSmelled[1] > 0 and heading == "w":
                 return "left", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "w":
+            elif cellsSmelled[2] > 0 and heading == "w":
                 return "below", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "w":
+            elif cellsSmelled[3] > 0 and heading == "w":
                 return "above", cellsSmelled[3]
 
-            elif (cellsSmelled[4] != 0) and heading == "n":
+            elif (cellsSmelled[4] > 0) and heading == "n":
                 return "above", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "n":
+            elif (cellsSmelled[5] > 0) and heading == "n":
                 return "below", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "n":
+            elif (cellsSmelled[6] > 0) and heading == "n":
                 return "right", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "n":
+            elif (cellsSmelled[7] > 0) and heading == "n":
                 return "left", cellsSmelled[7]
 
-            elif (cellsSmelled[4] != 0) and heading == "s":
+            elif (cellsSmelled[4] > 0) and heading == "s":
                 return "below", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "s":
+            elif (cellsSmelled[5] > 0) and heading == "s":
                 return "above", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "s":
+            elif (cellsSmelled[6] > 0) and heading == "s":
                 return "left", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "s":
+            elif (cellsSmelled[7] > 0) and heading == "s":
                 return "right", cellsSmelled[7]
 
-            elif (cellsSmelled[4] != 0) and heading == "e":
+            elif (cellsSmelled[4] > 0) and heading == "e":
                 return "left", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "e":
+            elif (cellsSmelled[5] > 0) and heading == "e":
                 return "right", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "e":
+            elif (cellsSmelled[6] > 0) and heading == "e":
                 return "above", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "e":
+            elif (cellsSmelled[7] > 0) and heading == "e":
                 return "below", cellsSmelled[7]
 
-            elif (cellsSmelled[4] != 0) and heading == "w":
+            elif (cellsSmelled[4] > 0) and heading == "w":
                 return "right", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "w":
+            elif (cellsSmelled[5] > 0) and heading == "w":
                 return "left", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "w":
+            elif (cellsSmelled[6] > 0) and heading == "w":
                 return "below", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "w":
+            elif (cellsSmelled[7] > 0) and heading == "w":
                 return "above", cellsSmelled[7]
 
-            elif cellsSmelled[8] != 0 and heading == "n":
+            elif cellsSmelled[8] > 0 and heading == "n":
                 return random.choice(["above", "left"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "n":
+            elif cellsSmelled[9] > 0 and heading == "n":
                 return random.choice(["above", "right"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "n":
+            elif cellsSmelled[10] > 0 and heading == "n":
                 return random.choice(["below", "left"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "n":
+            elif cellsSmelled[11] > 0 and heading == "n":
                 return random.choice(["below", "right"]), cellsSmelled[11]
 
-            elif cellsSmelled[8] != 0 and heading == "s":
+            elif cellsSmelled[8] > 0 and heading == "s":
                 return random.choice(["below", "right"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "s":
+            elif cellsSmelled[9] > 0 and heading == "s":
                 return random.choice(["below", "left"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "s":
+            elif cellsSmelled[10] > 0 and heading == "s":
                 return random.choice(["above", "right"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "s":
+            elif cellsSmelled[11] > 0 and heading == "s":
                 return random.choice(["above", "left"]), cellsSmelled[11]
 
-            elif cellsSmelled[8] != 0 and heading == "e":
+            elif cellsSmelled[8] > 0 and heading == "e":
                 return random.choice(["below", "left"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "e":
+            elif cellsSmelled[9] > 0 and heading == "e":
                 return random.choice(["above", "left"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "e":
+            elif cellsSmelled[10] > 0 and heading == "e":
                 return random.choice(["below", "right"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "e":
+            elif cellsSmelled[11] > 0 and heading == "e":
                 return random.choice(["above", "right"]), cellsSmelled[11]
 
-            elif cellsSmelled[8] != 0 and heading == "w":
+            elif cellsSmelled[8] > 0 and heading == "w":
                 return random.choice(["above", "right"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "w":
+            elif cellsSmelled[9] > 0 and heading == "w":
                 return random.choice(["below", "right"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "w":
+            elif cellsSmelled[10] > 0 and heading == "w":
                 return random.choice(["above", "left"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "w":
+            elif cellsSmelled[11] > 0 and heading == "w":
                 return random.choice(["below", "left"]), cellsSmelled[11]
 
             else:
@@ -812,6 +883,9 @@ class Agent(Object):
 
         else:
             return "none"
+
+    def detectRocks(self, sim):
+        return self.smellRadiusGlobal1(sim)
 
     def _printSmell(self, sim, type):
         smellRadius = self.geneticString[1]
