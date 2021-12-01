@@ -343,7 +343,6 @@ class ALifeSimTest(object):
 
 
             if not agent.isDead:
-
                 action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere)
                 print("action: ", action)
 
@@ -364,11 +363,11 @@ class ALifeSimTest(object):
                     print("Agent Map at [r,c]: ", self.agentMap[agentR, agentC])
                     print(agent)
                     print("[r,c]: ", agentR, agentC)
-                    if len(self.agentMap[agentR, agentC]) != 0:
+                    if agent in self.agentMap[agentR, agentC]:
                         # print("REMOVING",agent,"from agentMap")
                         self.agentMap[agentR, agentC].remove(agent)
                         # print(self.agentMap)
-                    if agent in (self.globalMap[agentR, agentC]):
+                    if agent in (self.globalMap[agentR, agentC]): #TODO: does this work?
                         # print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
                         # print(self.globalMap)

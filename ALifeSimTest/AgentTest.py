@@ -883,8 +883,6 @@ class Agent(Object):
 
 
 
-
-
     # def smellRadiusFood1(self, sim):
     #     ownY, ownX, heading = self.getPose()
     #     cellsSmelled = []
