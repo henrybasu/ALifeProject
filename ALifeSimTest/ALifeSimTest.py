@@ -79,8 +79,8 @@ class ALifeSimTest(object):
         return self.deadAgents
 
     def getEatenFood(self):
-        """Returns a list of the dead agents."""
-        return self.eatenFood
+        """Returns a list of the food eaten."""
+        return self.eatenFood[:]
 
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
@@ -494,24 +494,17 @@ class ALifeSimTest(object):
         """Determines what, if any, food is eaten from the current given location. It returns the
         energy value of the food eaten, and updates the foodMap."""
         foodAtCell = self.foodMap[row, col]
-        print("foodlist", self.foodList)
-        print("FoodAtCell:" , foodAtCell)
-        print("self.eatenFood:", self.eatenFood)
-        # print("foodmap", self.foodMap)
         if len(foodAtCell) > 0:
             self.eatenFood.append(foodAtCell)
-            print("self.eatenFood:",self.eatenFood)
-            for ob in self.globalMap[row,col]:
-                # self.foodMap[row, col] = []
+            for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
-                    self.foodMap[row,col].remove(ob)
-                    self.globalMap[row,col].remove(ob)
-            # self.foodList.remove(foodAtCell)
+                    self.foodMap[row, col] = []
+                    self.globalMap[row, col] = []
+
             for i in range(len(self.foodList)):
-                print("self.foodList["+str(i)+"] = ",self.foodList[i])
                 if foodAtCell == self.foodList[i]:
                     self.foodList.pop(i)
-                    print("foodlist", self.foodList)
+
 
 
     def makeABaby(self, agent1, agent2):
