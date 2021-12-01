@@ -649,11 +649,10 @@ class Agent(Object):
 
         # actions for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
-
-            creaturesSmelled = self.smellRadiusGlobal1(sim)
-            foodSmelled = self.smellRadiusGlobal1(sim)
-
-            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
+            # creaturesSmelled = self.smellRadiusGlobal1(sim)
+            # foodSmelled = self.smellRadiusGlobal1(sim)
+            # cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
+            cellsSmelled = self.smellRadiusGlobal1(sim)
 
             if cellsSmelled[0] != 0 and heading == "n":
                 return "above", cellsSmelled[0]
@@ -694,10 +693,11 @@ class Agent(Object):
                 return "none"
 
         elif int(smellRadius) == 2:
-            creaturesSmelled = self.smellRadiusGlobal2(sim)
-            foodSmelled = self.smellRadiusGlobal2(sim)
+            # creaturesSmelled = self.smellRadiusGlobal2(sim)
+            # foodSmelled = self.smellRadiusGlobal2(sim)
+            # cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
 
-            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
+            cellsSmelled = self.smellRadiusGlobal2(sim)
 
             if cellsSmelled[0] != 0 and heading == "n":
                 return "above", cellsSmelled[0]
