@@ -324,6 +324,8 @@ class ALifeSimTest(object):
             # checks to see if there is a creature in the agent's smell radius
             canSmellCreature = agent.detectSmellRadius(self)
 
+            detectedRocks = agent.detectRocks(self)
+
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
@@ -344,8 +346,7 @@ class ALifeSimTest(object):
 
             if not agent.isDead:
 
-                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere)
-                print("action: ", action)
+                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks)
 
                 if action == 'breed':
                     self.makeABaby(self.agentMap[agentR, agentC][0], self.agentMap[agentR, agentC][1])
@@ -361,9 +362,6 @@ class ALifeSimTest(object):
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
-                    print("Agent Map at [r,c]: ", self.agentMap[agentR, agentC])
-                    print(agent)
-                    print("[r,c]: ", agentR, agentC)
                     if len(self.agentMap[agentR, agentC]) != 0:
                         # print("REMOVING",agent,"from agentMap")
                         self.agentMap[agentR, agentC].remove(agent)
@@ -476,7 +474,7 @@ class ALifeSimTest(object):
             return 2
 
     def _assessObjects(self, row, col, agent):
-        listOfObjects =  self.globalMap[row, col]
+        listOfObjects = self.globalMap[row, col]
         if listOfObjects != []:
             for ob in listOfObjects:
                 if type(ob) is Stone:

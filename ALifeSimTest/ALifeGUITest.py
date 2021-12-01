@@ -36,7 +36,7 @@ class ALifeGUI:
         # randomGeneticStrings.append("12110299")
         # randomGeneticStrings.append("11110599")
 
-        randomGeneticStrings.append("12100699")
+        # randomGeneticStrings.append("12100699")
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
@@ -828,14 +828,14 @@ class ALifeGUI:
             col = 0
         elif col >= self.gridDim:
             col = self.gridDim - 1
-            
-        return (int(row), int(col))
+
+        return int(row), int(col)
 
 
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
+    numberOfAgents = 1
     s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
