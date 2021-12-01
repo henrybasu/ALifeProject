@@ -497,7 +497,7 @@ class ALifeSimTest(object):
             for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
                     self.foodMap[row, col] = []
-                    self.globalMap[row, col] = []
+                    self.globalMap[row, col] = [] #TODO: what if there is something else on that square other than food?
 
             for i in range(len(self.foodList)):
                 if foodAtCell == self.foodList[i]:
