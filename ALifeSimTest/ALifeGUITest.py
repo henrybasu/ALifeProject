@@ -478,10 +478,8 @@ class ALifeGUI:
 
         for eatenFood in self.sim.getEatenFood():
             # finds eaten food tkinter object id
-            print("self.sim.getEatenFood():",self.sim.getEatenFood())
-            print(self.sim.eatenFood)
-            # id = eatenFood[0].getVisId()
-            # self.canvas.delete(id)
+            id = eatenFood[0].getVisId()
+            self.canvas.delete(id)
 
             # (newRow, newCol) = eatenFood[0].getPose()
             # (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
