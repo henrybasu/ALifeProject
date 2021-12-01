@@ -345,27 +345,6 @@ class Agent(object):
         self.col = col
         self.heading = heading
 
-    def changeEnergy(self, changeVal):
-        """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
-        or below: the agent "dies" in that case."""
-        self.energy += changeVal
-        if self.energy <= 0:
-            return False
-        return True
-
-    def respond(self, foodHere, foodAhead):
-        """
-        This performs the action the rules would require, given how much food is here and food ahead, and
-        the internal energy level
-        :param foodHere: 0, 1, or 2, where 0 = no food, 1 = some food, 2 = plentiful food
-        :param foodAhead: same as foodHere, but for cell ahead of agent
-        :return: None
-        """
-        eLevel = self._assessEnergy()
-        behavIndex = (3 ** 2) * foodHere + 3 * foodAhead + eLevel
-        return self.chooseAction(behavIndex)
-
-
     def _assessEnergy(self):
         """Converts energy level into 0 for low, 1 for medium, and 2 for high amounts of energy."""
         if self.energy < 20:
@@ -374,7 +353,6 @@ class Agent(object):
             return 1
         else:
             return 2
-
 
     def chooseAction(self, index):
         """
@@ -411,10 +389,8 @@ class Agent(object):
         formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}"
         return formStr.format(self.row, self.col, self.heading, self.energy)
 
-
     def getFirstValue(self, geneticString):
         return self.geneticString[0]
-
 
 if __name__ == '__main__':
     sim = ALifeSim(50, 20)

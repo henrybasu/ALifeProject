@@ -32,11 +32,11 @@ class ALifeGUI:
         self.TurnipImage = PhotoImage(file='images/trnip.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("11100599")
+        randomGeneticStrings.append("12100599")
         # randomGeneticStrings.append("12110299")
-        randomGeneticStrings.append("11110599")
+        # randomGeneticStrings.append("11110599")
 
-        # randomGeneticStrings.append("11100599")
+        randomGeneticStrings.append("12100699")
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
         # randomGeneticStrings.append("11100599")
@@ -477,14 +477,14 @@ class ALifeGUI:
             self.agentIdToPose[id] = agent.getPose()
 
         for eatenFood in self.sim.getEatenFood():
-            # finds dead agent tkinter object id
-            id = eatenFood[0].getVisId()
+            # finds eaten food tkinter object id
+            print("self.sim.getEatenFood():",self.sim.getEatenFood())
+            print(self.sim.eatenFood)
+            # id = eatenFood[0].getVisId()
+            # self.canvas.delete(id)
 
-            # deletes the object
-            self.canvas.delete(id)
-
-            (newRow, newCol) = eatenFood[0].getPose()
-            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+            # (newRow, newCol) = eatenFood[0].getPose()
+            # (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
 
             # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
             # self.canvas.create_image(x1, y1, image=self.ghostImage)

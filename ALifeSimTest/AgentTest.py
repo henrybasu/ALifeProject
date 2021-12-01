@@ -591,13 +591,13 @@ class Agent(Object):
         print("\n")
 
 
-    def _assess(self, sim):
+    def smellRadiusGlobal1(self, sim):
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
-        cellAbove = sim.objectsAt((ownY - 1) % sim.gridSize, ownX)
-        cellBelow = sim.objectsAt((ownY + 1) % sim.gridSize, ownX)
-        cellRight = sim.objectsAt(ownY, (ownX + 1) % sim.gridSize)
-        cellLeft = sim.objectsAt(ownY, (ownX - 1) % sim.gridSize)
+        cellAbove = sim._assessObjects((ownY - 1) % sim.gridSize, ownX, self)
+        cellBelow = sim._assessObjects((ownY + 1) % sim.gridSize, ownX, self)
+        cellRight = sim._assessObjects(ownY, (ownX + 1) % sim.gridSize, self)
+        cellLeft = sim._assessObjects(ownY, (ownX - 1) % sim.gridSize, self)
 
         cellsSmelled.append(cellAbove)
         cellsSmelled.append(cellBelow)
@@ -607,94 +607,24 @@ class Agent(Object):
 
         return cellsSmelled
 
-
-    def smellRadiusFood1(self, sim):
+    def smellRadiusGlobal2(self, sim):
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
 
-        cellAbove = sim._assessFood((ownY - 1) % sim.gridSize, ownX)
-        cellBelow = sim._assessFood((ownY + 1) % sim.gridSize, ownX)
-        cellRight = sim._assessFood(ownY, (ownX + 1) % sim.gridSize)
-        cellLeft = sim._assessFood(ownY, (ownX - 1) % sim.gridSize)
+        cellAbove = sim._assessObjects((ownY - 1) % sim.gridSize, ownX, self)
+        cellBelow = sim._assessObjects((ownY + 1) % sim.gridSize, ownX, self)
+        cellRight = sim._assessObjects(ownY, (ownX + 1) % sim.gridSize, self)
+        cellLeft = sim._assessObjects(ownY, (ownX - 1) % sim.gridSize, self)
 
-        cellsSmelled.append(cellAbove)
-        cellsSmelled.append(cellBelow)
-        cellsSmelled.append(cellRight)
-        cellsSmelled.append(cellLeft)
+        cellTwoAbove = sim._assessObjects((ownY - 2) % sim.gridSize, ownX, self)
+        cellTwoBelow = sim._assessObjects((ownY + 2) % sim.gridSize, ownX, self)
+        cellTwoRight = sim._assessObjects(ownY, (ownX + 2) % sim.gridSize, self)
+        cellTwoLeft = sim._assessObjects(ownY, (ownX - 2) % sim.gridSize, self)
 
-        return cellsSmelled
-
-    def smellRadiusFood2(self, sim):
-        ownY, ownX, heading = self.getPose()
-        cellsSmelled = []
-
-        cellAbove = sim._assessFood((ownY - 1) % sim.gridSize, ownX)
-        cellBelow = sim._assessFood((ownY + 1) % sim.gridSize, ownX)
-        cellRight = sim._assessFood(ownY, (ownX + 1) % sim.gridSize)
-        cellLeft = sim._assessFood(ownY, (ownX - 1) % sim.gridSize)
-
-        cellTwoAbove = sim._assessFood((ownY - 2) % sim.gridSize, ownX)
-        cellTwoBelow = sim._assessFood((ownY + 2) % sim.gridSize, ownX)
-        cellTwoRight = sim._assessFood(ownY, (ownX + 2) % sim.gridSize)
-        cellTwoLeft = sim._assessFood(ownY, (ownX - 2) % sim.gridSize)
-
-        cellAboveLeft = sim._assessFood((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize)
-        cellAboveRight = sim._assessFood((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize)
-        cellBelowRight = sim._assessFood((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize)
-        cellBelowLeft = sim._assessFood((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize)
-
-        cellsSmelled.append(cellAbove)
-        cellsSmelled.append(cellBelow)
-        cellsSmelled.append(cellRight)
-        cellsSmelled.append(cellLeft)
-
-        cellsSmelled.append(cellTwoAbove)
-        cellsSmelled.append(cellTwoBelow)
-        cellsSmelled.append(cellTwoRight)
-        cellsSmelled.append(cellTwoLeft)
-
-        cellsSmelled.append(cellAboveLeft)
-        cellsSmelled.append(cellAboveRight)
-        cellsSmelled.append(cellBelowLeft)
-        cellsSmelled.append(cellBelowRight)
-
-        return cellsSmelled
-
-
-    def smellRadiusCreature1(self, sim):
-        ownY, ownX, heading = self.getPose()
-        cellsSmelled = []
-
-        cellAbove = sim._assessCreature((ownY - 1) % sim.gridSize, ownX, self)
-        cellBelow = sim._assessCreature((ownY + 1) % sim.gridSize, ownX, self)
-        cellRight = sim._assessCreature(ownY, (ownX + 1) % sim.gridSize, self)
-        cellLeft = sim._assessCreature(ownY, (ownX - 1) % sim.gridSize, self)
-
-        cellsSmelled.append(cellAbove)
-        cellsSmelled.append(cellBelow)
-        cellsSmelled.append(cellRight)
-        cellsSmelled.append(cellLeft)
-
-        return cellsSmelled
-
-    def smellRadiusCreature2(self, sim):
-        ownY, ownX, heading = self.getPose()
-        cellsSmelled = []
-
-        cellAbove = sim._assessCreature((ownY - 1) % sim.gridSize, ownX, self)
-        cellBelow = sim._assessCreature((ownY + 1) % sim.gridSize, ownX, self)
-        cellRight = sim._assessCreature(ownY, (ownX + 1) % sim.gridSize, self)
-        cellLeft = sim._assessCreature(ownY, (ownX - 1) % sim.gridSize, self)
-
-        cellTwoAbove = sim._assessCreature((ownY - 2) % sim.gridSize, ownX, self)
-        cellTwoBelow = sim._assessCreature((ownY + 2) % sim.gridSize, ownX, self)
-        cellTwoRight = sim._assessCreature(ownY, (ownX + 2) % sim.gridSize, self)
-        cellTwoLeft = sim._assessCreature(ownY, (ownX - 2) % sim.gridSize, self)
-
-        cellAboveLeft = sim._assessCreature((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
-        cellAboveRight = sim._assessCreature((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-        cellBelowRight = sim._assessCreature((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-        cellBelowLeft = sim._assessCreature((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+        cellAboveLeft = sim._assessObjects((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+        cellAboveRight = sim._assessObjects((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+        cellBelowRight = sim._assessObjects((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+        cellBelowLeft = sim._assessObjects((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
 
         cellsSmelled.append(cellAbove)
         cellsSmelled.append(cellBelow)
@@ -720,8 +650,8 @@ class Agent(Object):
         # actions for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
 
-            creaturesSmelled = self.smellRadiusCreature1(sim)
-            foodSmelled = self._assess(sim)
+            creaturesSmelled = self.smellRadiusGlobal1(sim)
+            foodSmelled = self.smellRadiusGlobal1(sim)
 
             cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
 
@@ -764,8 +694,8 @@ class Agent(Object):
                 return "none"
 
         elif int(smellRadius) == 2:
-            creaturesSmelled = self.smellRadiusCreature2(sim)
-            foodSmelled = self.smellRadiusFood2(sim)
+            creaturesSmelled = self.smellRadiusGlobal2(sim)
+            foodSmelled = self.smellRadiusGlobal2(sim)
 
             cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
 
@@ -900,9 +830,9 @@ class Agent(Object):
 
         if int(smellRadius) == 1:
             if type == "agent":
-                cellsSmelled = self._assess(sim)
+                cellsSmelled = self.smellRadiusGlobal1(sim)
             else:
-                cellsSmelled = self._assess(sim)
+                cellsSmelled = self.smellRadiusGlobal1(sim)
             # cellsSmelled = self.smellRadiusCreature1(agent)
             print(cellsSmelled)
 
@@ -912,9 +842,9 @@ class Agent(Object):
 
         elif int(smellRadius) == 2:
             if type == "agent":
-                cellsSmelled = self.smellRadiusCreature2(sim)
+                cellsSmelled = self.smellRadiusGlobal2(sim)
             else:
-                cellsSmelled = self.smellRadiusFood2(sim)
+                cellsSmelled = self.smellRadiusGlobal2(sim)
             # cellsSmelled = self.smellRadiusCreature2(agent)
             print(cellsSmelled)
 
@@ -948,3 +878,114 @@ class Agent(Object):
     def __str__(self):
         formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}      {4}"
         return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString)
+
+
+
+
+
+
+
+    # def smellRadiusFood1(self, sim):
+    #     ownY, ownX, heading = self.getPose()
+    #     cellsSmelled = []
+    #
+    #     cellAbove = sim._assessFood((ownY - 1) % sim.gridSize, ownX)
+    #     cellBelow = sim._assessFood((ownY + 1) % sim.gridSize, ownX)
+    #     cellRight = sim._assessFood(ownY, (ownX + 1) % sim.gridSize)
+    #     cellLeft = sim._assessFood(ownY, (ownX - 1) % sim.gridSize)
+    #
+    #     cellsSmelled.append(cellAbove)
+    #     cellsSmelled.append(cellBelow)
+    #     cellsSmelled.append(cellRight)
+    #     cellsSmelled.append(cellLeft)
+    #
+    #     return cellsSmelled
+    #
+    # def smellRadiusFood2(self, sim):
+    #     ownY, ownX, heading = self.getPose()
+    #     cellsSmelled = []
+    #
+    #     cellAbove = sim._assessFood((ownY - 1) % sim.gridSize, ownX)
+    #     cellBelow = sim._assessFood((ownY + 1) % sim.gridSize, ownX)
+    #     cellRight = sim._assessFood(ownY, (ownX + 1) % sim.gridSize)
+    #     cellLeft = sim._assessFood(ownY, (ownX - 1) % sim.gridSize)
+    #
+    #     cellTwoAbove = sim._assessFood((ownY - 2) % sim.gridSize, ownX)
+    #     cellTwoBelow = sim._assessFood((ownY + 2) % sim.gridSize, ownX)
+    #     cellTwoRight = sim._assessFood(ownY, (ownX + 2) % sim.gridSize)
+    #     cellTwoLeft = sim._assessFood(ownY, (ownX - 2) % sim.gridSize)
+    #
+    #     cellAboveLeft = sim._assessFood((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize)
+    #     cellAboveRight = sim._assessFood((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize)
+    #     cellBelowRight = sim._assessFood((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize)
+    #     cellBelowLeft = sim._assessFood((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize)
+    #
+    #     cellsSmelled.append(cellAbove)
+    #     cellsSmelled.append(cellBelow)
+    #     cellsSmelled.append(cellRight)
+    #     cellsSmelled.append(cellLeft)
+    #
+    #     cellsSmelled.append(cellTwoAbove)
+    #     cellsSmelled.append(cellTwoBelow)
+    #     cellsSmelled.append(cellTwoRight)
+    #     cellsSmelled.append(cellTwoLeft)
+    #
+    #     cellsSmelled.append(cellAboveLeft)
+    #     cellsSmelled.append(cellAboveRight)
+    #     cellsSmelled.append(cellBelowLeft)
+    #     cellsSmelled.append(cellBelowRight)
+    #
+    #     return cellsSmelled
+
+
+    # def smellRadiusCreature1(self, sim):
+    #     ownY, ownX, heading = self.getPose()
+    #     cellsSmelled = []
+    #
+    #     cellAbove = sim._assessCreature((ownY - 1) % sim.gridSize, ownX, self)
+    #     cellBelow = sim._assessCreature((ownY + 1) % sim.gridSize, ownX, self)
+    #     cellRight = sim._assessCreature(ownY, (ownX + 1) % sim.gridSize, self)
+    #     cellLeft = sim._assessCreature(ownY, (ownX - 1) % sim.gridSize, self)
+    #
+    #     cellsSmelled.append(cellAbove)
+    #     cellsSmelled.append(cellBelow)
+    #     cellsSmelled.append(cellRight)
+    #     cellsSmelled.append(cellLeft)
+    #
+    #     return cellsSmelled
+    #
+    # def smellRadiusCreature2(self, sim):
+    #     ownY, ownX, heading = self.getPose()
+    #     cellsSmelled = []
+    #
+    #     cellAbove = sim._assessCreature((ownY - 1) % sim.gridSize, ownX, self)
+    #     cellBelow = sim._assessCreature((ownY + 1) % sim.gridSize, ownX, self)
+    #     cellRight = sim._assessCreature(ownY, (ownX + 1) % sim.gridSize, self)
+    #     cellLeft = sim._assessCreature(ownY, (ownX - 1) % sim.gridSize, self)
+    #
+    #     cellTwoAbove = sim._assessCreature((ownY - 2) % sim.gridSize, ownX, self)
+    #     cellTwoBelow = sim._assessCreature((ownY + 2) % sim.gridSize, ownX, self)
+    #     cellTwoRight = sim._assessCreature(ownY, (ownX + 2) % sim.gridSize, self)
+    #     cellTwoLeft = sim._assessCreature(ownY, (ownX - 2) % sim.gridSize, self)
+    #
+    #     cellAboveLeft = sim._assessCreature((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+    #     cellAboveRight = sim._assessCreature((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+    #     cellBelowRight = sim._assessCreature((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+    #     cellBelowLeft = sim._assessCreature((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+    #
+    #     cellsSmelled.append(cellAbove)
+    #     cellsSmelled.append(cellBelow)
+    #     cellsSmelled.append(cellRight)
+    #     cellsSmelled.append(cellLeft)
+    #
+    #     cellsSmelled.append(cellTwoAbove)
+    #     cellsSmelled.append(cellTwoBelow)
+    #     cellsSmelled.append(cellTwoRight)
+    #     cellsSmelled.append(cellTwoLeft)
+    #
+    #     cellsSmelled.append(cellAboveLeft)
+    #     cellsSmelled.append(cellAboveRight)
+    #     cellsSmelled.append(cellBelowLeft)
+    #     cellsSmelled.append(cellBelowRight)
+    #
+    #     return cellsSmelled

@@ -260,14 +260,16 @@ class ALifeSimTest(object):
         #     print(self.agentList[i].getEnergy())
         #     print("~ Vision ~")
         #     self._printVision(self.agentList[i])
-            print("~ Smell Food ~")
+        #     print("~ Smell Food ~")
             self.agentList[i]._printSmell(self, "food")
 
             # print("~ Smell Agent ~")
             # self.agentList[i]._printSmell(self, "agent")
             # print(self.agentList[i].detectSmellRadius(self), "agent")
 
-        self.printGrid()
+        # self.printGrid()
+        # print(self.globalMap)
+        # print(self.agentMap)
 
 
     def _growFood(self):
@@ -350,7 +352,7 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(0)
 
                 elif action == 'eat':
-                    self._foodEaten(agentR, agentC)
+                    self.eatFood(agentR, agentC)
                     isOkay = agent.changeEnergy(0)
 
                 elif action == 'attack':
@@ -359,12 +361,22 @@ class ALifeSimTest(object):
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
-                    print("Agent Map: ", self.agentMap[agentR, agentC])
-                    print("agent:", agent)
-                    print("Coords: ", agentR, agentC)
+                    print("Agent Map at [r,c]: ", self.agentMap[agentR, agentC])
+                    print(agent)
+                    print("[r,c]: ", agentR, agentC)
                     if len(self.agentMap[agentR, agentC]) != 0:
+                        # print("REMOVING",agent,"from agentMap")
                         self.agentMap[agentR, agentC].remove(agent)
+                        # print(self.agentMap)
+                    if agent in (self.globalMap[agentR, agentC]):
+                        # print("REMOVING",agent,"from globalMap")
+                        self.globalMap[agentR, agentC].remove(agent)
+                        # print(self.globalMap)
+
                     self.agentMap[rAhead, cAhead].append(agent)
+                    self.globalMap[rAhead, cAhead].append(agent)
+                    # print("globalMap:",self.globalMap)
+                    # print("agentMap",self.agentMap)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(0)
 
@@ -405,6 +417,7 @@ class ALifeSimTest(object):
                 self.deadAgents.append((agent, self.stepNum))
                 self.agentList.pop(i)
                 self.agentMap[agentR, agentC].remove(agent)
+                self.globalMap[agentR, agentC].remove(agent)
 
     def _assessFood(self, row, col):
         """Given a row and column, examine the amount of food there, and divide it into
@@ -462,22 +475,43 @@ class ALifeSimTest(object):
                     return 1
             return 2
 
-    def _foodEaten(self, row, col):
+    def _assessObjects(self, row, col, agent):
+        listOfObjects =  self.globalMap[row, col]
+        if listOfObjects != []:
+            for ob in listOfObjects:
+                if type(ob) is Stone:
+                    return -1
+                elif type(ob) is Agent:
+                    if ob.getColor() == agent.getColor():
+                        return 2
+                    else:
+                        return 1
+                elif type(ob) is Food:
+                    return 3
+        return 0
+
+    def eatFood(self, row, col):
         """Determines what, if any, food is eaten from the current given location. It returns the
         energy value of the food eaten, and updates the foodMap."""
         foodAtCell = self.foodMap[row, col]
         print("foodlist", self.foodList)
         print("FoodAtCell:" , foodAtCell)
+        print("self.eatenFood:", self.eatenFood)
         # print("foodmap", self.foodMap)
         if len(foodAtCell) > 0:
             self.eatenFood.append(foodAtCell)
-            self.foodMap[row, col] = []
+            print("self.eatenFood:",self.eatenFood)
+            for ob in self.globalMap[row,col]:
+                # self.foodMap[row, col] = []
+                if type(ob) is Food:
+                    self.foodMap[row,col].remove(ob)
+                    self.globalMap[row,col].remove(ob)
             # self.foodList.remove(foodAtCell)
-        for i in range(len(self.foodList)):
-            print("self.foodList[",i,"]",self.foodList[i])
-            if foodAtCell == self.foodList[i]:
-                self.foodList.pop(i)
-                print("foodlist", self.foodList)
+            for i in range(len(self.foodList)):
+                print("self.foodList["+str(i)+"] = ",self.foodList[i])
+                if foodAtCell == self.foodList[i]:
+                    self.foodList.pop(i)
+                    print("foodlist", self.foodList)
 
 
     def makeABaby(self, agent1, agent2):
@@ -499,7 +533,7 @@ class ALifeSimTest(object):
 
             self.agentList.append(babyAgent)
             self.agentMap[r, c].append(babyAgent)
-
+            self.globalMap[r,c].append(babyAgent)
 
             agent1.setReadyToBreed(24)
             agent2.setReadyToBreed(24)
