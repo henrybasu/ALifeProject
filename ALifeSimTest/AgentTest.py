@@ -426,8 +426,10 @@ class Agent(Object):
     def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere, detectedRocks):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
+                print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks))
                 return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks)
             elif agent.Aggression == 1:
+                print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks))
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks)
             else:
                 print("SHOULD NOT GET HERE")
@@ -450,7 +452,7 @@ class Agent(Object):
             listOfRandomActionsPossible.remove('right')
         if detectedRocks[3] == -1:
             listOfRandomActionsPossible.remove('left')
-        print(listOfRandomActionsPossible)
+        print("possible action:", listOfRandomActionsPossible)
 
         if isCreatureHere == 2:
             if agent.getReadyToBreed() == 0:
@@ -565,7 +567,7 @@ class Agent(Object):
         if detectedRocks[3] == -1:
             listOfRandomActionsPossible.remove('left')
 
-        print(listOfRandomActionsPossible)
+        print("list of actions possible aggressive:",listOfRandomActionsPossible)
 
 
         creaturesAround = cellsSmelled
@@ -889,7 +891,7 @@ class Agent(Object):
 
     def detectRocks(self, sim):
         detectedRocks = self.smellRadiusGlobal1(sim)
-        print("Dectected Rocks: ", detectedRocks)
+        # print("Dectected Rocks: ", detectedRocks)
         order = []
 
         ownY, ownX, heading = self.getPose()
