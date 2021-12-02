@@ -255,6 +255,7 @@ class ALifeSimTest(object):
         # print(self.foodMap)
 
         for i in range(len(self.agentList)):
+            print("\n\n")
             print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
         #     print("~ Energy ~")
         #     print(self.agentList[i].getEnergy())
@@ -415,7 +416,8 @@ class ALifeSimTest(object):
                 self.deadAgents.append((agent, self.stepNum))
                 self.agentList.pop(i)
                 self.agentMap[agentR, agentC].remove(agent)
-                self.globalMap[agentR, agentC].remove(agent)
+                if agent in self.globalMap:
+                    self.globalMap[agentR, agentC].remove(agent)
 
     def _assessFood(self, row, col):
         """Given a row and column, examine the amount of food there, and divide it into
@@ -457,6 +459,9 @@ class ALifeSimTest(object):
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at current location: (" + str(row) + "," + str(col) + ")")
         creatureAmt = self.agentMap[row, col]
+        print("creatureHere",creatureAmt)
+        for i in range(len(creatureAmt)):
+            print(creatureAmt[i].getColor())
         #print("AgentMap: " + str(self.agentMap))
         #print("Row and Col: " + str(row) + ", " + str(col))
         # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
@@ -473,6 +478,7 @@ class ALifeSimTest(object):
 
     def _assessObjects(self, row, col, agent):
         listOfObjects = self.globalMap[row, col]
+        # print("listOfObjects",listOfObjects)
         if listOfObjects != []:
             for ob in listOfObjects:
                 if type(ob) is Stone:

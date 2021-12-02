@@ -452,7 +452,7 @@ class Agent(Object):
             listOfRandomActionsPossible.remove('right')
         if detectedRocks[3] == -1:
             listOfRandomActionsPossible.remove('left')
-        print(listOfRandomActionsPossible)
+        print("possible action:", listOfRandomActionsPossible)
 
         if isCreatureHere == 2:
             if agent.getReadyToBreed() == 0:
@@ -567,7 +567,7 @@ class Agent(Object):
         if detectedRocks[3] == -1:
             listOfRandomActionsPossible.remove('left')
 
-        print(listOfRandomActionsPossible)
+        print("list of actions possible aggressive:",listOfRandomActionsPossible)
 
 
         creaturesAround = cellsSmelled
@@ -891,7 +891,7 @@ class Agent(Object):
 
     def detectRocks(self, sim):
         detectedRocks = self.smellRadiusGlobal1(sim)
-        print("Dectected Rocks: ", detectedRocks)
+        # print("Dectected Rocks: ", detectedRocks)
         order = []
 
         ownY, ownX, heading = self.getPose()
