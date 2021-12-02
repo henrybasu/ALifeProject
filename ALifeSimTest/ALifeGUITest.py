@@ -32,9 +32,11 @@ class ALifeGUI:
         self.TurnipImage = PhotoImage(file='images/trnip.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("12100599")
-        randomGeneticStrings.append("12110299")
-        randomGeneticStrings.append("11110599")
+        # randomGeneticStrings.append("12100599")
+        randomGeneticStrings.append("11100299")
+        randomGeneticStrings.append("11110299")
+
+        # randomGeneticStrings.append("11110599")
 
         # randomGeneticStrings.append("12100699")
         # randomGeneticStrings.append("11100599")
@@ -835,7 +837,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 3
+    numberOfAgents = 2
     s = ALifeGUI(3, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
