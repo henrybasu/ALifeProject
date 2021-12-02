@@ -362,7 +362,7 @@ class ALifeSimTest(object):
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
-                    if len(self.agentMap[agentR, agentC]) != 0:
+                    if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from agentMap")
                         self.agentMap[agentR, agentC].remove(agent)
                         # print(self.agentMap)

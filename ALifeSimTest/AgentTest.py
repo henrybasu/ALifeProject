@@ -439,9 +439,11 @@ class Agent(Object):
     def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks):
         # print("Creatures around: " + str(creaturesAround))
         # if the agent is on the same square as a friend
-        listOfRandomActionsPossible = ['left','right','turnAround','forward']
+        listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
         if detectedRocks[0] == -1:
-            listOfRandomActionsPossible.remove('forward') #TODO: the agent can get stuck if it's below a rock
+            listOfRandomActionsPossible.remove('forward')
+            listOfRandomActionsPossible.remove('forward')
+            listOfRandomActionsPossible.remove('forward')
         if detectedRocks[1] == -1:
             listOfRandomActionsPossible.remove('turnAround')
         if detectedRocks[2] == -1:
@@ -541,9 +543,9 @@ class Agent(Object):
                     else:
                         return random.choice(listOfRandomActionsPossible)
             else:
-                if 'forward' in listOfRandomActionsPossible:
-                    for i in range(2):
-                        listOfRandomActionsPossible.append('forward')
+                # if 'forward' in listOfRandomActionsPossible:
+                #     for i in range(2):
+                #         listOfRandomActionsPossible.append('forward')
                 return random.choice(listOfRandomActionsPossible)
 
         else:
@@ -551,8 +553,10 @@ class Agent(Object):
             return 'forward'
 
     def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks):
-        listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward']
+        listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
         if detectedRocks[0] == -1:
+            listOfRandomActionsPossible.remove('forward')
+            listOfRandomActionsPossible.remove('forward')
             listOfRandomActionsPossible.remove('forward')
         if detectedRocks[1] == -1:
             listOfRandomActionsPossible.remove('turnAround')
@@ -560,7 +564,9 @@ class Agent(Object):
             listOfRandomActionsPossible.remove('right')
         if detectedRocks[3] == -1:
             listOfRandomActionsPossible.remove('left')
+
         print(listOfRandomActionsPossible)
+
 
         creaturesAround = cellsSmelled
 
@@ -579,8 +585,8 @@ class Agent(Object):
 
         # if it can't see any creatures, and can't smell any creatures: go anywhere
         elif isCreatureAhead == 0 and creaturesAround == "none":
-            for i in range(2):
-                listOfRandomActionsPossible.append('forward')
+            # for i in range(2):
+            #     listOfRandomActionsPossible.append('forward')
             return random.choice(listOfRandomActionsPossible)
 
         # if it can't see any creatures, and but it can smell any creatures:
@@ -603,9 +609,10 @@ class Agent(Object):
                     return "right"
                 elif creaturesAround[0] == "below":
                     return "turnAround"
+            elif creaturesAround[1] == -1:
+                return random.choice(listOfRandomActionsPossible)
+
             else:
-                for i in range(2):
-                    listOfRandomActionsPossible.append('forward')
                 return random.choice(listOfRandomActionsPossible)
 
         else:
@@ -724,40 +731,40 @@ class Agent(Object):
 
             cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
 
-            if cellsSmelled[0] != 0 and heading == "n":
+            if cellsSmelled[0] > 0 and heading == "n":
                 return "above", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "n":
+            elif cellsSmelled[1] > 0 and heading == "n":
                 return "below", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "n":
+            elif cellsSmelled[2] > 0 and heading == "n":
                 return "right", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "n":
+            elif cellsSmelled[3] > 0 and heading == "n":
                 return "left", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "s":
+            elif cellsSmelled[0] > 0 and heading == "s":
                 return "below", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "s":
+            elif cellsSmelled[1] > 0 and heading == "s":
                 return "above", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "s":
+            elif cellsSmelled[2] > 0 and heading == "s":
                 return "left", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "s":
+            elif cellsSmelled[3] > 0 and heading == "s":
                 return "right", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "e":
+            elif cellsSmelled[0] > 0 and heading == "e":
                 return "left", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "e":
+            elif cellsSmelled[1] > 0 and heading == "e":
                 return "right", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "e":
+            elif cellsSmelled[2] > 0 and heading == "e":
                 return "above", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "e":
+            elif cellsSmelled[3] > 0 and heading == "e":
                 return "below", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "w":
+            elif cellsSmelled[0] > 0 and heading == "w":
                 return "right", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "w":
+            elif cellsSmelled[1] > 0 and heading == "w":
                 return "left", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "w":
+            elif cellsSmelled[2] > 0 and heading == "w":
                 return "below", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "w":
+            elif cellsSmelled[3] > 0 and heading == "w":
                 return "above", cellsSmelled[3]
             else:
                 return "none"
@@ -881,11 +888,34 @@ class Agent(Object):
             return "none"
 
     def detectRocks(self, sim):
-        return self.smellRadiusGlobal1(sim)
+        detectedRocks = self.smellRadiusGlobal1(sim)
+        print("Dectected Rocks: ", detectedRocks)
+        order = []
+
+        ownY, ownX, heading = self.getPose()
+
+        if heading == "n":
+            return detectedRocks
+        elif heading == "s":
+            order = [1, 0, 2, 3]
+        elif heading == "e":
+            order = [2, 3, 1, 0]
+        elif heading == "w":
+            order = [3, 2, 0, 1]
+        else:
+            print("HEADING INVALID: RETURNING NORTH")
+            return detectedRocks
+
+        detectedRocks = [detectedRocks[i] for i in order]
+
+        return detectedRocks
+
 
     def _printSmell(self, sim, type):
         smellRadius = self.geneticString[1]
         ownY, ownX, heading = self.getPose()
+
+
 
         if heading == "n":
             direction = "^"
