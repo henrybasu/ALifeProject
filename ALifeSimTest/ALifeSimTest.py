@@ -527,7 +527,7 @@ class ALifeSimTest(object):
 
             babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
 
-            newBabyGeneticString = mutate(babyGeneticString)
+            newBabyGeneticString = self.mutate(babyGeneticString)
 
             babyAgent = Agent(geneticString=newBabyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)
 
