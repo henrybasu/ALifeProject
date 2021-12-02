@@ -527,7 +527,9 @@ class ALifeSimTest(object):
 
             babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
 
-            babyAgent = Agent(geneticString=babyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)
+            newBabyGeneticString = mutate(babyGeneticString)
+
+            babyAgent = Agent(geneticString=newBabyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)
 
             self.agentList.append(babyAgent)
             self.agentMap[r, c].append(babyAgent)
@@ -535,4 +537,24 @@ class ALifeSimTest(object):
 
             agent1.setReadyToBreed(24)
             agent2.setReadyToBreed(24)
+
+    def mutate(self, babyGeneticString):
+        randElem = random.randrange(len(babyGeneticString)-2)
+
+        if randElem == 0:
+            newVal =  random.choice(0, 1, 2, 3)
+        elif randElem == 1:
+            return random.choice(0, 1, 2)
+        elif randElem == 2:
+            return random.choice(0, 1)
+        elif randElem == 3:
+            return random.choice(0, 1)
+        elif randElem == 4:
+            return random.choice(0, 1)
+        elif randElem == 5:
+            return random.choice(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+
+        babyGeneticString[randElem] =
+
+
 
