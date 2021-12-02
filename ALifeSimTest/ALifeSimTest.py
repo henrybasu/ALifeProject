@@ -50,7 +50,7 @@ class ALifeSimTest(object):
         self.verbose = False
 
         self._placeStones()
-        self._placeFood()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -271,6 +271,8 @@ class ALifeSimTest(object):
         # self.printGrid()
         # print(self.globalMap)
         # print(self.agentMap)
+        print("self.globalMap:",self.globalMap)
+        print("self.agentMap:", self.agentMap)
 
 
     def _growFood(self):
@@ -343,10 +345,9 @@ class ALifeSimTest(object):
             # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
 
             # print("Agent is ready to breed: " + str(agent.getReadyToBreed()))
-
+            isOkay = True
 
             if not agent.isDead:
-
                 action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks)
 
                 if action == 'breed':
@@ -363,7 +364,7 @@ class ALifeSimTest(object):
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
-                    if agent in (self.globalMap[agentR, agentC]):
+                    if agent in (self.agentMap[agentR, agentC]):
                         # print("REMOVING",agent,"from agentMap")
                         self.agentMap[agentR, agentC].remove(agent)
                         # print(self.agentMap)
@@ -412,12 +413,15 @@ class ALifeSimTest(object):
 
             if isOkay:
                 i = i + 1
+
             else:
                 self.deadAgents.append((agent, self.stepNum))
                 self.agentList.pop(i)
-                self.agentMap[agentR, agentC].remove(agent)
-                if agent in self.globalMap:
+                if agent in self.agentMap[agentR,agentC]:
+                    self.agentMap[agentR, agentC].remove(agent)
+                if agent in self.globalMap[agentR,agentC]:
                     self.globalMap[agentR, agentC].remove(agent)
+                i = i + 1
 
     def _assessFood(self, row, col):
         """Given a row and column, examine the amount of food there, and divide it into
