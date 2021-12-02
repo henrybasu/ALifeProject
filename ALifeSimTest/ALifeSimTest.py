@@ -539,22 +539,25 @@ class ALifeSimTest(object):
             agent2.setReadyToBreed(24)
 
     def mutate(self, babyGeneticString):
+        newBabyGeneticString = babyGeneticString
         randElem = random.randrange(len(babyGeneticString)-2)
+        newVal = 0
 
         if randElem == 0:
-            newVal =  random.choice(0, 1, 2, 3)
+            newVal =  random.choice([0, 1, 2, 3])
         elif randElem == 1:
-            return random.choice(0, 1, 2)
+            newVal =  random.choice([0, 1, 2])
         elif randElem == 2:
-            return random.choice(0, 1)
+            newVal =  random.choice([0, 1])
         elif randElem == 3:
-            return random.choice(0, 1)
+            newVal =  random.choice([0, 1])
         elif randElem == 4:
-            return random.choice(0, 1)
+            newVal = random.choice([0, 1])
         elif randElem == 5:
-            return random.choice(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+            newVal = random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
 
-        babyGeneticString[randElem] =
+        newBabyGeneticString[randElem] = newVal
+        return newBabyGeneticString
 
 
 
