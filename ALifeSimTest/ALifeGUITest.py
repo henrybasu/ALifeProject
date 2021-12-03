@@ -6,6 +6,7 @@ GUI for this problem.  This must be run in Python 3!
  ==================================================================="""
 
 #
+import collections
 import time
 import random
 import string
@@ -25,7 +26,7 @@ class ALifeGUI:
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
-        self.numberStones = 5
+        self.numberStones = 1
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
@@ -33,9 +34,9 @@ class ALifeGUI:
         self.TurnipImage = PhotoImage(file='images/trnip.png')
 
         randomGeneticStrings = []
-        # randomGeneticStrings.append("12100599")
+        randomGeneticStrings.append("121005990")
         randomGeneticStrings.append("111002990")
-        randomGeneticStrings.append("111002990")
+        # randomGeneticStrings.append("111002990")
 
         # randomGeneticStrings.append("11110599")
 
@@ -155,7 +156,7 @@ class ALifeGUI:
         messageFrame.grid(row=2, column=2,  padx=5, pady=5)
         self.messageVar = StringVar()
         self.messageVar.set("")
-        message = Label(messageFrame, textvariable=self.messageVar, width=50, height=5, wraplength = 300)
+        message = Label(messageFrame, textvariable=self.messageVar, width=50, height=10, wraplength = 300)
         message.grid(row=1, column=1)
 
 
@@ -470,6 +471,7 @@ class ALifeGUI:
                     agentOutlineColor = "red"
                 else:
                     agentOutlineColor = "blue"
+
                 coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
                 agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=2)
                 self.agentIdToPose[agId] = agent.getPose()
@@ -529,36 +531,36 @@ class ALifeGUI:
 
     def reportSimResult(self):
         """Reports statistics on how the simulation came out."""
-        total = 0
-        count = 0
-        self.minTime = 10 * self.maxSteps
-        self.maxTime = 0
-        deadAgents = self.sim.getDeadAgents()
-        self.agentsLiving = self.sim.getAgents()
-        numLiving = len(self.agentsLiving)
-        for agent, when in deadAgents:
-            if when < self.minTime:
-                self.minTime = when
-            if when > self.maxTime:
-                self.maxTime = when
-            total += when
-            count += 1
-        self.avgTime = (total + numLiving*self.maxSteps) / self.numberAgents
-        if numLiving > 0:
-            maxTime = self.maxSteps
-        message1Template = "Survival time in steps: Average = {0:5.2f}     Minimum = {1:3d}     Maximum = {2:3d}"
-        message1 = message1Template.format(round(self.avgTime, 2), self.minTime, self.maxTime)
-        message2Template = "Number living = {0:5d}"
-        message2 = message2Template.format(numLiving)
-        message2 = str(self.sim.getDeadAgents())
-        self._addMessage(message1 + '\n' + message2)
+        # total = 0
+        # count = 0
+        # self.minTime = 10 * self.maxSteps
+        # self.maxTime = 0
+        # deadAgents = self.sim.getDeadAgents()
+        # self.agentsLiving = self.sim.getAgents()
+        # numLiving = len(self.agentsLiving)
+        # for agent, when in deadAgents:
+        #     if when < self.minTime:
+        #         self.minTime = when
+        #     if when > self.maxTime:
+        #         self.maxTime = when
+        #     total += when
+        #     count += 1
+        # self.avgTime = (total + numLiving*self.maxSteps) / self.numberAgents
+        # if numLiving > 0:
+        #     maxTime = self.maxSteps
+        # message1Template = "Survival time in steps: Average = {0:5.2f}     Minimum = {1:3d}     Maximum = {2:3d}"
+        # message1 = message1Template.format(round(self.avgTime, 2), self.minTime, self.maxTime)
+        # message2Template = "Number living = {0:5d}"
+        # message2 = message2Template.format(numLiving)
+        # message2 = str(self.sim.getDeadAgents())
+        # self._addMessage(message1 + '\n' + message2)
 
-        print("DEAD AGENTS")
-        print("Genetic String      Lifespan")
-
-        for i in range(len(self.sim.getDeadAgents())):
-            deadAgent,timeLived = self.sim.getDeadAgents()[i]
-            print("  ",deadAgent.getGeneticString(), "           " ,timeLived)
+        # self._addMessage("DEAD AGENTS")
+        # self._addMessage("Genetic String      Lifespan")
+        #
+        # for i in range(len(self.sim.getDeadAgents())):
+        #     deadAgent,timeLived = self.sim.getDeadAgents()[i]
+        #     self._addMessage("  " + str(deadAgent.getGeneticString()) + "           " + str(timeLived))
 
         self.assessFinalResult()
 
@@ -573,20 +575,23 @@ class ALifeGUI:
         ListOfAggression = []
         ListOfSleepType = []
         ListOfColor = []
+        ListOfJump = []
 
         for i in range(len(deadAgents)):
             deadAgent, timeLived = self.sim.getDeadAgents()[i]
             deadAgentGenetricStrings.append(deadAgent.getGeneticString())
 
-        print(deadAgentGenetricStrings)
+        # print(deadAgentGenetricStrings)
 
         for j in range(len(deadAgentGenetricStrings)):
-            ListOfVisions.append(deadAgentGenetricStrings[j][0])
-            ListOfSmell.append(deadAgentGenetricStrings[j][1])
-            ListOfMovement.append(deadAgentGenetricStrings[j][2])
-            ListOfAggression.append(deadAgentGenetricStrings[j][3])
-            ListOfSleepType.append(deadAgentGenetricStrings[j][4])
-            ListOfColor .append(deadAgentGenetricStrings[j][5])
+            ListOfVisions.append(int(deadAgentGenetricStrings[j][0]))
+            ListOfSmell.append(int(deadAgentGenetricStrings[j][1]))
+            ListOfMovement.append(int(deadAgentGenetricStrings[j][2]))
+            ListOfAggression.append(int(deadAgentGenetricStrings[j][3]))
+            ListOfSleepType.append(int(deadAgentGenetricStrings[j][4]))
+            ListOfColor.append(int(deadAgentGenetricStrings[j][5]))
+            ListOfJump.append(int(deadAgentGenetricStrings[j][8]))
+
 
         print("ListOfVisions: ", ListOfVisions)
         print("ListOfSmell: ", ListOfSmell)
@@ -594,6 +599,27 @@ class ALifeGUI:
         print("ListOfAggression: ", ListOfAggression)
         print("ListOfSleepType: ", ListOfSleepType)
         print("ListOfColor: ", ListOfColor)
+        print("ListOfJump: ", ListOfJump)
+
+
+        WorstVisionTrait = self.most_common(ListOfVisions)
+        WorstSmellTrait = self.most_common(ListOfSmell)
+        WorstMovementTrait = self.most_common(ListOfMovement)
+        WorstAggressionTrait = self.most_common(ListOfAggression)
+        WorstSleepTrait = self.most_common(ListOfSleepType)
+        WorstColorTrait = self.most_common(ListOfColor)
+        WorstJumpTrait = self.most_common(ListOfJump)
+
+        self._clearMessage()
+
+        self._addMessage("WorstVisionTrait: " + str(WorstVisionTrait))
+        self._addMessage("WorstSmellTrait: " + str(WorstSmellTrait))
+        self._addMessage("WorstMovementTrait: " + str(WorstMovementTrait))
+        self._addMessage("WorstAggressionTrait: " + str(WorstAggressionTrait))
+        self._addMessage("WorstSleepTrait: " + str(WorstSleepTrait))
+        self._addMessage("WorstColorTrait: " + str(WorstColorTrait))
+        self._addMessage("WorstJumpTrait: " + str(WorstJumpTrait))
+
 
 
 
@@ -601,6 +627,12 @@ class ALifeGUI:
 
     ### =================================================================
     ### Private helper functions
+
+    def most_common(self, list):
+        if len(list) != 0:
+            return max(set(list), key=list.count)
+        else:
+            return []
 
 
     def _buildTkinterGrid(self):
@@ -845,7 +877,7 @@ class ALifeGUI:
         oldMessage = self.messageVar.get()
         newMessage = oldMessage + '\n' + messageText
         self.messageVar.set(newMessage)
-        print(newMessage)
+        # print(newMessage)
 
 
     def _setCellColor(self, cellId, color):

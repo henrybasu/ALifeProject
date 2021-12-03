@@ -254,6 +254,7 @@ class ALifeSimTest(object):
         # else:
         #     self.time = 0
 
+
         self._growFood()
         self._updateAgents()
         # print(self.foodMap)
@@ -411,6 +412,12 @@ class ALifeSimTest(object):
                 if agent.getReadyToBreed() != 0:
                     agent.changeReadyToBreed(1)
 
+
+            for j in range(len(self.agentList)-1):
+                print("AGENT 1 ID: ", self.agentList[j].getVisId)
+                print("AGENT 2 ID: ", self.agentList[j+1].getVisId)
+                if self.agentList[j].getVisId == self.agentList[j+1].getVisId:
+                    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
             if agent.energy <= 0:
                 isOkay = False

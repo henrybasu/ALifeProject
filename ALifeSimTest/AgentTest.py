@@ -433,11 +433,9 @@ class Agent(Object):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
                 print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks))
-                print("docileHELLO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
                 return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks)
             elif agent.Aggression == 1:
                 print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks))
-                print("agHELLO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks)
             else:
                 print("SHOULD NOT GET HERE")
@@ -450,11 +448,9 @@ class Agent(Object):
         # print("Creatures around: " + str(creaturesAround))
         # if the agent is on the same square as a friend
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-        print("HELLO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
-        print("GetJump: ", self.getJump())
+
 
         if self.getJump() == 0:
-            print("I CAN'T JUMP")
             if detectedRocks[0] == -1:
                 listOfRandomActionsPossible.remove('forward')
                 listOfRandomActionsPossible.remove('forward')
@@ -465,7 +461,6 @@ class Agent(Object):
                 listOfRandomActionsPossible.remove('right')
             if detectedRocks[3] == -1:
                 listOfRandomActionsPossible.remove('left')
-        print("list of actions possible docile:", listOfRandomActionsPossible)
 
         if len(listOfRandomActionsPossible) == 0:
             return "turnAround"
