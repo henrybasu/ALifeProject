@@ -453,6 +453,7 @@ class Agent(Object):
             listOfRandomActionsPossible.remove('right')
         if detectedRocks[3] == -1:
             listOfRandomActionsPossible.remove('left')
+
         print("possible action:", listOfRandomActionsPossible)
 
         if isCreatureHere == 2:
@@ -475,7 +476,7 @@ class Agent(Object):
             # if they are ready to breed, go forward
             if agent.getReadyToBreed() == 0:
                 return "forward"
-            # if they aren't, go anywhere
+            # if they aren't, go a anywhere
             else:
                 return random.choice(listOfRandomActionsPossible)
 
