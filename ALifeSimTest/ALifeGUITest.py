@@ -25,7 +25,7 @@ class ALifeGUI:
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
-        self.numberStones = 1
+        self.numberStones = 5
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
@@ -34,8 +34,8 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         # randomGeneticStrings.append("12100599")
-        # randomGeneticStrings.append("11100299")
-        # randomGeneticStrings.append("11110299")
+        randomGeneticStrings.append("111002990")
+        randomGeneticStrings.append("111002990")
 
         # randomGeneticStrings.append("11110599")
 
@@ -72,7 +72,7 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
-        randomGeneticStrings = self.generateRandomGeneticStrings()
+        # randomGeneticStrings = self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
@@ -96,7 +96,7 @@ class ALifeGUI:
             randomSleepType = str(random.randint(0, 0))
             randomColor = str(random.randint(3, 6))
             randomEnergy = "99"
-            randomJump = str(random.randint(0, 1))
+            randomJump = str(random.choice([0, 0, 0, 1]))
             randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy + randomJump
             randomGeneticStrings.append(randomGeneticString)
             print("randomGeneticString: ", randomGeneticString)

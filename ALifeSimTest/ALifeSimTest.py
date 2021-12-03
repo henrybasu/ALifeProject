@@ -526,8 +526,9 @@ class ALifeSimTest(object):
             agent2GeneticString = agent2.getGeneticString()
 
             # TODO: if we extend geneticString's length, this will need to be changed.
-            babyGeneticStringPart1 = agent1GeneticString[:4]
-            babyGeneticStringPart2 = agent2GeneticString[4:]
+            halfway = round(len(agent1.getGeneticString()) / 2)
+            babyGeneticStringPart1 = agent1GeneticString[:halfway]
+            babyGeneticStringPart2 = agent2GeneticString[halfway:]
 
             babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
 
@@ -546,7 +547,7 @@ class ALifeSimTest(object):
 
     def mutate(self, babyGeneticString):
         newBabyGeneticString = babyGeneticString
-        randElem = random.randrange(len(babyGeneticString)-2)
+        randElem = random.randrange(len(babyGeneticString))
         newVal = 0
         if randElem == 0:
             newVal =  random.choice([0, 1, 2, 3])
@@ -560,6 +561,12 @@ class ALifeSimTest(object):
             newVal = random.choice([0, 1])
         elif randElem == 5:
             newVal = random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        elif randElem == 6:
+            newVal = random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        elif randElem == 7:
+            newVal = random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+        elif randElem == 8:
+            newVal = random.choice([0, 1])
 
         babyGeneticStringAsList = list(newBabyGeneticString)
         print(babyGeneticStringAsList)
