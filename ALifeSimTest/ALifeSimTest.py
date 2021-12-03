@@ -129,16 +129,18 @@ class ALifeSimTest(object):
             self.globalMap[r, c].append(nextAgent)
 
     def _placeStones(self):
-        (randRow, randCol) = self._genRandomLoc()
-        while True:
-            if len(self.globalMap[randRow, randCol]) != 0:
-                (randRow, randCol) = self._genRandomLoc()
-            else:
-                break
-        nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
-        self.stoneList.append(nextStone)
-        self.stoneMap[randRow, randCol].append(nextStone)
-        self.globalMap[randRow, randCol].append(nextStone)
+
+        for i in range(4):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
+            self.stoneList.append(nextStone)
+            self.stoneMap[randRow, randCol].append(nextStone)
+            self.globalMap[randRow, randCol].append(nextStone)
 
 
     def _addFoodClump(self):

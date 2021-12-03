@@ -539,16 +539,49 @@ class ALifeGUI:
         message2 = str(self.sim.getDeadAgents())
         self._addMessage(message1 + '\n' + message2)
 
+        print("DEAD AGENTS")
+        print("Genetic String      Lifespan")
+
         for i in range(len(self.sim.getDeadAgents())):
             deadAgent,timeLived = self.sim.getDeadAgents()[i]
-            print("DEAD AGENTS")
-            print("Genetic String      Lifespan")
             print("  ",deadAgent.getGeneticString(), "           " ,timeLived)
+
+        self.assessFinalResult()
 
 
     def assessFinalResult(self):
         deadAgents = self.sim.getDeadAgents()
         liveAgents = self.sim.getAgents()
+        deadAgentGenetricStrings = []
+        ListOfVisions = []
+        ListOfSmell = []
+        ListOfMovement = []
+        ListOfAggression = []
+        ListOfSleepType = []
+        ListOfColor = []
+
+        for i in range(len(deadAgents)):
+            deadAgent, timeLived = self.sim.getDeadAgents()[i]
+            deadAgentGenetricStrings.append(deadAgent.getGeneticString())
+
+        print(deadAgentGenetricStrings)
+
+        for j in range(len(deadAgentGenetricStrings)):
+            ListOfVisions.append(deadAgentGenetricStrings[j][0])
+            ListOfSmell.append(deadAgentGenetricStrings[j][1])
+            ListOfMovement.append(deadAgentGenetricStrings[j][2])
+            ListOfAggression.append(deadAgentGenetricStrings[j][3])
+            ListOfSleepType.append(deadAgentGenetricStrings[j][4])
+            ListOfColor .append(deadAgentGenetricStrings[j][5])
+
+        print("ListOfVisions: ", ListOfVisions)
+        print("ListOfSmell: ", ListOfSmell)
+        print("ListOfMovement: ", ListOfMovement)
+        print("ListOfAggression: ", ListOfAggression)
+        print("ListOfSleepType: ", ListOfSleepType)
+        print("ListOfColor: ", ListOfColor)
+
+
 
 
 
