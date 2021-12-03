@@ -449,11 +449,8 @@ class Agent(Object):
         # if the agent is on the same square as a friend
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
 
-        print("HELLO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
-        print("GetJump: ", self.getJump())
 
         if self.getJump() == 0:
-            print("I CAN'T JUMP")
             if detectedRocks[0] == -1:
                 listOfRandomActionsPossible.remove('forward')
                 listOfRandomActionsPossible.remove('forward')
@@ -464,8 +461,6 @@ class Agent(Object):
                 listOfRandomActionsPossible.remove('right')
             if detectedRocks[3] == -1:
                 listOfRandomActionsPossible.remove('left')
-
-        print("possible action:", listOfRandomActionsPossible)
 
         if len(listOfRandomActionsPossible) == 0:
             return "turnAround"
