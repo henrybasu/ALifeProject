@@ -24,13 +24,14 @@ class Agent(Object):
         self.stepSpawned = stepSpawned
 
         """
-        X0000000 - Vision
-        0X000000 - Smell
-        00X00000 - Movement
-        000X0000 - Predator (0) or Prey (1)
-        0000X000 - 
-        00000X00 - Color
-        000000XX - Energy
+        X00000000 - Vision [0]
+        0X0000000 - Smell [1]
+        00X000000 - Movement [2]
+        000X00000 - Aggression [3]
+        0000X0000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
+        00000X000 - Color [5]
+        0000000X0 - Energy [6:7]
+        00000000X - Jump [8]
         """
 
         self.visionRange = int(self.geneticString[0])
@@ -38,7 +39,8 @@ class Agent(Object):
         self.Aggression = int(self.geneticString[3])
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
-        self.energy = int(self.geneticString[6:])
+        self.energy = int(self.geneticString[6:7])
+        self.jumpVal = int(self.geneticString[8])
         # self.score = 0
 
     def getEnergy(self):
@@ -74,6 +76,9 @@ class Agent(Object):
 
     def changeIsDead(self, deadVal):
         self.isDead = deadVal
+
+    def getJump(self):
+        return self.jumpVal
 
     def changeReadyToBreed(self, breedVal):
         self.readyToBreed = self.readyToBreed - breedVal
@@ -443,16 +448,22 @@ class Agent(Object):
         # print("Creatures around: " + str(creaturesAround))
         # if the agent is on the same square as a friend
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-        if detectedRocks[0] == -1:
-            listOfRandomActionsPossible.remove('forward')
-            listOfRandomActionsPossible.remove('forward')
-            listOfRandomActionsPossible.remove('forward')
-        if detectedRocks[1] == -1:
-            listOfRandomActionsPossible.remove('turnAround')
-        if detectedRocks[2] == -1:
-            listOfRandomActionsPossible.remove('right')
-        if detectedRocks[3] == -1:
-            listOfRandomActionsPossible.remove('left')
+
+        print("HELLO ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`")
+        print("GetJump: ", self.getJump())
+
+        if self.getJump() == 0:
+            print("I CAN'T JUMP")
+            if detectedRocks[0] == -1:
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+            if detectedRocks[1] == -1:
+                listOfRandomActionsPossible.remove('turnAround')
+            if detectedRocks[2] == -1:
+                listOfRandomActionsPossible.remove('right')
+            if detectedRocks[3] == -1:
+                listOfRandomActionsPossible.remove('left')
 
         print("possible action:", listOfRandomActionsPossible)
 
@@ -468,7 +479,8 @@ class Agent(Object):
         # if the agent sees an enemy on a square ahead
         elif isCreatureAhead == 1:
             if 'forward' in listOfRandomActionsPossible:
-                listOfRandomActionsPossible.remove('forward')
+                if len(listOfRandomActionsPossible) != 1:
+                    listOfRandomActionsPossible.remove('forward')
             return random.choice(listOfRandomActionsPossible)
 
         # if the agent sees a friend ahead
@@ -492,12 +504,14 @@ class Agent(Object):
             if cellsSmelled[1] == 1:
                 if cellsSmelled[0] == "above":
                     if 'forward' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('forward')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('forward')
                     return random.choice(listOfRandomActionsPossible)
 
                 elif cellsSmelled[0] == "left":
                     if 'left' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('left')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('left')
                     if detectedRocks[0] == -1:
                         return random.choice(listOfRandomActionsPossible)
                     else:
@@ -507,7 +521,8 @@ class Agent(Object):
 
                 elif cellsSmelled[0] == "right":
                     if 'right' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('right')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('right')
                     if detectedRocks[0] == -1:
                         return random.choice(listOfRandomActionsPossible)
                     else:
@@ -517,7 +532,8 @@ class Agent(Object):
 
                 elif cellsSmelled[0] == "below":
                     if 'turnAround' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('turnAround')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('turnAround')
                     if detectedRocks[0] == -1:
                         return random.choice(listOfRandomActionsPossible)
                     else:
@@ -558,16 +574,18 @@ class Agent(Object):
 
     def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks):
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-        if detectedRocks[0] == -1:
-            listOfRandomActionsPossible.remove('forward')
-            listOfRandomActionsPossible.remove('forward')
-            listOfRandomActionsPossible.remove('forward')
-        if detectedRocks[1] == -1:
-            listOfRandomActionsPossible.remove('turnAround')
-        if detectedRocks[2] == -1:
-            listOfRandomActionsPossible.remove('right')
-        if detectedRocks[3] == -1:
-            listOfRandomActionsPossible.remove('left')
+
+        if agent.getJump() == 0:
+            if detectedRocks[0] == -1:
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+            if detectedRocks[1] == -1:
+                listOfRandomActionsPossible.remove('turnAround')
+            if detectedRocks[2] == -1:
+                listOfRandomActionsPossible.remove('right')
+            if detectedRocks[3] == -1:
+                listOfRandomActionsPossible.remove('left')
 
         print("list of actions possible aggressive:",listOfRandomActionsPossible)
 
@@ -670,7 +688,8 @@ class Agent(Object):
         # if the agent sees an enemy on a square ahead
         elif isCreatureAhead == 1:
             if 'forward' in listOfRandomActionsPossible:
-                listOfRandomActionsPossible.remove('forward')
+                if len(listOfRandomActionsPossible) != 1:
+                    listOfRandomActionsPossible.remove('forward')
             return random.choice(listOfRandomActionsPossible)
 
         # if the agent sees a friend ahead
@@ -694,12 +713,14 @@ class Agent(Object):
             if cellsSmelled[1] == 1:
                 if cellsSmelled[0] == "above":
                     if 'forward' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('forward')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('forward')
                     return random.choice(listOfRandomActionsPossible)
 
                 elif cellsSmelled[0] == "left":
                     if 'left' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('left')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('left')
                     if detectedRocks[0] == -1:
                         return random.choice(listOfRandomActionsPossible)
                     else:
@@ -709,7 +730,8 @@ class Agent(Object):
 
                 elif cellsSmelled[0] == "right":
                     if 'right' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('right')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('right')
                     if detectedRocks[0] == -1:
                         return random.choice(listOfRandomActionsPossible)
                     else:
@@ -719,7 +741,8 @@ class Agent(Object):
 
                 elif cellsSmelled[0] == "below":
                     if 'turnAround' in listOfRandomActionsPossible:
-                        listOfRandomActionsPossible.remove('turnAround')
+                        if len(listOfRandomActionsPossible) != 1:
+                            listOfRandomActionsPossible.remove('turnAround')
                     if detectedRocks[0] == -1:
                         return random.choice(listOfRandomActionsPossible)
                     else:

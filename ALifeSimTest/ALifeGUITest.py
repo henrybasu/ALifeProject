@@ -34,8 +34,8 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         # randomGeneticStrings.append("12100599")
-        randomGeneticStrings.append("11100299")
-        randomGeneticStrings.append("11110299")
+        # randomGeneticStrings.append("11100299")
+        # randomGeneticStrings.append("11110299")
 
         # randomGeneticStrings.append("11110599")
 
@@ -51,13 +51,14 @@ class ALifeGUI:
 
 
         """
-        X0000000 - Vision [0]
-        0X000000 - Smell [1]
-        00X00000 - Movement [2]
-        000X0000 - Aggression [3]
-        0000X000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
-        00000X00 - Color [5]
-        0000000X - Energy [6:7]
+        X00000000 - Vision [0]
+        0X0000000 - Smell [1]
+        00X000000 - Movement [2]
+        000X00000 - Aggression [3]
+        0000X0000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
+        00000X000 - Color [5]
+        0000000X0 - Energy [6:7]
+        00000000X - Jump [8]
         """
         # for n in range(self.numberAgents):
         #     randomVision = str(random.randint(0, 5))
@@ -71,7 +72,7 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
-        # randomGeneticStrings = self.generateRandomGeneticStrings()
+        randomGeneticStrings = self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
@@ -95,9 +96,10 @@ class ALifeGUI:
             randomSleepType = str(random.randint(0, 0))
             randomColor = str(random.randint(3, 6))
             randomEnergy = "99"
-            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy
+            randomJump = str(random.randint(0, 1))
+            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy + randomJump
             randomGeneticStrings.append(randomGeneticString)
-            print(randomGeneticString)
+            print("randomGeneticString: ", randomGeneticString)
         return randomGeneticStrings
 
     def setupWidgets(self):
