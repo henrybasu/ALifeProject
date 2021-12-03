@@ -30,8 +30,9 @@ class ALifeGUI:
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
-        self.ghostImage = PhotoImage(file='images/Ghost.png')
-        self.TurnipImage = PhotoImage(file='images/trnip.png')
+        self.ghostImage = PhotoImage(file='images/ghost.png')
+        self.turnipImage = PhotoImage(file='images/trnip.png')
+        self.stoneImage = PhotoImage(file='images/stone.png')
 
         randomGeneticStrings = []
         randomGeneticStrings.append("121005990")
@@ -657,26 +658,26 @@ class ALifeGUI:
                 self.patchIdToPos[currId] = (row, col)
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
-                objects = self.sim.stonesAt(row,col)
+                stones = self.sim.stonesAt(row,col)
                 # print(agents)
                 # print(self.sim.foodAt(row,col))
                 food = self.sim.foodAt(row,col)
                 for fd in food:
                     self.canvas.update()
                     coords = [(x1 + x2)/2, (y1 + y2) / 2]
-                    fdId = self.canvas.create_image(coords, image=self.TurnipImage)
+                    fdId = self.canvas.create_image(coords, image=self.turnipImage)
                     self.agentIdToPose[fdId] = fd.getPose()
                     fd.setVisId(fdId)
-                for ob in objects:
+                for st in stones:
                     self.canvas.update()
-                    obColor = ob.colorNumberToText(ob.getColor())
-                    offsetCoords = self._determineObjectCoords(ob)
-                    # print(offsetCoords)
-                    coords = [x1+offsetCoords[0], y1+offsetCoords[1], x2-offsetCoords[2], y2-offsetCoords[3]]
-                    # print(coords)
-                    obId = self.canvas.create_rectangle(coords, fill=obColor, width=2)
-                    self.agentIdToPose[obId] = ob.getPose()
-                    ob.setVisId(obId)
+                    # stColor = st.colorNumberToText(st.getColor())
+                    # offsetCoords = self._determineObjectCoords(st)
+                    # coords = [x1+offsetCoords[0], y1+offsetCoords[1], x2-offsetCoords[2], y2-offsetCoords[3]]
+                    # stId = self.canvas.create_rectangle(coords, fill=stColor, width=2)
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    stId = self.canvas.create_image(coords, image=self.stoneImage)
+                    self.agentIdToPose[stId] = st.getPose()
+                    st.setVisId(stId)
                 for ag in agents:
                     # self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
