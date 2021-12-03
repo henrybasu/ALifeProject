@@ -536,7 +536,20 @@ class ALifeGUI:
         message1 = message1Template.format(round(self.avgTime, 2), self.minTime, self.maxTime)
         message2Template = "Number living = {0:5d}"
         message2 = message2Template.format(numLiving)
+        message2 = str(self.sim.getDeadAgents())
         self._addMessage(message1 + '\n' + message2)
+
+        for i in range(len(self.sim.getDeadAgents())):
+            deadAgent,timeLived = self.sim.getDeadAgents()[i]
+            print("DEAD AGENTS")
+            print("Genetic String      Lifespan")
+            print("  ",deadAgent.getGeneticString(), "           " ,timeLived)
+
+
+    def assessFinalResult(self):
+        deadAgents = self.sim.getDeadAgents()
+        liveAgents = self.sim.getAgents()
+
 
 
     ### =================================================================

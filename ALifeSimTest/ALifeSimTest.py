@@ -244,7 +244,7 @@ class ALifeSimTest(object):
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
         #TODO Uncomment this to reimplement time VVV
-        # self.stepNum += 1
+        self.stepNum += 1
         # if self.time != 24:
         #     self.time += 1
         # else:
@@ -415,7 +415,7 @@ class ALifeSimTest(object):
                 i = i + 1
 
             else:
-                self.deadAgents.append((agent, self.stepNum))
+                self.deadAgents.append((agent, self.stepNum-agent.stepSpawned))
                 self.agentList.pop(i)
                 if agent in self.agentMap[agentR,agentC]:
                     self.agentMap[agentR, agentC].remove(agent)
@@ -530,6 +530,8 @@ class ALifeSimTest(object):
             newBabyGeneticString = self.mutate(babyGeneticString)
 
             babyAgent = Agent(geneticString=newBabyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)
+            # print(self.stepNum)
+            # print("baby",babyAgent.stepSpawned)
 
             self.agentList.append(babyAgent)
             self.agentMap[r, c].append(babyAgent)
@@ -542,7 +544,6 @@ class ALifeSimTest(object):
         newBabyGeneticString = babyGeneticString
         randElem = random.randrange(len(babyGeneticString)-2)
         newVal = 0
-
         if randElem == 0:
             newVal =  random.choice([0, 1, 2, 3])
         elif randElem == 1:

@@ -21,6 +21,7 @@ class Agent(Object):
         # self.visObjectId = None
         self.isDead = False
         self.readyToBreed = 10
+        self.stepSpawned = stepSpawned
 
         """
         X0000000 - Vision
