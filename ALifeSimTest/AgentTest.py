@@ -653,6 +653,10 @@ class Agent(Object):
             listOfRandomActionsPossible.remove('left')
         print("possible action:", listOfRandomActionsPossible)
 
+        if len(listOfRandomActionsPossible) == 0:
+            print("I'M STUCK")
+            return "turnAround"
+
         if isCreatureHere == 2:
             if agent.getReadyToBreed() == 0:
                 return "breed"
@@ -767,6 +771,9 @@ class Agent(Object):
             listOfRandomActionsPossible.remove('left')
 
         print("list of actions possible aggressive:",listOfRandomActionsPossible)
+
+        if len(listOfRandomActionsPossible) == 0:
+            return "turnAround"
 
 
         creaturesAround = cellsSmelled
