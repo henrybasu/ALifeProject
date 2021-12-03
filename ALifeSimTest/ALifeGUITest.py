@@ -25,6 +25,7 @@ class ALifeGUI:
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
+        self.numberStones = 1
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
@@ -75,7 +76,7 @@ class ALifeGUI:
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
-        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, randomGeneticStrings)
+        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, randomGeneticStrings)
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -180,16 +181,24 @@ class ALifeGUI:
         self.agentNum.set(self.numberAgents)
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
+        stonesLabel = Label(makerFrame, text="Stones")
+        self.stonesNum = IntVar()
+        self.stonesNum.set(self.numberStones)
+        self.numStones = Entry(makerFrame, textvariable=self.stonesNum, width=4, justify=CENTER)
+
         self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
 
         sizeLabel1.grid(row=1, column=3)
         # sizeLabel2.grid(row=1, column=5)
         agentsLabel.grid(row=2, column=3)
+        stonesLabel.grid(row=3, column=3)
+
         self.rowsEntry.grid(row=1, column=4)
         # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
+        self.numStones.grid(row=3, column = 4)
 
 
     def _initGrid(self):
@@ -278,13 +287,16 @@ class ALifeGUI:
         colSize = self.colDimensionText.get()
         size = self.rowDimensionText.get()
         ageNum = self.agentNum.get()
+        stoneNum = self.stonesNum.get()
         try:
             self.gridDim = int(size)
             self.numberAgents = int(ageNum)
+            self.numberStones = int(stoneNum)
         except:
             self._postMessage("Dimension must be positive integer.")
             return
-        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, self.generateRandomGeneticStrings())
+
+        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, self.generateRandomGeneticStrings())
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)

@@ -19,18 +19,21 @@ class ALifeSimTest(object):
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
     time = 12
+    numStones = 1
 
-    def __init__(self, gridSize, numAgents, geneticStrings):
+    def __init__(self, gridSize, numAgents, numStones, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
         self.numAgents = numAgents
+        self.numStones = numStones
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
         self.stoneMap = dict()
         self.foodMap = dict()
         self.agentMap = dict()
         self.globalMap = dict()
+
         for row in range(gridSize):
             for col in range(gridSize):
                 self.stoneMap[row, col] = []
@@ -129,8 +132,7 @@ class ALifeSimTest(object):
             self.globalMap[r, c].append(nextAgent)
 
     def _placeStones(self):
-
-        for i in range(4):
+        for i in range(self.numStones):
             (randRow, randCol) = self._genRandomLoc()
             while True:
                 if len(self.globalMap[randRow, randCol]) != 0:
