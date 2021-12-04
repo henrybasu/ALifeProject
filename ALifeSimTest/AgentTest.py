@@ -430,6 +430,7 @@ class Agent(Object):
                 deadCreature.isDead = True
 
     def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere, detectedRocks):
+
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
                 print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks))
