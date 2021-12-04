@@ -60,6 +60,7 @@ class ALifeSimTest(object):
 
         self._placeStones()
         self._placeWaters()
+        print('placing water')
         # self._placeFood()
         self._placeAgents()
 
@@ -158,17 +159,18 @@ class ALifeSimTest(object):
             self.globalMap[randRow, randCol].append(nextStone)
 
     def _placeWaters(self):
-        for i in range(self.numStones):
+        # print('got here')
+        for i in range(self.numWaters):
             (randRow, randCol) = self._genRandomLoc()
             while True:
                 if len(self.globalMap[randRow, randCol]) != 0:
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
-            self.stoneList.append(nextStone)
-            self.stoneMap[randRow, randCol].append(nextStone)
-            self.globalMap[randRow, randCol].append(nextStone)
+            nextWater = Water(initPose=(randRow, randCol), geneticString="00")
+            self.waterList.append(nextWater)
+            self.waterMap[randRow, randCol].append(nextWater)
+            self.globalMap[randRow, randCol].append(nextWater)
 
 
     def _addFoodClump(self):
@@ -531,7 +533,7 @@ class ALifeSimTest(object):
         # print("listOfObjects",listOfObjects)
         if listOfObjects != []:
             for ob in listOfObjects:
-                if type(ob) is Stone:
+                if type(ob) is Stone or type(ob) is Water:
                     return -1
                 elif type(ob) is Agent:
                     if ob.getColor() == agent.getColor():

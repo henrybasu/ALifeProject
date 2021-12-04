@@ -36,6 +36,7 @@ class ALifeGUI:
         self.mushroomImage = PhotoImage(file='images/mushroom.png')
         self.treeImage = PhotoImage(file='images/tree.png')
         self.treeFruitImage = PhotoImage(file='images/tree_fruit.png')
+        self.waterImage = PhotoImage(file='images/water.png')
 
         randomGeneticStrings = []
         randomGeneticStrings.append("121005990")
