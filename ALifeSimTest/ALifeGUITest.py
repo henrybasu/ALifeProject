@@ -12,6 +12,9 @@ import random
 import string
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
+from PIL import Image,ImageTk
+# import numpy as np
+# import cv2
 
 import ALifeSimTest
 from LocalSearchSolverTest import RulesetState, HillClimber, BeamSearcher, GASearcher
@@ -931,9 +934,59 @@ class ALifeGUI:
 
     def resizeAllImages(self):
         if self.sim.gridSize > 10:
-            scale_w = 1
-            scale_h = 1
-            self.waveImage = self.waveImage.zoom(scale_w,scale_h)
+            scale_w = 10/self.sim.gridSize
+            scale_h = 10/self.sim.gridSize
+            newW = int(480/(self.sim.gridSize))
+            newH = int(480 / (self.sim.gridSize))
+
+            # self.ghostImage = self.ghostImage.zoom(scale_w,scale_h)
+            ghostImg = Image.open('images/ghost.png')
+            ghostImg = ghostImg.resize((newW, newH))
+            self.ghostImg = ImageTk.PhotoImage(ghostImg)
+            # self.turnipImage = self.turnipImage.zoom(scale_w,scale_h)
+            turnipImg = Image.open('images/trnip.png')
+            turnipImg = turnipImg.resize((newW, newH))
+            self.turnipImage = ImageTk.PhotoImage(turnipImg)
+            # self.stoneImage = self.stoneImage.zoom(scale_w,scale_h)
+            stoneImg = Image.open('images/stone.png')
+            stoneImg = stoneImg.resize((newW, newH))
+            self.stoneImage = ImageTk.PhotoImage(stoneImg)
+            # self.mushroomImage = self.mushroomImage.zoom(scale_w,scale_h)
+            mushroomImg = Image.open('images/mushroom.png')
+            mushroomImg = mushroomImg.resize((newW, newH))
+            self.mushroomImage = ImageTk.PhotoImage(mushroomImg)
+            # self.treeImage = self.treeImage.zoom(scale_w,scale_h)
+            treeImg = Image.open('images/tree.png')
+            treeImg = treeImg.resize((newW, newH))
+            self.treeImage = ImageTk.PhotoImage(treeImg)
+            # self.treeFruitImage = self.treeFruitImage.zoom(scale_w,scale_h)
+            treeFruitImg = Image.open('images/tree_fruit.png')
+            treeFruitImg = treeFruitImg.resize((newW, newH))
+            self.treeFruitImage = ImageTk.PhotoImage(treeFruitImg)
+            # self.waveImage = self.waveImage.zoom(scale_w,scale_h)
+            waveImg = Image.open('images/wave.png')
+            waveImg = waveImg.resize((newW, newH))
+            self.waveImage = ImageTk.PhotoImage(waveImg)
+            # self.pitImage = self.pitImage.zoom(scale_w,scale_h)
+            pitImg = Image.open('images/pit.png')
+            pitImg = pitImg.resize((newW, newH))
+            self.pitImage = ImageTk.PhotoImage(pitImg)
+            # self.fishUpImage = self.fishUpImage.zoom(scale_w,scale_h)
+            fishUpImg = Image.open('images/fishUp.png')
+            fishUpImg = fishUpImg.resize((newW, newH))
+            self.fishUpImage = ImageTk.PhotoImage(fishUpImg)
+            # self.fishDownImage = self.fishDownImage.zoom(scale_w,scale_h)
+            fishDownImg = Image.open('images/fishDown.png')
+            fishDownImg = fishDownImg.resize((newW, newH))
+            self.fishDownImage = ImageTk.PhotoImage(fishDownImg)
+            # self.fishRightImage = self.fishRightImage.zoom(scale_w,scale_h)
+            fishRightImg = Image.open('images/fishRight.png')
+            fishRightImg = fishRightImg.resize((newW, newH))
+            self.fishRightImage = ImageTk.PhotoImage(fishRightImg)
+            # self.fishLeftImage = self.fishLeftImage.zoom(scale_w,scale_h)
+            fishLeftImg = Image.open('images/fishLeft.png')
+            fishLeftImg = fishLeftImg.resize((newW, newH))
+            self.fishLeftImage = ImageTk.PhotoImage(fishLeftImg)
 
 
     def _posToId(self, row, col):
