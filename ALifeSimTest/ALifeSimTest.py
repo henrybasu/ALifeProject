@@ -228,26 +228,39 @@ class ALifeSimTest(object):
 
     def _placeTrees(self, numForrests, forrestSize):
 
-        width = self.gridSize
-        height = self.gridSize
+        radius = forrestSize // 2
 
-        cx = width // 2
-        cy = height // 2
-        r = forrestSize // 2
+        X = radius
 
-        tiles = [[0 for _ in range(height)] for _ in range(width)]
+        for x in range(-X, X + 1):
+            Y = int((radius * radius - x * x) ** 0.5)  # bound for y given x
+            for y in range(-Y, Y + 1):
+                nextTree = Tree(initPose=(x, y), geneticString="00")
+                self.treeList.append(nextTree)
+                self.globalMap[x, y].append(nextTree)
+                yield (x, y)
 
-        self.make_circle(tiles, cx, cy, r)
 
-        print("tiles: ", tiles)
+        # width = self.gridSize
+        # height = self.gridSize
 
-        for i in range(len(tiles)):
-            for j in range(len(tiles)):
-                if tiles[i][j] == 1:
-                    if len(self.objectsAt(i, j)) == 0:
-                        nextTree = Tree(initPose=(i, j), geneticString="00")
-                        self.treeList.append(nextTree)
-                        self.globalMap[i, j].append(nextTree)
+        # cx = width // 2
+        # cy = height // 2
+        # r = forrestSize // 2
+        #
+        # tiles = [[0 for _ in range(height)] for _ in range(width)]
+        #
+        # self.make_circle(tiles, cx, cy, r)
+        #
+        # print("tiles: ", tiles)
+        #
+        # for i in range(len(tiles)):
+        #     for j in range(len(tiles)):
+        #         if tiles[i][j] == 1:
+        #             if len(self.objectsAt(i, j)) == 0:
+        #                 nextTree = Tree(initPose=(i, j), geneticString="00")
+        #                 self.treeList.append(nextTree)
+        #                 self.globalMap[i, j].append(nextTree)
 
 
         # print("\n".join("".join(map(str, i)) for i in tiles))
