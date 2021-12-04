@@ -36,7 +36,7 @@ class ALifeGUI:
         self.mushroomImage = PhotoImage(file='images/mushroom.png')
         self.treeImage = PhotoImage(file='images/tree.png')
         self.treeFruitImage = PhotoImage(file='images/tree_fruit.png')
-        self.waterImage = PhotoImage(file='images/water.png')
+        self.waveImage = PhotoImage(file='images/wave.png')
 
         randomGeneticStrings = []
         randomGeneticStrings.append("121005990")
@@ -686,7 +686,7 @@ class ALifeGUI:
                 for wt in waters:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    wtId = self.canvas.create_image(coords, image=self.waterImage)
+                    wtId = self.canvas.create_image(coords, image=self.waveImage)
                     self.agentIdToPose[wtId] = wt.getPose()
                     wt.setVisId(wtId)
                 for ag in agents:
