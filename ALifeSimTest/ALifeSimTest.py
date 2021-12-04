@@ -402,6 +402,7 @@ class ALifeSimTest(object):
 
             if not agent.isDead:
                 action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks)
+                print(action)
 
                 if action == 'breed':
                     self.makeABaby(self.globalMap[agentR, agentC][0], self.globalMap[agentR, agentC][1])
@@ -521,7 +522,7 @@ class ALifeSimTest(object):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at current location: (" + str(row) + "," + str(col) + ")")
-        creatureAmt = self.globalMap[row, col]
+        creatureAmt = self.agentsAt(row,col)
         print("creatureHere",creatureAmt)
         for i in range(len(creatureAmt)):
             print(creatureAmt[i].getColor())
