@@ -58,7 +58,7 @@ class ALifeSimTest(object):
         # self._placeWaters()
         # self._placeStones()
         # self._placeTrees(self.numForrests, random.randint(1, 5))
-        self._placeTrees(self.numForrests, 7)
+        self._placeTrees(self.numForrests, 10)
         # self._placeFood()
         # self._placeAgents()
 
@@ -224,10 +224,15 @@ class ALifeSimTest(object):
             for y in range(cy - r, cy + r):
                 if self.dist(cx, cy, x, y) <= r:
                     tiles[x][y] = 1
+        return tiles
+
+    def generateImageMask(self, iw, ih, cx, cy, cr):
+        mask = [[0 for _ in range(ih)] for _ in range(iw)]
+        mask = self.make_circle(mask, cx, cy, cr)
+        return mask
 
 
     def _placeTrees(self, numForrests, forrestSize):
-
         width = self.gridSize
         height = self.gridSize
 
@@ -237,7 +242,7 @@ class ALifeSimTest(object):
 
         tiles = [[0 for _ in range(height)] for _ in range(width)]
 
-        self.make_circle(tiles, cx, cy, r)
+        tiles = self.generateImageMask(width, height, cx, cy, r)
 
         print("tiles: ", tiles)
 
@@ -248,8 +253,6 @@ class ALifeSimTest(object):
                         nextTree = Tree(initPose=(i, j), geneticString="00")
                         self.treeList.append(nextTree)
                         self.globalMap[i, j].append(nextTree)
-        # print("\n".join("".join(map(str, i)) for i in tiles))
-
 
         # for i in range(numForrests):
         #     rowLoc = random.randint(0, self.gridSize - forrestSize)
