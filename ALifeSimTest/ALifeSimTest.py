@@ -1,6 +1,7 @@
 
 import random
 import tkinter
+import math
 
 from ALifeGUITest import *
 from AgentTest import *
@@ -34,6 +35,7 @@ class ALifeSimTest(object):
         self.numWaters = 0
         self.numTrees = 1
         self.numRivers = 2
+        self.numForrests = 3
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
         self.globalMap = dict()
@@ -53,11 +55,12 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeWaters()
-        self._placeStones()
-        self._placeTrees()
+        # self._placeWaters()
+        # self._placeStones()
+        # self._placeTrees(self.numForrests, random.randint(1, 5))
+        self._placeTrees(self.numForrests, 7)
         # self._placeFood()
-        self._placeAgents()
+        # self._placeAgents()
 
     def getSize(self):
         """Returns the size of the grid"""
@@ -202,31 +205,77 @@ class ALifeSimTest(object):
                         break
 
                 if randomOrientation == 0:
-                    if len(self.waterAt(i, place)) == 0:
+                    if len(self.objectsAt(i, place)) == 0:
                         nextWater = Water(initPose=(i, place), geneticString="00")
                         self.waterList.append(nextWater)
                         self.globalMap[i, place].append(nextWater)
 
                 elif randomOrientation == 1:
-                    if len(self.waterAt(place, i)) == 0:
+                    if len(self.objectsAt(place, i)) == 0:
                         nextWater = Water(initPose=(place, i), geneticString="00")
                         self.waterList.append(nextWater)
                         self.globalMap[place, i].append(nextWater)
 
+    def dist(self, x1, y1, x2, y2):
+        return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+    def make_circle(self, tiles, cx, cy, r):
+        for x in range(cx - r, cx + r):
+            for y in range(cy - r, cy + r):
+                if self.dist(cx, cy, x, y) <= r:
+                    tiles[x][y] = 1
 
 
+    def _placeTrees(self, numForrests, forrestSize):
 
-    def _placeTrees(self):
-        for i in range(self.numTrees):
-            (randRow, randCol) = self._genRandomLoc()
-            while True:
-                if len(self.globalMap[randRow, randCol]) != 0:
-                    (randRow, randCol) = self._genRandomLoc()
-                else:
-                    break
-            nextTree = Tree(initPose=(randRow, randCol), geneticString="00")
-            self.treeList.append(nextTree)
-            self.globalMap[randRow, randCol].append(nextTree)
+        width = self.gridSize
+        height = self.gridSize
+
+        cx = width // 2
+        cy = height // 2
+        r = forrestSize // 2
+
+        tiles = [[0 for _ in range(height)] for _ in range(width)]
+
+        self.make_circle(tiles, cx, cy, r)
+
+        print("tiles: ", tiles)
+
+        for i in range(len(tiles)):
+            for j in range(len(tiles)):
+                if tiles[i][j] == 1:
+                    if len(self.objectsAt(i, j)) == 0:
+                        nextTree = Tree(initPose=(i, j), geneticString="00")
+                        self.treeList.append(nextTree)
+                        self.globalMap[i, j].append(nextTree)
+        # print("\n".join("".join(map(str, i)) for i in tiles))
+
+
+        # for i in range(numForrests):
+        #     rowLoc = random.randint(0, self.gridSize - forrestSize)
+        #     colLoc = random.randint(0, self.gridSize - forrestSize)
+        #
+        #     print("row, col: ", rowLoc, colLoc)
+        #
+        #     for row in range(forrestSize):
+        #         for col in range(forrestSize):
+        #             isTreeHere = random.randint(0, 1)
+        #             if isTreeHere == 1:
+        #                 if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
+        #                     nextTree = Tree(initPose=(rowLoc + row, colLoc + col), geneticString="00")
+        #                     self.treeList.append(nextTree)
+        #                     self.globalMap[rowLoc + row, colLoc + col].append(nextTree)
+
+        # for i in range(self.numTrees):
+        #     (randRow, randCol) = self._genRandomLoc()
+        #     while True:
+        #         if len(self.globalMap[randRow, randCol]) != 0:
+        #             (randRow, randCol) = self._genRandomLoc()
+        #         else:
+        #             break
+        #     nextTree = Tree(initPose=(randRow, randCol), geneticString="00")
+        #     self.treeList.append(nextTree)
+        #     self.globalMap[randRow, randCol].append(nextTree)
 
 
     def _addFoodClump(self):
