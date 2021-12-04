@@ -65,7 +65,7 @@ class ALifeSimTest(object):
 
         # self._placeWaters()
         self._placePits()
-        self._placeTrees(self.numForests, random.randint(4, 10))
+        self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeStones()
         # self._placeFood()
         self._placeAgents()
@@ -478,22 +478,6 @@ class ALifeSimTest(object):
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self.agentList[i]._computeAhead(self.gridSize)
 
-            # checks to see if there is a creature where the agent currently is
-            isCreatureHere = self._assessCreatureHere(agentR, agentC)
-
-            # checks to see if there is food where the agent currently is
-            isFoodHere = self.foodAt(agentR, agentC)
-
-            # checks to see if there is a creature in the agent's vision
-            isCreatureAhead = self.agentList[i]._areCreaturesInVision(self)
-
-            # checks to see if there is a creature in the agent's smell radius
-            canSmellCreature = agent.detectSmellRadius(self)
-
-            detectedRocks = agent.detectRocks(self)
-
-            detectedWater = agent.detectWater(self)
-
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
             # foodAheadRating = self._assessFood(rAhead, cAhead)
@@ -512,7 +496,7 @@ class ALifeSimTest(object):
             isOkay = True
 
             if not agent.isDead:
-                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks, detectedWater)
+                action = agent.determineAction(self, self.agentList[i], self.time)
                 print(agent.colorNumberToText(agent.getColor()), action)
                 if action == 'breed':
                     twoAgents = []

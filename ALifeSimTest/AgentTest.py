@@ -435,7 +435,19 @@ class Agent(Object):
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
-    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere, detectedRocks, detectedWater):
+    def determineAction(self, sim, agent, time):
+        agentR, agentC, agentH = self.getPose()
+        # checks to see if there is a creature where the agent currently is
+        isCreatureHere = sim._assessCreatureHere(agentR, agentC)
+        # checks to see if there is a creature in the agent's vision
+        isCreatureAhead = self._areCreaturesInVision(sim)
+        # checks to see if there is food where the agent currently is
+        isFoodHere = sim.foodAt(agentR, agentC)
+        # checks to see if there is a creature in the agent's smell radius
+        cellsSmelled = self.detectSmellRadius(sim)
+        detectedRocks = self.detectRocks(sim)
+        detectedWater = self.detectWater(sim)
+
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
         listOfRandomActionsPossible = self.filterActionsByWater(listOfRandomActionsPossible, detectedWater)
         listOfRandomActionsPossible = self.filterActionsByRocks(listOfRandomActionsPossible,detectedRocks)
