@@ -26,7 +26,7 @@ class ALifeGUI:
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
-        self.numberStones = 3
+        self.numberStones = 0
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
@@ -39,17 +39,11 @@ class ALifeGUI:
         self.waveImage = PhotoImage(file='images/wave.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("121005990")
-        randomGeneticStrings.append("111102990")
-        # randomGeneticStrings.append("111002990")
-
-        # randomGeneticStrings.append("11110599")
-
-        # randomGeneticStrings.append("12100699")
-        # randomGeneticStrings.append("11100599")
-        # randomGeneticStrings.append("11100599")
-        # randomGeneticStrings.append("11100599")
-        # randomGeneticStrings.append("11100599")
+        randomGeneticStrings.append("1210059900")
+        # randomGeneticStrings.append("111102990")
+        randomGeneticStrings.append("1210069900")
+        randomGeneticStrings.append("1210079900")
+        randomGeneticStrings.append("1210089900")
 
         # randomGeneticStrings.append("12110299")
         # for n in range(self.numberAgents - 1):
@@ -57,14 +51,15 @@ class ALifeGUI:
 
 
         """
-        X00000000 - Vision [0]
-        0X0000000 - Smell [1]
-        00X000000 - Movement [2]
-        000X00000 - Aggression [3]
-        0000X0000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
-        00000X000 - Color [5]
-        0000000X0 - Energy [6:7]
-        00000000X - Jump [8]
+        X000000000 - Vision [0]
+        0X00000000 - Smell [1]
+        00X0000000 - Movement [2]
+        000X000000 - Aggression [3]
+        0000X00000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
+        00000X0000 - Color [5]
+        0000000X00 - Energy [6:7]
+        00000000X0 - Jump [8]
+        000000000X - Swim [9]
         """
         # for n in range(self.numberAgents):
         #     randomVision = str(random.randint(0, 5))
@@ -103,7 +98,8 @@ class ALifeGUI:
             randomColor = str(random.randint(3, 6))
             randomEnergy = "99"
             randomJump = str(random.choice([0, 0, 0, 1]))
-            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy + randomJump
+            randomSwim = str(random.choice([0, 0, 0, 1]))
+            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy + randomJump + randomSwim
             randomGeneticStrings.append(randomGeneticString)
             print("randomGeneticString: ", randomGeneticString)
         return randomGeneticStrings
@@ -942,7 +938,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
-    s = ALifeGUI(3, numberOfAgents)
+    numberOfAgents = 4
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

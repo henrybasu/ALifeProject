@@ -18,9 +18,9 @@ class ALifeSimTest(object):
     FOOD_PERCENT = 0.1
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
-    MAX_FOOD = 1
+    MAX_FOOD = 0
     time = 12
-    numStones = 1
+    numStones = 0
     numWaters = 0
 
     def __init__(self, gridSize, numAgents, numStones, geneticStrings):
@@ -48,9 +48,9 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeStones()
         self._placeWaters()
-        self._placeFood()
+        # self._placeStones()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -90,7 +90,6 @@ class ALifeSimTest(object):
         for ob in stonesAtList:
             if type(ob) is not Stone:
                 stonesAtList.remove(ob)
-        print(stonesAtList)
         return stonesAtList
 
     def waterAt(self,row,col):
@@ -98,16 +97,18 @@ class ALifeSimTest(object):
         for ob in waterAtList:
             if type(ob) is not Water:
                 waterAtList.remove(ob)
-        print(waterAtList)
         return waterAtList
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
         foodAtList = self.globalMap[row, col].copy()
+        print("Before: ", foodAtList)
         for ob in foodAtList:
-            if type(ob) is not Food:
-                foodAtList.remove(ob)
-        return foodAtList
+            if type(ob) is Food:
+                return [ob]
+
+        print("After: ", foodAtList)
+        return []
 
     def agentsAt(self, row, col):
         # TODO: Potential issue here
@@ -163,17 +164,19 @@ class ALifeSimTest(object):
             self.globalMap[randRow, randCol].append(nextStone)
 
     def _placeWaters(self):
-        # print('got here')
-        for i in range(self.numWaters):
-            (randRow, randCol) = self._genRandomLoc()
+        place = random.randint(0, self.gridSize-1)
+        print(place)
+        for i in range(self.gridSize):
             while True:
-                if len(self.globalMap[randRow, randCol]) != 0:
-                    (randRow, randCol) = self._genRandomLoc()
+                place = random.choice([place-1, place, place+1])
+                if place < 0 or place > self.gridSize-1:
+                    place = random.choice([place - 1, place, place + 1])
                 else:
                     break
-            nextWater = Water(initPose=(randRow, randCol), geneticString="00")
+
+            nextWater = Water(initPose=(i, place), geneticString="00")
             self.waterList.append(nextWater)
-            self.globalMap[randRow, randCol].append(nextWater)
+            self.globalMap[i, place].append(nextWater)
 
 
     def _addFoodClump(self):
@@ -275,7 +278,7 @@ class ALifeSimTest(object):
 
         self.printGrid()
         # print(self.globalMap)
-        print("self.globalMap:",self.globalMap)
+        # print("self.globalMap:",self.globalMap)
 
 
     def _growFood(self):
@@ -332,6 +335,8 @@ class ALifeSimTest(object):
 
             detectedRocks = agent.detectRocks(self)
 
+            detectedWater = agent.detectWater(self)
+
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
@@ -351,7 +356,7 @@ class ALifeSimTest(object):
             isOkay = True
 
             if not agent.isDead:
-                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks)
+                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks, detectedWater)
                 print(action)
 
                 if action == 'breed':
@@ -456,7 +461,6 @@ class ALifeSimTest(object):
         elif len(creatureAmt) >= 1:
             for i in range(len(creatureAmt)):
                 if agent.getColor() == creatureAmt[i].getColor():
-                    print("TRUE")
                     return 2
             return 1
 
@@ -484,7 +488,7 @@ class ALifeSimTest(object):
         # print("listOfObjects",listOfObjects)
         if listOfObjects != []:
             for ob in listOfObjects:
-                if type(ob) is Stone or type(ob) is Water:
+                if type(ob) is Stone:
                     return -1
                 elif type(ob) is Agent:
                     if ob.getColor() == agent.getColor():
@@ -493,6 +497,8 @@ class ALifeSimTest(object):
                         return 1
                 elif type(ob) is Food:
                     return 3
+                elif type(ob) is Water:
+                    return -2
         return 0
 
     def eatFood(self, row, col):

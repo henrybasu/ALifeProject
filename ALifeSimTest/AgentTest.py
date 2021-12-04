@@ -5,7 +5,7 @@ class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
     a string, and it has an amount of energy and a location on the agentMap (given when created and then updated)."""
 
-    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "00000000", stepSpawned=0):
+    def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "0000000000", stepSpawned=0):
         """
         Sets up an agent with a location, energy, geneticString, and step created
         :param initPose:   tuple giving agent's initial location
@@ -24,14 +24,15 @@ class Agent(Object):
         self.stepSpawned = stepSpawned
 
         """
-        X00000000 - Vision [0]
-        0X0000000 - Smell [1]
-        00X000000 - Movement [2]
-        000X00000 - Aggression [3]
-        0000X0000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
-        00000X000 - Color [5]
-        0000000X0 - Energy [6:7]
-        00000000X - Jump [8]
+        X000000000 - Vision [0]
+        0X00000000 - Smell [1]
+        00X0000000 - Movement [2]
+        000X000000 - Aggression [3]
+        0000X00000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
+        00000X0000 - Color [5]
+        0000000X00 - Energy [6:7]
+        00000000X0 - Jump [8]
+        000000000X - Swim [9]
         """
 
         self.visionRange = int(self.geneticString[0])
@@ -41,6 +42,7 @@ class Agent(Object):
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:7])
         self.jumpVal = int(self.geneticString[8])
+        self.swimVal = int(self.geneticString[9])
         # self.score = 0
 
     def getEnergy(self):
@@ -79,6 +81,9 @@ class Agent(Object):
 
     def getJump(self):
         return self.jumpVal
+
+    def getSwim(self):
+        return self.swimVal
 
     def changeReadyToBreed(self, breedVal):
         self.readyToBreed = self.readyToBreed - breedVal
@@ -429,15 +434,14 @@ class Agent(Object):
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
-    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere, detectedRocks):
-
+    def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere, detectedRocks, detectedWater):
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks))
-                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks)
+                print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, detectedWater))
+                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, detectedWater)
             elif agent.Aggression == 1:
-                print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks))
-                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks)
+                print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater))
+                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater)
             else:
                 print("SHOULD NOT GET HERE")
 
@@ -445,7 +449,7 @@ class Agent(Object):
             return "none"
 
 
-    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks):
+    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, detectedWater):
         # print("Creatures around: " + str(creaturesAround))
         # if the agent is on the same square as a friend
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
@@ -463,8 +467,22 @@ class Agent(Object):
             if detectedRocks[3] == -1:
                 listOfRandomActionsPossible.remove('left')
 
+        if self.getSwim() == 0:
+            if detectedWater[0] == -2:
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+            if detectedWater[1] == -2:
+                listOfRandomActionsPossible.remove('turnAround')
+            if detectedWater[2] == -2:
+                listOfRandomActionsPossible.remove('right')
+            if detectedWater[3] == -2:
+                listOfRandomActionsPossible.remove('left')
+
         if len(listOfRandomActionsPossible) == 0:
             return "turnAround"
+
+        print(listOfRandomActionsPossible)
 
         if isCreatureHere == 2:
             if agent.getReadyToBreed() == 0:
@@ -571,7 +589,7 @@ class Agent(Object):
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
 
-    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks):
+    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater):
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
         print(detectedRocks)
         if agent.getJump() == 0:
@@ -585,6 +603,19 @@ class Agent(Object):
                 listOfRandomActionsPossible.remove('right')
             if detectedRocks[3] == -1:
                 listOfRandomActionsPossible.remove('left')
+
+        if self.getSwim() == 0:
+            if detectedWater[0] == -1:
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+                listOfRandomActionsPossible.remove('forward')
+            if detectedWater[1] == -1:
+                listOfRandomActionsPossible.remove('turnAround')
+            if detectedWater[2] == -1:
+                listOfRandomActionsPossible.remove('right')
+            if detectedWater[3] == -1:
+                listOfRandomActionsPossible.remove('left')
+
 
         print("list of actions possible aggressive:",listOfRandomActionsPossible)
 
@@ -936,6 +967,27 @@ class Agent(Object):
         detectedRocks = [detectedRocks[i] for i in order]
 
         return detectedRocks
+
+    def detectWater(self, sim):
+        detectedWater = self.smellRadiusGlobal1(sim)
+
+        ownY, ownX, heading = self.getPose()
+
+        if heading == "n":
+            return detectedWater
+        elif heading == "s":
+            order = [1, 0, 2, 3]
+        elif heading == "e":
+            order = [2, 3, 1, 0]
+        elif heading == "w":
+            order = [3, 2, 0, 1]
+        else:
+            print("HEADING INVALID: RETURNING NORTH")
+            return detectedWater
+
+        detectedWater = [detectedWater[i] for i in order]
+
+        return detectedWater
 
 
     def _printSmell(self, sim, type):
