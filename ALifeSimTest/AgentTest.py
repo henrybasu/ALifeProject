@@ -435,10 +435,13 @@ class Agent(Object):
                 deadCreature.isDead = True
 
     def determineAction(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, time, isFoodHere, detectedRocks, detectedWater):
+        listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
+        listOfRandomActionsPossible = self.filterActionsByWater(listOfRandomActionsPossible, detectedWater)
+        listOfRandomActionsPossible = self.filterActionsByRocks(listOfRandomActionsPossible,detectedRocks)
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, detectedWater))
-                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, detectedWater)
+                print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible))
+                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible)
             elif agent.Aggression == 1:
                 print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater))
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater)
@@ -449,36 +452,10 @@ class Agent(Object):
             return "none"
 
 
-    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, detectedWater):
+    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible):
         # print("Creatures around: " + str(creaturesAround))
         # if the agent is on the same square as a friend
-        listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-
-
-        if self.getJump() == 0:
-            if detectedRocks[0] == -1:
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-            if detectedRocks[1] == -1:
-                listOfRandomActionsPossible.remove('turnAround')
-            if detectedRocks[2] == -1:
-                listOfRandomActionsPossible.remove('right')
-            if detectedRocks[3] == -1:
-                listOfRandomActionsPossible.remove('left')
-
-        if self.getSwim() == 0:
-            if detectedWater[0] == -2:
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-            if detectedWater[1] == -2:
-                listOfRandomActionsPossible.remove('turnAround')
-            if detectedWater[2] == -2:
-                listOfRandomActionsPossible.remove('right')
-            if detectedWater[3] == -2:
-                listOfRandomActionsPossible.remove('left')
-
+        print("list of actions possible docile:", listOfRandomActionsPossible)
         if len(listOfRandomActionsPossible) == 0:
             return "turnAround"
 
@@ -589,39 +566,11 @@ class Agent(Object):
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
 
-    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater):
-        listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-        print(detectedRocks)
-        if agent.getJump() == 0:
-            if detectedRocks[0] == -1:
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-            if detectedRocks[1] == -1:
-                listOfRandomActionsPossible.remove('turnAround')
-            if detectedRocks[2] == -1:
-                listOfRandomActionsPossible.remove('right')
-            if detectedRocks[3] == -1:
-                listOfRandomActionsPossible.remove('left')
-
-        if self.getSwim() == 0:
-            if detectedWater[0] == -1:
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-                listOfRandomActionsPossible.remove('forward')
-            if detectedWater[1] == -1:
-                listOfRandomActionsPossible.remove('turnAround')
-            if detectedWater[2] == -1:
-                listOfRandomActionsPossible.remove('right')
-            if detectedWater[3] == -1:
-                listOfRandomActionsPossible.remove('left')
-
-
+    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible):
         print("list of actions possible aggressive:",listOfRandomActionsPossible)
 
         if len(listOfRandomActionsPossible) == 0:
             return "turnAround"
-
 
         creaturesAround = cellsSmelled
 
@@ -636,25 +585,25 @@ class Agent(Object):
                 return random.choice(listOfRandomActionsPossible)
 
         elif isCreatureAhead == 1:
-            return random.choice(['forward'])
+            return "forward"
 
-        # if it can't see any creatures, and can't smell any creatures: go anywhere
+        # if it can't see any creatures, and can't smell any creatures: go anywhere, prioritizing forward moves
         elif isCreatureAhead == 0 and creaturesAround == "none":
-            # for i in range(2):
-            #     listOfRandomActionsPossible.append('forward')
+            for i in range(2):
+                listOfRandomActionsPossible.append('forward')
             return random.choice(listOfRandomActionsPossible)
 
         # if it can't see any creatures, and but it can smell any creatures:
         elif isCreatureAhead == 0 and creaturesAround != "none":
             if creaturesAround[1] == 1:
                 if creaturesAround[0] == "above":
-                    return random.choice(['forward'])
+                    return 'forward'
                 elif creaturesAround[0] == "left":
-                    return random.choice(['left'])
+                    return 'left'
                 elif creaturesAround[0] == "right":
-                    return random.choice(['right'])
+                    return 'right'
                 elif creaturesAround[0] == "below":
-                    return random.choice(['turnAround'])
+                    return 'turnAround'
             elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
                 if creaturesAround[0] == "above":
                     return "forward"
@@ -674,8 +623,63 @@ class Agent(Object):
             print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
             return 'forward'
 
+    def filterActionsByWater(self, listOfRandomActionsPossible, detectedWater):
+        newListOfRandomActionsPossible = listOfRandomActionsPossible.copy()
+        if self.getSwim() == 0:
+            if detectedWater[0] == -2:
+                while True:
+                    if 'forward' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('forward') #Removes ALL instances of 'forward'
+                    else:
+                        break
+            if detectedWater[1] == -2:
+                while True:
+                    if 'turnAround' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('turnAround')  # Removes ALL instances of 'turnAround'
+                    else:
+                        break
+            if detectedWater[2] == -2:
+                while True:
+                    if 'right' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('right')  # Removes ALL instances of 'right'
+                    else:
+                        break
+            if detectedWater[3] == -2:
+                while True:
+                    if 'left' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('left')  # Removes ALL instances of 'left'
+                    else:
+                        break
+        return newListOfRandomActionsPossible
 
-
+    def filterActionsByRocks(self, listOfRandomActionsPossible, detectedWater):
+        newListOfRandomActionsPossible = listOfRandomActionsPossible.copy()
+        if self.getJump() == 0:
+            if detectedWater[0] == -1:
+                while True:
+                    if 'forward' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('forward') #Removes ALL instances of 'forward'
+                    else:
+                        break
+            if detectedWater[1] == -1:
+                while True:
+                    if 'turnAround' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('turnAround')  # Removes ALL instances of 'turnAround'
+                    else:
+                        break
+            if detectedWater[2] == -1:
+                while True:
+                    if 'right' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('right')  # Removes ALL instances of 'right'
+                    else:
+                        break
+            if detectedWater[3] == -1:
+                while True:
+                    if 'left' in newListOfRandomActionsPossible:
+                        newListOfRandomActionsPossible.remove('left')  # Removes ALL instances of 'left'
+                    else:
+                        break
+        return newListOfRandomActionsPossible
 
     def _printVision(self, sim):
         ownY, ownX, heading = self.getPose()

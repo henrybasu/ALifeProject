@@ -18,7 +18,7 @@ class ALifeSimTest(object):
     FOOD_PERCENT = 0.1
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
-    MAX_FOOD = 0
+    MAX_FOOD = 1
     time = 12
     numStones = 0
     numWaters = 0
@@ -49,7 +49,7 @@ class ALifeSimTest(object):
         self.verbose = False
 
         self._placeWaters()
-        # self._placeStones()
+        self._placeStones()
         # self._placeFood()
         self._placeAgents()
 
