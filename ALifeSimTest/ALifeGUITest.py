@@ -33,6 +33,9 @@ class ALifeGUI:
         self.ghostImage = PhotoImage(file='images/ghost.png')
         self.turnipImage = PhotoImage(file='images/trnip.png')
         self.stoneImage = PhotoImage(file='images/stone.png')
+        self.mushroomImage = PhotoImage(file='images/mushroom.png')
+        self.treeImage = PhotoImage(file='images/tree.png')
+        self.treeFruitImage = PhotoImage(file='images/tree_fruit.png')
 
         randomGeneticStrings = []
         randomGeneticStrings.append("121005990")
@@ -659,6 +662,7 @@ class ALifeGUI:
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
                 stones = self.sim.stonesAt(row,col)
+                waters = self.sim.waterAt(row,col)
                 # print(agents)
                 # print(self.sim.foodAt(row,col))
                 food = self.sim.foodAt(row,col)
@@ -678,6 +682,12 @@ class ALifeGUI:
                     stId = self.canvas.create_image(coords, image=self.stoneImage)
                     self.agentIdToPose[stId] = st.getPose()
                     st.setVisId(stId)
+                for wt in waters:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    wtId = self.canvas.create_image(coords, image=self.waterImage)
+                    self.agentIdToPose[wtId] = wt.getPose()
+                    wt.setVisId(wtId)
                 for ag in agents:
                     # self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)

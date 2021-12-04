@@ -7,6 +7,7 @@ from AgentTest import *
 from ObjectTest import *
 from StoneTest import *
 from FoodTest import *
+from WaterTest import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -20,6 +21,7 @@ class ALifeSimTest(object):
     MAX_FOOD = 1
     time = 12
     numStones = 1
+    numWaters = 0
 
     def __init__(self, gridSize, numAgents, numStones, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
@@ -27,9 +29,11 @@ class ALifeSimTest(object):
         self.gridSize = gridSize
         self.numAgents = numAgents
         self.numStones = numStones
+        self.numWaters = 0
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
         self.stoneMap = dict()
+        self.waterMap = dict()
         self.foodMap = dict()
         self.agentMap = dict()
         self.globalMap = dict()
@@ -37,6 +41,7 @@ class ALifeSimTest(object):
         for row in range(gridSize):
             for col in range(gridSize):
                 self.stoneMap[row, col] = []
+                self.waterMap[row,col] = []
                 self.foodMap[row, col] = []
                 self.agentMap[row, col] = []
                 self.globalMap[row, col] = []
@@ -45,6 +50,7 @@ class ALifeSimTest(object):
 
         self.foodList = []
         self.stoneList = []
+        self.waterList = []
         self.agentList = []
         self.deadAgents = []
         self.eatenFood = []
@@ -53,6 +59,7 @@ class ALifeSimTest(object):
         self.verbose = False
 
         self._placeStones()
+        self._placeWaters()
         # self._placeFood()
         self._placeAgents()
 
@@ -77,6 +84,9 @@ class ALifeSimTest(object):
         """Returns the list of agents"""
         return self.stoneList[:]
 
+    def getWaters(self):
+        return self.waterList[:]
+
     def getDeadAgents(self):
         """Returns a list of the dead agents."""
         return self.deadAgents
@@ -88,6 +98,9 @@ class ALifeSimTest(object):
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
         return self.stoneMap[row, col]
+
+    def waterAt(self,row,col):
+        return self.waterMap[row,col]
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
@@ -132,6 +145,19 @@ class ALifeSimTest(object):
             self.globalMap[r, c].append(nextAgent)
 
     def _placeStones(self):
+        for i in range(self.numStones):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
+            self.stoneList.append(nextStone)
+            self.stoneMap[randRow, randCol].append(nextStone)
+            self.globalMap[randRow, randCol].append(nextStone)
+
+    def _placeWaters(self):
         for i in range(self.numStones):
             (randRow, randCol) = self._genRandomLoc()
             while True:
