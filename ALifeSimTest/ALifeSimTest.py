@@ -33,6 +33,7 @@ class ALifeSimTest(object):
         self.numStones = numStones
         self.numWaters = 0
         self.numTrees = 1
+        self.numRivers = 3
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
         self.globalMap = dict()
@@ -117,7 +118,7 @@ class ALifeSimTest(object):
     def foodAt(self, row, col):
         """Given a row and column, returns the food at that location."""
         foodAtList = self.globalMap[row, col].copy()
-        print("Before: ", foodAtList)
+        # print("Before: ", foodAtList)
         for ob in foodAtList:
             if type(ob) is Food:
                 return [ob]
@@ -188,19 +189,21 @@ class ALifeSimTest(object):
             self.globalMap[randRow, randCol].append(nextStone)
 
     def _placeWaters(self):
-        place = random.randint(0, self.gridSize-1)
-        print(place)
-        for i in range(self.gridSize):
-            while True:
-                place = random.choice([place-1, place, place+1])
-                if place < 0 or place > self.gridSize-1:
-                    place = random.choice([place - 1, place, place + 1])
-                else:
-                    break
+        for i in range(self.numRivers):
+            place = random.randint(0, self.gridSize-1)
+            print(place)
+            for i in range(self.gridSize):
+                while True:
+                    place = random.choice([place-1, place, place+1])
+                    if place < 0 or place > self.gridSize-1:
+                        place = random.choice([place - 1, place, place + 1])
+                    else:
+                        break
 
-            nextWater = Water(initPose=(i, place), geneticString="00")
-            self.waterList.append(nextWater)
-            self.globalMap[i, place].append(nextWater)
+                if len(self.waterAt(i, place)) == 0:
+                    nextWater = Water(initPose=(i, place), geneticString="00")
+                    self.waterList.append(nextWater)
+                    self.globalMap[i, place].append(nextWater)
 
     def _placeTrees(self):
         for i in range(self.numTrees):

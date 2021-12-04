@@ -966,6 +966,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
-    s = ALifeGUI(5, numberOfAgents)
+    s = ALifeGUI(20, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
