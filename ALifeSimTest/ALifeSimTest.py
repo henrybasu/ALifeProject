@@ -115,15 +115,24 @@ class ALifeSimTest(object):
         return treeAtList
 
     def foodAt(self, row, col):
-        """Given a row and column, returns the amount of food at that location."""
+        """Given a row and column, returns the food at that location."""
         foodAtList = self.globalMap[row, col].copy()
         print("Before: ", foodAtList)
         for ob in foodAtList:
             if type(ob) is Food:
                 return [ob]
-
-        print("After: ", foodAtList)
         return []
+        #TODO: There used to be a bug here where it would fail to remove some objects that were not food.
+        # This caused len(this list) to be > 1, which caused agents to choose 'eat' over and over
+        # print(len(foodAtList))
+        # for ob in foodAtList:
+        #     print(type(ob))
+        #     print(ob)
+        #     if type(ob) is not Food:
+        #         foodAtList.remove(ob)
+        # print("After: ", foodAtList)
+        # return foodAtList
+
 
     def agentsAt(self, row, col):
         # TODO: Potential issue here
@@ -393,7 +402,7 @@ class ALifeSimTest(object):
                         # print(type(ob))
                         # if ob is Agent:
                         twoAgents.append(agentsHere[i])
-                        print("twoAgents",twoAgents)
+                        # print("twoAgents",twoAgents)
                     self.makeABaby(twoAgents[0], twoAgents[1])
                     for ag in agentsHere:
                         ag.setReadyToBreed(24)
