@@ -207,7 +207,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
+            nextStone = Stone(initPose=(randRow, randCol), geneticString="0")
             self.stoneList.append(nextStone)
             self.globalMap[randRow, randCol].append(nextStone)
 
@@ -219,7 +219,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextPit = Pit(initPose=(randRow, randCol), geneticString="00")
+            nextPit = Pit(initPose=(randRow, randCol), geneticString="0")
             self.pitList.append(nextPit)
             self.globalMap[randRow, randCol].append(nextPit)
 
@@ -238,7 +238,7 @@ class ALifeSimTest(object):
                     isWaterHere = random.choice([1, 1])
                     if isWaterHere == 1:
                         if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
-                            nextWater = Water(initPose=(rowLoc + row, colLoc + col), geneticString="00")
+                            nextWater = Water(initPose=(rowLoc + row, colLoc + col), geneticString="0")
                             self.waterList.append(nextWater)
                             self.globalMap[rowLoc + row, colLoc + col].append(nextWater)
 
@@ -257,13 +257,13 @@ class ALifeSimTest(object):
 
                 if randomOrientation == 0:
                     if len(self.objectsAt(i, place)) == 0:
-                        nextWater = Water(initPose=(i, place), geneticString="00")
+                        nextWater = Water(initPose=(i, place), geneticString="0")
                         self.waterList.append(nextWater)
                         self.globalMap[i, place].append(nextWater)
 
                 elif randomOrientation == 1:
                     if len(self.objectsAt(place, i)) == 0:
-                        nextWater = Water(initPose=(place, i), geneticString="00")
+                        nextWater = Water(initPose=(place, i), geneticString="0")
                         self.waterList.append(nextWater)
                         self.globalMap[place, i].append(nextWater)
 
@@ -324,7 +324,7 @@ class ALifeSimTest(object):
         #             isTreeHere = random.randint(0, 1)
         #             if isTreeHere == 1:
         #                 if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
-        #                     nextTree = Tree(initPose=(rowLoc + row, colLoc + col), geneticString="00")
+        #                     nextTree = Tree(initPose=(rowLoc + row, colLoc + col), geneticString="0")
         #                     self.treeList.append(nextTree)
         #                     self.globalMap[rowLoc + row, colLoc + col].append(nextTree)
 
@@ -335,7 +335,7 @@ class ALifeSimTest(object):
         #             (randRow, randCol) = self._genRandomLoc()
         #         else:
         #             break
-        #     nextTree = Tree(initPose=(randRow, randCol), geneticString="00")
+        #     nextTree = Tree(initPose=(randRow, randCol), geneticString="0")
         #     self.treeList.append(nextTree)
         #     self.globalMap[randRow, randCol].append(nextTree)
 
