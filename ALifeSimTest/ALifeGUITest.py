@@ -12,6 +12,7 @@ import random
 import string
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
+from PIL import *
 
 import ALifeSimTest
 from LocalSearchSolverTest import RulesetState, HillClimber, BeamSearcher, GASearcher
@@ -46,9 +47,8 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("1210059900")
+        randomGeneticStrings.append("1210059901")
         randomGeneticStrings.append("1110029900")
-        randomGeneticStrings.append("1210069900")
         # randomGeneticStrings.append("1210079900")
         # randomGeneticStrings.append("1210089900")
 
@@ -966,6 +966,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
-    s = ALifeGUI(10, numberOfAgents)
+    s = ALifeGUI(3, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
