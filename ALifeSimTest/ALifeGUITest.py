@@ -927,6 +927,12 @@ class ALifeGUI:
         have the right color."""
         self.canvas.itemconfig(cellId, outline=color)
 
+    def resizeAllImages(self):
+        if self.sim.gridSize > 10:
+            scale_w = 10
+            scale_h = 10
+            self.waveImage = self.waveImage.zoom(scale_w,scale_h)
+
 
     def _posToId(self, row, col):
         """Given row and column indices, it looks up and returns the GUI id of the cell at that location"""
