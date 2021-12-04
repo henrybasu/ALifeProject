@@ -326,7 +326,7 @@ class ALifeSimTest(object):
             # self.agentList[i]._printSmell(self, "agent")
             # print(self.agentList[i].detectSmellRadius(self), "agent")
 
-        self.printGrid()
+        # self.printGrid()
         # print(self.globalMap)
         # print("self.globalMap:",self.globalMap)
 
@@ -420,15 +420,15 @@ class ALifeSimTest(object):
                     self.makeABaby(twoAgents[0], twoAgents[1])
                     for ag in agentsHere:
                         ag.setReadyToBreed(24)
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 elif action == 'eat':
                     self.eatFood(agentR, agentC)
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(50)
 
                 elif action == 'attack':
                     self.agentList[i].attackCreature(self, agentR, agentC)
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(50)
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
@@ -441,23 +441,25 @@ class ALifeSimTest(object):
                     self.globalMap[rAhead, cAhead].append(agent)
                     # print("globalMap:",self.globalMap)
                     agentR, agentC = rAhead, cAhead
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 elif action == 'left':
                     agent.updatePose(agentR, agentC, agent._leftTurn())
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 elif action == 'right':
                     agent.updatePose(agentR, agentC, agent._rightTurn())
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 elif action == 'turnAround':
                     agent.updatePose(agentR, agentC, agent._turnAround())
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 else:
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
+
+                print("new energy:", agent.getEnergy())
 
                 agentR, agentC, agentH = agent.getPose()
                 rAhead, cAhead = agent._computeAhead(self.gridSize)
