@@ -40,7 +40,7 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("121005990")
-        randomGeneticStrings.append("111002990")
+        randomGeneticStrings.append("111102990")
         # randomGeneticStrings.append("111002990")
 
         # randomGeneticStrings.append("11110599")

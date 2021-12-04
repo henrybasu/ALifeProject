@@ -98,7 +98,13 @@ class ALifeSimTest(object):
 
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
-        return self.stoneMap[row, col]
+        # return self.stoneMap[row, col]
+
+        stonesAtList = self.globalMap[row, col]
+        for ob in stonesAtList:
+            if type(ob) is not Stone:
+                stonesAtList.remove(ob)
+        return stonesAtList
 
     def waterAt(self,row,col):
         return self.waterMap[row,col]
@@ -108,8 +114,13 @@ class ALifeSimTest(object):
         return self.foodMap[row, col]
 
     def agentsAt(self, row, col):
+        # TODO: Potential issue here
         """Given a row and column, returns a list of the agents at that location."""
-        return self.agentMap[row, col]
+        agentAtList = self.globalMap[row, col]
+        for ob in agentAtList:
+            if type(ob) is not Agent:
+                agentAtList.remove(ob)
+        return agentAtList
 
     def objectsAt(self, row, col):
         return self.globalMap[row, col]
@@ -142,7 +153,7 @@ class ALifeSimTest(object):
                 pass
 
             self.agentList.append(nextAgent)
-            self.agentMap[r, c].append(nextAgent)
+            # self.agentMap[r, c].append(nextAgent)
             self.globalMap[r, c].append(nextAgent)
 
     def _placeStones(self):
@@ -155,7 +166,7 @@ class ALifeSimTest(object):
                     break
             nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
             self.stoneList.append(nextStone)
-            self.stoneMap[randRow, randCol].append(nextStone)
+            # self.stoneMap[randRow, randCol].append(nextStone)
             self.globalMap[randRow, randCol].append(nextStone)
 
     def _placeWaters(self):
@@ -257,7 +268,7 @@ class ALifeSimTest(object):
         agentStr = "{0:s}{1:<3d}|"
         emptyStr = "    |"
         strings = [emptyStr, emptyStr, emptyStr]
-        agentsHere = self.agentMap[row, col]
+        agentsHere = self.globalMap[row, col]
         for i in range(3):
             if len(agentsHere) > i:
                 agent = agentsHere[i]
@@ -314,7 +325,7 @@ class ALifeSimTest(object):
         print(self.globalMap)
         # print(self.agentMap)
         print("self.globalMap:",self.globalMap)
-        print("self.agentMap:", self.agentMap)
+        # print("self.agentMap:", self.agentMap)
 
 
     def _growFood(self):
@@ -393,7 +404,7 @@ class ALifeSimTest(object):
                 action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks)
 
                 if action == 'breed':
-                    self.makeABaby(self.agentMap[agentR, agentC][0], self.agentMap[agentR, agentC][1])
+                    self.makeABaby(self.globalMap[agentR, agentC][0], self.globalMap[agentR, agentC][1])
                     isOkay = agent.changeEnergy(0)
 
                 elif action == 'eat':
@@ -406,16 +417,16 @@ class ALifeSimTest(object):
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
-                    if agent in (self.agentMap[agentR, agentC]):
-                        # print("REMOVING",agent,"from agentMap")
-                        self.agentMap[agentR, agentC].remove(agent)
-                        # print(self.agentMap)
+                    # if agent in (self.agentMap[agentR, agentC]):
+                    #     # print("REMOVING",agent,"from agentMap")
+                    #     self.agentMap[agentR, agentC].remove(agent)
+                    #     # print(self.agentMap)
                     if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
                         # print(self.globalMap)
 
-                    self.agentMap[rAhead, cAhead].append(agent)
+                    # self.agentMap[rAhead, cAhead].append(agent)
                     self.globalMap[rAhead, cAhead].append(agent)
                     # print("globalMap:",self.globalMap)
                     # print("agentMap",self.agentMap)
@@ -465,8 +476,8 @@ class ALifeSimTest(object):
             else:
                 self.deadAgents.append((agent, self.stepNum-agent.stepSpawned))
                 self.agentList.pop(i)
-                if agent in self.agentMap[agentR,agentC]:
-                    self.agentMap[agentR, agentC].remove(agent)
+                # if agent in self.agentMap[agentR,agentC]:
+                #     self.agentMap[agentR, agentC].remove(agent)
                 if agent in self.globalMap[agentR,agentC]:
                     self.globalMap[agentR, agentC].remove(agent)
                 i = i + 1
@@ -488,7 +499,7 @@ class ALifeSimTest(object):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at location: (" + str(row) + "," + str(col) + ")")
-        creatureAmt = self.agentMap[row, col]
+        creatureAmt = self.globalMap[row, col]
         # print("AgentMap: " + str(self.agentMap))
         # print("Row and Col: " + str(row) + ", " + str(col))
         # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
@@ -510,7 +521,7 @@ class ALifeSimTest(object):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at current location: (" + str(row) + "," + str(col) + ")")
-        creatureAmt = self.agentMap[row, col]
+        creatureAmt = self.globalMap[row, col]
         print("creatureHere",creatureAmt)
         for i in range(len(creatureAmt)):
             print(creatureAmt[i].getColor())
@@ -583,7 +594,7 @@ class ALifeSimTest(object):
             # print("baby",babyAgent.stepSpawned)
 
             self.agentList.append(babyAgent)
-            self.agentMap[r, c].append(babyAgent)
+            # self.agentMap[r, c].append(babyAgent)
             self.globalMap[r,c].append(babyAgent)
 
             agent1.setReadyToBreed(24)
