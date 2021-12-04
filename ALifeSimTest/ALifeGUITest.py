@@ -30,6 +30,8 @@ class ALifeGUI:
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
+
+        #Loading in Images
         self.ghostImage = PhotoImage(file='images/ghost.png')
         self.turnipImage = PhotoImage(file='images/trnip.png')
         self.stoneImage = PhotoImage(file='images/stone.png')
@@ -37,6 +39,11 @@ class ALifeGUI:
         self.treeImage = PhotoImage(file='images/tree.png')
         self.treeFruitImage = PhotoImage(file='images/tree_fruit.png')
         self.waveImage = PhotoImage(file='images/wave.png')
+        self.pitImage = PhotoImage(file='images/pit.png')
+        self.fishUpImage = PhotoImage(file='images/fishUp.png')
+        self.fishDownImage = PhotoImage(file='images/fishDown.png')
+        self.fishRightImage = PhotoImage(file='images/fishRight.png')
+        self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
         randomGeneticStrings.append("1210059900")
@@ -682,7 +689,7 @@ class ALifeGUI:
                 for wt in waters:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    wtId = self.canvas.create_image(coords, image=self.waveImage)
+                    wtId = self.canvas.create_image(coords, image=self.pitImage)
                     self.agentIdToPose[wtId] = wt.getPose()
                     wt.setVisId(wtId)
                 for ag in agents:
