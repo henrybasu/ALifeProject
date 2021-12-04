@@ -443,8 +443,8 @@ class Agent(Object):
                 print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible))
                 return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible)
             elif agent.Aggression == 1:
-                print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater))
-                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, detectedWater)
+                print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible))
+                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible)
             else:
                 print("SHOULD NOT GET HERE")
 

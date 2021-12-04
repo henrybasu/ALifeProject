@@ -387,7 +387,16 @@ class ALifeSimTest(object):
                 print(action)
 
                 if action == 'breed':
-                    self.makeABaby(self.globalMap[agentR, agentC][0], self.globalMap[agentR, agentC][1])
+                    twoAgents = []
+                    agentsHere = self.agentsAt(agentR,agentC)
+                    for i in range(2):
+                        # print(type(ob))
+                        # if ob is Agent:
+                        twoAgents.append(agentsHere[i])
+                        print("twoAgents",twoAgents)
+                    self.makeABaby(twoAgents[0], twoAgents[1])
+                    for ag in agentsHere:
+                        ag.setReadyToBreed(24)
                     isOkay = agent.changeEnergy(0)
 
                 elif action == 'eat':
