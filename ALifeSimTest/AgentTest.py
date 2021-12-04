@@ -441,6 +441,8 @@ class Agent(Object):
         isCreatureHere = sim._assessCreatureHere(agentR, agentC)
         # checks to see if there is a creature in the agent's vision
         isCreatureAhead = self._areCreaturesInVision(sim)
+        if sim._assessObjects == 4:
+            isCreatureAhead=[]
         # checks to see if there is food where the agent currently is
         isFoodHere = sim.foodAt(agentR, agentC)
         # checks to see if there is a creature in the agent's smell radius
