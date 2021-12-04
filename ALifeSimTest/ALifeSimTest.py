@@ -224,16 +224,17 @@ class ALifeSimTest(object):
             self.globalMap[randRow, randCol].append(nextPit)
 
     def _placeWaters(self):
-        self._placePonds(self.numPonds, random.randint(2,4))
+        self._placePonds(self.numPonds)
         self._placeRivers()
 
-    def _placePonds(self, numPonds, pondSize):
+    def _placePonds(self, numPonds, pondSize=random.choice([3,3])):
         for i in range(numPonds):
-            rowLoc = random.randint(0, self.gridSize - pondSize)
-            colLoc = random.randint(0, self.gridSize - pondSize)
+            thisPondSize = random.randint(1,pondSize)
+            rowLoc = random.randint(0, self.gridSize - thisPondSize)
+            colLoc = random.randint(0, self.gridSize - thisPondSize)
             # print("row, col: ", rowLoc, colLoc)
-            for row in range(pondSize):
-                for col in range(pondSize):
+            for row in range(thisPondSize):
+                for col in range(thisPondSize):
                     isWaterHere = random.choice([1, 1])
                     if isWaterHere == 1:
                         if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
