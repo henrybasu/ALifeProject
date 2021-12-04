@@ -12,7 +12,7 @@ import random
 import string
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
-from PIL import *
+from PIL import Image,ImageTk
 
 import ALifeSimTest
 from LocalSearchSolverTest import RulesetState, HillClimber, BeamSearcher, GASearcher
@@ -47,8 +47,9 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("1210059901")
+        randomGeneticStrings.append("1210059900")
         randomGeneticStrings.append("1110029900")
+        randomGeneticStrings.append("1210069900")
         # randomGeneticStrings.append("1210079900")
         # randomGeneticStrings.append("1210089900")
 
@@ -650,6 +651,8 @@ class ALifeGUI:
         self.posToPatchId = {}
         self.agentIdToPose = {}
 
+        self.resizeAllImages()
+
         if self.gridDim * 50 < self.canvasSize:
             self.cellSize = 50
         else:
@@ -927,6 +930,59 @@ class ALifeGUI:
         have the right color."""
         self.canvas.itemconfig(cellId, outline=color)
 
+    def resizeAllImages(self):
+        if self.sim.gridSize > 10:
+            newW = int(480/(self.sim.gridSize))
+            newH = int(480 / (self.sim.gridSize))
+
+            ghostImg = Image.open('images/ghost.png')
+            ghostImg = ghostImg.resize((newW, newH))
+            self.ghostImg = ImageTk.PhotoImage(ghostImg)
+
+            turnipImg = Image.open('images/trnip.png')
+            turnipImg = turnipImg.resize((newW, newH))
+            self.turnipImage = ImageTk.PhotoImage(turnipImg)
+
+            stoneImg = Image.open('images/stone.png')
+            stoneImg = stoneImg.resize((newW, newH))
+            self.stoneImage = ImageTk.PhotoImage(stoneImg)
+
+            mushroomImg = Image.open('images/mushroom.png')
+            mushroomImg = mushroomImg.resize((newW, newH))
+            self.mushroomImage = ImageTk.PhotoImage(mushroomImg)
+
+            treeImg = Image.open('images/tree.png')
+            treeImg = treeImg.resize((newW, newH))
+            self.treeImage = ImageTk.PhotoImage(treeImg)
+
+            treeFruitImg = Image.open('images/tree_fruit.png')
+            treeFruitImg = treeFruitImg.resize((newW, newH))
+            self.treeFruitImage = ImageTk.PhotoImage(treeFruitImg)
+
+            waveImg = Image.open('images/wave.png')
+            waveImg = waveImg.resize((newW, newH))
+            self.waveImage = ImageTk.PhotoImage(waveImg)
+
+            pitImg = Image.open('images/pit.png')
+            pitImg = pitImg.resize((newW, newH))
+            self.pitImage = ImageTk.PhotoImage(pitImg)
+
+            fishUpImg = Image.open('images/fishUp.png')
+            fishUpImg = fishUpImg.resize((newW, newH))
+            self.fishUpImage = ImageTk.PhotoImage(fishUpImg)
+
+            fishDownImg = Image.open('images/fishDown.png')
+            fishDownImg = fishDownImg.resize((newW, newH))
+            self.fishDownImage = ImageTk.PhotoImage(fishDownImg)
+
+            fishRightImg = Image.open('images/fishRight.png')
+            fishRightImg = fishRightImg.resize((newW, newH))
+            self.fishRightImage = ImageTk.PhotoImage(fishRightImg)
+
+            fishLeftImg = Image.open('images/fishLeft.png')
+            fishLeftImg = fishLeftImg.resize((newW, newH))
+            self.fishLeftImage = ImageTk.PhotoImage(fishLeftImg)
+
 
     def _posToId(self, row, col):
         """Given row and column indices, it looks up and returns the GUI id of the cell at that location"""
@@ -966,6 +1022,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
-    s = ALifeGUI(3, numberOfAgents)
+    s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
