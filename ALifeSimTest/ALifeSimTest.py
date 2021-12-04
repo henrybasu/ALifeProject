@@ -61,13 +61,12 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        # self._placeWaters()
-        # self._placeStones()
+        self._placeWaters()
         self._placePits()
         self._placeTrees(self.numForests, random.randint(4, 10))
-        # self._placeTrees(self.numForests, 5)
+        # self._placeStones()
         # self._placeFood()
-        # self._placeAgents()
+        self._placeAgents()
 
     def getSize(self):
         """Returns the size of the grid"""
