@@ -38,7 +38,7 @@ class ALifeSimTest(object):
         self.numWaters = 0
         self.numTrees = 1
         self.numRivers = 2
-        self.numForrests = 3
+        self.numForests = 5
         self.numPits = 0
 
         self.initialGeneticStrings = geneticStrings
@@ -64,8 +64,8 @@ class ALifeSimTest(object):
         # self._placeWaters()
         # self._placeStones()
         self._placePits()
-        # self._placeTrees(self.numForrests, random.randint(1, 5))
-        self._placeTrees(self.numForrests, 7)
+        self._placeTrees(self.numForests, random.randint(4, 10))
+        # self._placeTrees(self.numForests, 5)
         # self._placeFood()
         # self._placeAgents()
 
@@ -257,41 +257,35 @@ class ALifeSimTest(object):
                     tiles[x][y] = 1
 
 
-    def _placeTrees(self, numForrests, forrestSize):
+    def _placeTrees(self, numForests, forestSize):
 
-        radius = forrestSize // 2
+        r = forestSize // 2
 
-        X = radius
+        for forest in range(numForests):
+            rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            colLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            print("row, col: ", rowLoc, colLoc)
 
-        for x in range(-X, X + 1):
-            Y = int((radius * radius - x * x) ** 0.5)  # bound for y given x
-            for y in range(-Y, Y + 1):
-                nextTree = Tree(initPose=(x, y), geneticString="00")
-                self.treeList.append(nextTree)
-                self.globalMap[x, y].append(nextTree)
-                yield (x, y)
+            width = forestSize
+            height = forestSize
 
+            cx = width // 2
+            cy = height // 2
 
-        # width = self.gridSize
-        # height = self.gridSize
+            tiles = [[0 for _ in range(height)] for _ in range(width)]
 
-        # cx = width // 2
-        # cy = height // 2
-        # r = forrestSize // 2
-        #
-        # tiles = [[0 for _ in range(height)] for _ in range(width)]
-        #
-        # self.make_circle(tiles, cx, cy, r)
-        #
-        # print("tiles: ", tiles)
-        #
-        # for i in range(len(tiles)):
-        #     for j in range(len(tiles)):
-        #         if tiles[i][j] == 1:
-        #             if len(self.objectsAt(i, j)) == 0:
-        #                 nextTree = Tree(initPose=(i, j), geneticString="00")
-        #                 self.treeList.append(nextTree)
-        #                 self.globalMap[i, j].append(nextTree)
+            self.make_circle(tiles, cx, cy, r)
+
+            for i in range(len(tiles)):
+                for j in range(len(tiles)):
+                    isTreeHere = random.choice([0, 1, 1])
+                    if tiles[i][j] == 1:
+                        if isTreeHere == 1:
+                            if self.gridSize > rowLoc + i >= 0 and self.gridSize > colLoc + j >= 0:
+                                if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
+                                    nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString="00")
+                                    self.treeList.append(nextTree)
+                                    self.globalMap[rowLoc + i, colLoc + j].append(nextTree)
 
 
         # print("\n".join("".join(map(str, i)) for i in tiles))
