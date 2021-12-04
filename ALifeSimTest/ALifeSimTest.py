@@ -357,14 +357,15 @@ class ALifeSimTest(object):
 
         if self.verbose:
             print("--------------------------------------------------------------------------------------------")
-        for agent in self.agentList:
+        while i < len(self.agentList):
             if self.verbose:
                 print("")
                 print("")
-                print("*************** AGENT COLOR: " + str(agent.colorNumberToText(agent.getColor())) + " ***************")
+                print("*************** AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ***************")
 
+            agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
-            rAhead, cAhead = agent._computeAhead(self.gridSize)
+            rAhead, cAhead = self.agentList[i]._computeAhead(self.gridSize)
 
             # checks to see if there is a creature where the agent currently is
             isCreatureHere = self._assessCreatureHere(agentR, agentC)
@@ -373,7 +374,7 @@ class ALifeSimTest(object):
             isFoodHere = self.foodAt(agentR, agentC)
 
             # checks to see if there is a creature in the agent's vision
-            isCreatureAhead = agent._areCreaturesInVision(self)
+            isCreatureAhead = self.agentList[i]._areCreaturesInVision(self)
 
             # checks to see if there is a creature in the agent's smell radius
             canSmellCreature = agent.detectSmellRadius(self)
@@ -400,7 +401,7 @@ class ALifeSimTest(object):
             isOkay = True
 
             if not agent.isDead:
-                action = agent.determineAction(agent, isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks, detectedWater)
+                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks, detectedWater)
                 print(agent.colorNumberToText(agent.getColor()), action)
                 if action == 'breed':
                     twoAgents = []
@@ -420,7 +421,7 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(50)
 
                 elif action == 'attack':
-                    agent.attackCreature(self, agentR, agentC)
+                    self.agentList[i].attackCreature(self, agentR, agentC)
                     isOkay = agent.changeEnergy(50)
 
                 elif action == 'forward':
@@ -482,13 +483,13 @@ class ALifeSimTest(object):
 
             if not isOkay:
                 self.deadAgents.append((agent, self.stepNum-agent.stepSpawned))
-                self.agentList.remove(agent)
+                self.agentList.pop(i)
                 if agent in self.globalMap[agentR,agentC]:
                     self.globalMap[agentR, agentC].remove(agent)
-                # i = i + 1
+                i = i + 1
 
-            # if isOkay:
-            #     i = i + 1
+            if isOkay:
+                i = i + 1
 
     def _assessFood(self, row, col):
         """Given a row and column, examine the amount of food there, and divide it into
