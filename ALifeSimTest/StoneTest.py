@@ -14,4 +14,7 @@ class Stone(Object):
         self.geneticString = geneticString
         self.color = int(self.geneticString[0])
 
+    def getTypeAbbreviation(self):
+        return "s"
+
 

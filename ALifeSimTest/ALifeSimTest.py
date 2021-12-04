@@ -223,22 +223,31 @@ class ALifeSimTest(object):
         #     print(agInCellC)
         #     print("-" * rowLen)
 
+        # for row in range(self.gridSize):
+        #     for col in range(self.gridSize):
+        #         if len(self.stoneMap[row, col]) > 0:
+        #             print("|   s   |", end="")
+        #         elif len(self.agentMap[row, col]) > 1:
+        #             print("|  " + str(len(self.agentMap[row, col])) + " a  |", end="")
+        #         elif len(self.foodMap[row, col]) > 0 and len(self.agentMap[row, col]) > 0:
+        #             print("|  f a  |", end="")
+        #         elif len(self.foodMap[row, col]) > 0:
+        #             print("|   f   |", end="")
+        #         elif len(self.agentMap[row, col]) > 0:
+        #             print("|   a   |", end="")
+        #         else:
+        #             print("|       |", end="")
+        #     print("\n")
+
         for row in range(self.gridSize):
             for col in range(self.gridSize):
-                if len(self.stoneMap[row, col]) > 0:
-                    print("|   s   |", end="")
-                elif len(self.agentMap[row, col]) > 1:
-                    print("|  " + str(len(self.agentMap[row, col])) + " a  |", end="")
-                elif len(self.foodMap[row, col]) > 0 and len(self.agentMap[row, col]) > 0:
-                    print("|  f a  |", end="")
-                elif len(self.foodMap[row, col]) > 0:
-                    print("|   f   |", end="")
-                elif len(self.agentMap[row, col]) > 0:
-                    print("|   a   |", end="")
-                else:
+                if len(self.globalMap[row, col]) == 0:
                     print("|       |", end="")
-            print("\n")
+                else:
+                    for i in range(len(self.globalMap[row, col])):
+                        print("|   " + str(self.globalMap[row, col][i].getTypeAbbreviation()) + "   |", end="")
 
+            print("\n")
 
     def _agentStringCodes(self, row, col):
         """Produces three strings for the first three agents (if that many) sitting in
@@ -299,8 +308,8 @@ class ALifeSimTest(object):
             # self.agentList[i]._printSmell(self, "agent")
             # print(self.agentList[i].detectSmellRadius(self), "agent")
 
-        # self.printGrid()
-        # print(self.globalMap)
+        self.printGrid()
+        print(self.globalMap)
         # print(self.agentMap)
         print("self.globalMap:",self.globalMap)
         print("self.agentMap:", self.agentMap)

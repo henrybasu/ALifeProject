@@ -14,4 +14,7 @@ class Water(Object):
         self.geneticString = geneticString
         self.color = 5
 
+    def getTypeAbbreviation(self):
+        return "w"
+
 

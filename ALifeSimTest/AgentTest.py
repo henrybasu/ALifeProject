@@ -1001,6 +1001,9 @@ class Agent(Object):
         # print("final String: " + str(finalString))
         return finalString
 
+    def getTypeAbbreviation(self):
+        return "a"
+
     def __str__(self):
         formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}      {4}"
         return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString)
