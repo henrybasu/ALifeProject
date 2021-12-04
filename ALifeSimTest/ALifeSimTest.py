@@ -37,9 +37,11 @@ class ALifeSimTest(object):
         self.numStones = numStones
         self.numWaters = 0
         self.numTrees = 1
-        self.numRivers = 2
+        self.numRivers = 1
+        self.numPonds = 2
         self.numForests = 5
         self.numPits = 0
+
 
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
@@ -222,6 +224,24 @@ class ALifeSimTest(object):
             self.globalMap[randRow, randCol].append(nextPit)
 
     def _placeWaters(self):
+        self._placePonds(self.numPonds, random.randint(2,4))
+        self._placeRivers()
+
+    def _placePonds(self, numPonds, pondSize):
+        for i in range(numPonds):
+            rowLoc = random.randint(0, self.gridSize - pondSize)
+            colLoc = random.randint(0, self.gridSize - pondSize)
+            # print("row, col: ", rowLoc, colLoc)
+            for row in range(pondSize):
+                for col in range(pondSize):
+                    isWaterHere = random.choice([1, 1])
+                    if isWaterHere == 1:
+                        if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
+                            nextWater = Water(initPose=(rowLoc + row, colLoc + col), geneticString="00")
+                            self.waterList.append(nextWater)
+                            self.globalMap[rowLoc + row, colLoc + col].append(nextWater)
+
+    def _placeRivers(self):
         for numberOfRivers in range(self.numRivers):
             randomOrientation = random.randint(0, 1)
 
