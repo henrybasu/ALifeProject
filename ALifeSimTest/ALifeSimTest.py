@@ -63,9 +63,9 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeWaters()
+        # self._placeWaters()
         self._placePits()
-        self._placeTrees(self.numForests, random.randint(4, 10))
+        self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeStones()
         # self._placeFood()
         self._placeAgents()
@@ -207,7 +207,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
+            nextStone = Stone(initPose=(randRow, randCol), geneticString="0")
             self.stoneList.append(nextStone)
             self.globalMap[randRow, randCol].append(nextStone)
 
@@ -219,7 +219,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextPit = Pit(initPose=(randRow, randCol), geneticString="00")
+            nextPit = Pit(initPose=(randRow, randCol), geneticString="0")
             self.pitList.append(nextPit)
             self.globalMap[randRow, randCol].append(nextPit)
 
@@ -238,7 +238,7 @@ class ALifeSimTest(object):
                     isWaterHere = random.choice([1, 1])
                     if isWaterHere == 1:
                         if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
-                            nextWater = Water(initPose=(rowLoc + row, colLoc + col), geneticString="00")
+                            nextWater = Water(initPose=(rowLoc + row, colLoc + col), geneticString="0")
                             self.waterList.append(nextWater)
                             self.globalMap[rowLoc + row, colLoc + col].append(nextWater)
 
@@ -257,13 +257,13 @@ class ALifeSimTest(object):
 
                 if randomOrientation == 0:
                     if len(self.objectsAt(i, place)) == 0:
-                        nextWater = Water(initPose=(i, place), geneticString="00")
+                        nextWater = Water(initPose=(i, place), geneticString="0")
                         self.waterList.append(nextWater)
                         self.globalMap[i, place].append(nextWater)
 
                 elif randomOrientation == 1:
                     if len(self.objectsAt(place, i)) == 0:
-                        nextWater = Water(initPose=(place, i), geneticString="00")
+                        nextWater = Water(initPose=(place, i), geneticString="0")
                         self.waterList.append(nextWater)
                         self.globalMap[place, i].append(nextWater)
 
@@ -284,7 +284,7 @@ class ALifeSimTest(object):
         for forest in range(numForests):
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
             colLoc = random.randint(-r + 1, self.gridSize - r + 1)
-            print("row, col: ", rowLoc, colLoc)
+            # print("row, col: ", rowLoc, colLoc)
 
             width = forestSize
             height = forestSize
@@ -303,7 +303,9 @@ class ALifeSimTest(object):
                         if isTreeHere == 1:
                             if self.gridSize > rowLoc + i >= 0 and self.gridSize > colLoc + j >= 0:
                                 if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
-                                    nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString="00")
+                                    nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString=random.choice(["0","0","0","0","1"]))
+                                    # print(nextTree.geneticString)
+                                    # print(nextTree.getCanGrowFood())
                                     self.treeList.append(nextTree)
                                     self.globalMap[rowLoc + i, colLoc + j].append(nextTree)
 
@@ -322,7 +324,7 @@ class ALifeSimTest(object):
         #             isTreeHere = random.randint(0, 1)
         #             if isTreeHere == 1:
         #                 if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
-        #                     nextTree = Tree(initPose=(rowLoc + row, colLoc + col), geneticString="00")
+        #                     nextTree = Tree(initPose=(rowLoc + row, colLoc + col), geneticString="0")
         #                     self.treeList.append(nextTree)
         #                     self.globalMap[rowLoc + row, colLoc + col].append(nextTree)
 
@@ -333,7 +335,7 @@ class ALifeSimTest(object):
         #             (randRow, randCol) = self._genRandomLoc()
         #         else:
         #             break
-        #     nextTree = Tree(initPose=(randRow, randCol), geneticString="00")
+        #     nextTree = Tree(initPose=(randRow, randCol), geneticString="0")
         #     self.treeList.append(nextTree)
         #     self.globalMap[randRow, randCol].append(nextTree)
 
@@ -476,22 +478,6 @@ class ALifeSimTest(object):
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = self.agentList[i]._computeAhead(self.gridSize)
 
-            # checks to see if there is a creature where the agent currently is
-            isCreatureHere = self._assessCreatureHere(agentR, agentC)
-
-            # checks to see if there is food where the agent currently is
-            isFoodHere = self.foodAt(agentR, agentC)
-
-            # checks to see if there is a creature in the agent's vision
-            isCreatureAhead = self.agentList[i]._areCreaturesInVision(self)
-
-            # checks to see if there is a creature in the agent's smell radius
-            canSmellCreature = agent.detectSmellRadius(self)
-
-            detectedRocks = agent.detectRocks(self)
-
-            detectedWater = agent.detectWater(self)
-
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
             # foodAheadRating = self._assessFood(rAhead, cAhead)
@@ -510,7 +496,7 @@ class ALifeSimTest(object):
             isOkay = True
 
             if not agent.isDead:
-                action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks, detectedWater)
+                action = agent.determineAction(self, self.agentList[i], self.time)
                 print(agent.colorNumberToText(agent.getColor()), action)
                 if action == 'breed':
                     twoAgents = []

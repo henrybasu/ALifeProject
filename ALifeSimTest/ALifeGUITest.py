@@ -47,8 +47,8 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("1210079900")
-        randomGeneticStrings.append("1210059900")
+        randomGeneticStrings.append("4210079900")
+        randomGeneticStrings.append("4210059900")
         randomGeneticStrings.append("1110029900")
         randomGeneticStrings.append("1210069900") #TODO: this one lives
         randomGeneticStrings.append("1210089900")
@@ -708,9 +708,14 @@ class ALifeGUI:
                 for tr in trees:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    trId = self.canvas.create_image(coords, image=self.treeImage)
-                    self.agentIdToPose[trId] = tr.getPose()
-                    tr.setVisId(trId)
+                    if tr.getCanGrowFood() == '0':
+                        trId = self.canvas.create_image(coords, image=self.treeImage)
+                        self.agentIdToPose[trId] = tr.getPose()
+                        tr.setVisId(trId)
+                    elif tr.getCanGrowFood() == '1':
+                        trId = self.canvas.create_image(coords, image=self.treeFruitImage)
+                        self.agentIdToPose[trId] = tr.getPose()
+                        tr.setVisId(trId)
                 for ag in agents:
                     self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
@@ -1030,7 +1035,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 3
-    s = ALifeGUI(20, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
