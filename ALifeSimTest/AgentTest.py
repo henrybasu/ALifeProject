@@ -652,28 +652,28 @@ class Agent(Object):
                         break
         return newListOfRandomActionsPossible
 
-    def filterActionsByRocks(self, listOfRandomActionsPossible, detectedWater):
+    def filterActionsByRocks(self, listOfRandomActionsPossible, detectedRocks):
         newListOfRandomActionsPossible = listOfRandomActionsPossible.copy()
         if self.getJump() == 0:
-            if detectedWater[0] == -1:
+            if detectedRocks[0] == -1:
                 while True:
                     if 'forward' in newListOfRandomActionsPossible:
                         newListOfRandomActionsPossible.remove('forward') #Removes ALL instances of 'forward'
                     else:
                         break
-            if detectedWater[1] == -1:
+            if detectedRocks[1] == -1:
                 while True:
                     if 'turnAround' in newListOfRandomActionsPossible:
                         newListOfRandomActionsPossible.remove('turnAround')  # Removes ALL instances of 'turnAround'
                     else:
                         break
-            if detectedWater[2] == -1:
+            if detectedRocks[2] == -1:
                 while True:
                     if 'right' in newListOfRandomActionsPossible:
                         newListOfRandomActionsPossible.remove('right')  # Removes ALL instances of 'right'
                     else:
                         break
-            if detectedWater[3] == -1:
+            if detectedRocks[3] == -1:
                 while True:
                     if 'left' in newListOfRandomActionsPossible:
                         newListOfRandomActionsPossible.remove('left')  # Removes ALL instances of 'left'

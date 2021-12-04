@@ -667,6 +667,7 @@ class ALifeGUI:
                 agents = self.sim.agentsAt(row, col)
                 stones = self.sim.stonesAt(row,col)
                 waters = self.sim.waterAt(row,col)
+                trees = self.sim.treeAt(row,col)
                 # print(agents)
                 # print(self.sim.foodAt(row,col))
                 food = self.sim.foodAt(row,col)
@@ -689,11 +690,17 @@ class ALifeGUI:
                 for wt in waters:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    wtId = self.canvas.create_image(coords, image=self.pitImage)
+                    wtId = self.canvas.create_image(coords, image=self.waveImage)
                     self.agentIdToPose[wtId] = wt.getPose()
                     wt.setVisId(wtId)
+                for tr in trees:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    trId = self.canvas.create_image(coords, image=self.treeImage)
+                    self.agentIdToPose[trId] = tr.getPose()
+                    tr.setVisId(trId)
                 for ag in agents:
-                    # self.canvas.update()
+                    self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
                     agColor = self._setAgentColor(ag.getColor())
                     if ag.getAggression() == 1:
@@ -703,9 +710,22 @@ class ALifeGUI:
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
                     agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=2)
                     self.agentIdToPose[agId] = ag.getPose()
-                    # print('orig coords:', coords)
-                    # print("agent pose:", ag.getPose())
                     ag.setVisId(agId)
+
+                    #TODO: vvv Will be useful when changing agent sprites. Comment out code above, comment in code below
+
+                    # self.canvas.update()
+                    # coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    # self.agentIdToPose[agId] = ag.getPose()
+                    # if ag.getPose()[2] == 'n':
+                    #     agId = self.canvas.create_image(coords, image=self.fishUpImage)
+                    # elif ag.getPose()[2] == 's':
+                    #     agId = self.canvas.create_image(coords, image=self.fishDownImage)
+                    # elif ag.getPose()[2] == 'e':
+                    #     agId = self.canvas.create_image(coords, image=self.fishRightImage)
+                    # elif ag.getPose()[2] == 'w':
+                    #     agId = self.canvas.create_image(coords, image=self.fishLeftImage)
+                    # ag.setVisId(agId)
 
     def _determineObjectCoords(self, object):
         """gives offset coordinates based on the direction the agent is

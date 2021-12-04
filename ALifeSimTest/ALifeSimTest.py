@@ -8,6 +8,7 @@ from ObjectTest import *
 from StoneTest import *
 from FoodTest import *
 from WaterTest import *
+from TreeTest import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -22,6 +23,7 @@ class ALifeSimTest(object):
     time = 12
     numStones = 0
     numWaters = 0
+    numTrees = 0
 
     def __init__(self, gridSize, numAgents, numStones, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
@@ -30,6 +32,7 @@ class ALifeSimTest(object):
         self.numAgents = numAgents
         self.numStones = numStones
         self.numWaters = 0
+        self.numTrees = 1
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
         self.globalMap = dict()
@@ -41,6 +44,7 @@ class ALifeSimTest(object):
         self.foodList = []
         self.stoneList = []
         self.waterList = []
+        self.treeList = []
         self.agentList = []
         self.deadAgents = []
         self.eatenFood = []
@@ -50,6 +54,7 @@ class ALifeSimTest(object):
 
         self._placeWaters()
         self._placeStones()
+        self._placeTrees()
         # self._placeFood()
         self._placeAgents()
 
@@ -76,6 +81,9 @@ class ALifeSimTest(object):
     def getWaters(self):
         return self.waterList[:]
 
+    def getTrees(self):
+        return self.treeList[:]
+
     def getDeadAgents(self):
         """Returns a list of the dead agents."""
         return self.deadAgents
@@ -98,6 +106,13 @@ class ALifeSimTest(object):
             if type(ob) is not Water:
                 waterAtList.remove(ob)
         return waterAtList
+
+    def treeAt(self,row,col):
+        treeAtList = self.globalMap[row, col].copy()
+        for ob in treeAtList:
+            if type(ob) is not Tree:
+                treeAtList.remove(ob)
+        return treeAtList
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
@@ -177,6 +192,18 @@ class ALifeSimTest(object):
             nextWater = Water(initPose=(i, place), geneticString="00")
             self.waterList.append(nextWater)
             self.globalMap[i, place].append(nextWater)
+
+    def _placeTrees(self):
+        for i in range(self.numTrees):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextTree = Tree(initPose=(randRow, randCol), geneticString="00")
+            self.treeList.append(nextTree)
+            self.globalMap[randRow, randCol].append(nextTree)
 
 
     def _addFoodClump(self):
@@ -499,6 +526,8 @@ class ALifeSimTest(object):
                     return 3
                 elif type(ob) is Water:
                     return -2
+                elif type(ob) is Tree:
+                    return 4
         return 0
 
     def eatFood(self, row, col):
