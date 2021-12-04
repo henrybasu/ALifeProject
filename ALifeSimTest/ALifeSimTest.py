@@ -111,7 +111,14 @@ class ALifeSimTest(object):
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
-        return self.foodMap[row, col]
+
+        foodAtList = self.globalMap[row, col].copy()
+        for ob in foodAtList:
+            if type(ob) is not Food:
+                foodAtList.remove(ob)
+        return foodAtList
+
+        # return self.foodMap[row, col]
 
     def agentsAt(self, row, col):
         # TODO: Potential issue here
@@ -195,7 +202,7 @@ class ALifeSimTest(object):
 
         nextFood = Food(initPose=(randRow, randCol))
         self.foodList.append(nextFood)
-        self.foodMap[randRow, randCol].append(nextFood)
+        # self.foodMap[randRow, randCol].append(nextFood)
         self.globalMap[randRow, randCol].append(nextFood)
 
 
@@ -331,8 +338,8 @@ class ALifeSimTest(object):
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
         # Grow food
-        for cell in self.foodMap:
-            foodAmt = self.foodMap[cell]
+        for cell in self.globalMap:
+            foodAmt = self.globalMap[cell]
             # if foodAmt < self.MAX_FOOD:
             #     newAmt = int(foodAmt * self.GROWTH_RATE)
             #     self.foodMap[cell] += newAmt
@@ -487,7 +494,7 @@ class ALifeSimTest(object):
         """Given a row and column, examine the amount of food there, and divide it into
         no food, some food, and plentiful food: returning 0, 1, or 2."""
         # print("AssessFood")
-        foodAmt = self.foodMap[row, col]
+        foodAmt = self.globalMap[row, col]
         #print("FoodMap: " + str(self.foodMap))
         # print("Row and Col: " + str(row) + ", " + str(col))
         # print("FoodMap[row,col] " + str(self.foodMap[row, col]))
