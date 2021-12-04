@@ -98,13 +98,7 @@ class ALifeSimTest(object):
 
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
-        # return self.stoneMap[row, col]
-
-        stonesAtList = self.globalMap[row, col]
-        for ob in stonesAtList:
-            if type(ob) is not Stone:
-                stonesAtList.remove(ob)
-        return stonesAtList
+        return self.stoneMap[row, col]
 
     def waterAt(self,row,col):
         return self.waterMap[row,col]
@@ -166,7 +160,7 @@ class ALifeSimTest(object):
                     break
             nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
             self.stoneList.append(nextStone)
-            # self.stoneMap[randRow, randCol].append(nextStone)
+            self.stoneMap[randRow, randCol].append(nextStone)
             self.globalMap[randRow, randCol].append(nextStone)
 
     def _placeWaters(self):

@@ -26,7 +26,7 @@ class ALifeGUI:
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
-        self.numberStones = 1
+        self.numberStones = 3
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
