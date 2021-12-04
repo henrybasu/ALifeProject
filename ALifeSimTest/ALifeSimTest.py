@@ -60,7 +60,7 @@ class ALifeSimTest(object):
 
         self._placeStones()
         self._placeWaters()
-        print('placing water')
+        # print('placing water')
         # self._placeFood()
         self._placeAgents()
 
@@ -98,12 +98,12 @@ class ALifeSimTest(object):
 
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
-        # return self.stoneMap[row, col]
-
-        stonesAtList = self.globalMap[row, col]
+        stonesAtList = self.globalMap[row, col].copy()
         for ob in stonesAtList:
             if type(ob) is not Stone:
                 stonesAtList.remove(ob)
+        print(stonesAtList)
+        # return self.stoneMap[row, col]
         return stonesAtList
 
     def waterAt(self,row,col):
@@ -116,7 +116,7 @@ class ALifeSimTest(object):
     def agentsAt(self, row, col):
         # TODO: Potential issue here
         """Given a row and column, returns a list of the agents at that location."""
-        agentAtList = self.globalMap[row, col]
+        agentAtList = self.globalMap[row, col].copy()
         for ob in agentAtList:
             if type(ob) is not Agent:
                 agentAtList.remove(ob)
@@ -322,7 +322,7 @@ class ALifeSimTest(object):
             # print(self.agentList[i].detectSmellRadius(self), "agent")
 
         self.printGrid()
-        print(self.globalMap)
+        # print(self.globalMap)
         # print(self.agentMap)
         print("self.globalMap:",self.globalMap)
         # print("self.agentMap:", self.agentMap)
