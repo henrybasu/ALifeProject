@@ -15,7 +15,7 @@ class ALifeSimTest(object):
     in clusters. Each agent has a certain amount of health that is depleted a bit each time step,
     and that is depleted more if the agent moves. They can regain health by eating, up to a max amount."""
 
-    FOOD_PERCENT = 0.10
+    FOOD_PERCENT = 0.1
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
@@ -29,7 +29,7 @@ class ALifeSimTest(object):
         self.gridSize = gridSize
         self.numAgents = numAgents
         self.numStones = numStones
-        self.numWaters = 0
+        self.numWaters = 2
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
         self.stoneMap = dict()
@@ -61,7 +61,7 @@ class ALifeSimTest(object):
         self._placeStones()
         self._placeWaters()
         # print('placing water')
-        # self._placeFood()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -107,7 +107,12 @@ class ALifeSimTest(object):
         return stonesAtList
 
     def waterAt(self,row,col):
-        return self.waterMap[row,col]
+        waterAtList = self.globalMap[row, col].copy()
+        for ob in waterAtList:
+            if type(ob) is not Water:
+                waterAtList.remove(ob)
+        print(waterAtList)
+        return waterAtList
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
@@ -187,7 +192,7 @@ class ALifeSimTest(object):
                     break
             nextWater = Water(initPose=(randRow, randCol), geneticString="00")
             self.waterList.append(nextWater)
-            self.waterMap[randRow, randCol].append(nextWater)
+            # self.waterMap[randRow, randCol].append(nextWater)
             self.globalMap[randRow, randCol].append(nextWater)
 
 
@@ -335,6 +340,7 @@ class ALifeSimTest(object):
         # print("self.agentMap:", self.agentMap)
 
 
+
     def _growFood(self):
         """Updates every cell in the food map with more food, up to the maximum amount"""
         # Grow food
@@ -429,6 +435,7 @@ class ALifeSimTest(object):
                     #     # print("REMOVING",agent,"from agentMap")
                     #     self.agentMap[agentR, agentC].remove(agent)
                     #     # print(self.agentMap)
+                    # TODO: this if shouldn't be here, and it should remove the agent every time it moves
                     if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
@@ -469,11 +476,15 @@ class ALifeSimTest(object):
                     agent.changeReadyToBreed(1)
 
 
-            for j in range(len(self.agentList)-1):
-                print("AGENT 1 ID: ", self.agentList[j].getVisId)
-                print("AGENT 2 ID: ", self.agentList[j+1].getVisId)
-                if self.agentList[j].getVisId == self.agentList[j+1].getVisId:
-                    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            # for j in range(len(self.agentList)-1):
+            #     print("AGENT 1 ID: ", self.agentList[j].getVisId)
+            #     print("AGENT 2 ID: ", self.agentList[j+1].getVisId)
+            #     if self.agentList[j].getVisId == self.agentList[j+1].getVisId:
+            #         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+
+            if len(self.agentList) != len(set(self.agentList)):
+                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATES~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
             if agent.energy <= 0:
                 isOkay = False
@@ -494,7 +505,7 @@ class ALifeSimTest(object):
         """Given a row and column, examine the amount of food there, and divide it into
         no food, some food, and plentiful food: returning 0, 1, or 2."""
         # print("AssessFood")
-        foodAmt = self.globalMap[row, col]
+        foodAmt = self.foodAt(row, col)
         #print("FoodMap: " + str(self.foodMap))
         # print("Row and Col: " + str(row) + ", " + str(col))
         # print("FoodMap[row,col] " + str(self.foodMap[row, col]))
@@ -566,13 +577,13 @@ class ALifeSimTest(object):
     def eatFood(self, row, col):
         """Determines what, if any, food is eaten from the current given location. It returns the
         energy value of the food eaten, and updates the foodMap."""
-        foodAtCell = self.foodMap[row, col]
+        foodAtCell = self.foodAt(row, col)
         if len(foodAtCell) > 0:
             self.eatenFood.append(foodAtCell)
             for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
-                    self.foodMap[row, col] = []
-                    self.globalMap[row, col] = [] #TODO: what if there is something else on that square other than food?
+                    # self.foodMap[row, col] = []
+                    self.globalMap[row, col].remove(ob) #TODO: what if there is something else on that square other than food?
 
             for i in range(len(self.foodList)):
                 if foodAtCell == self.foodList[i]:
