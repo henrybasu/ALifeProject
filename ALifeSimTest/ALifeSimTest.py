@@ -248,6 +248,8 @@ class ALifeSimTest(object):
                         nextTree = Tree(initPose=(i, j), geneticString="00")
                         self.treeList.append(nextTree)
                         self.globalMap[i, j].append(nextTree)
+
+
         # print("\n".join("".join(map(str, i)) for i in tiles))
 
 
