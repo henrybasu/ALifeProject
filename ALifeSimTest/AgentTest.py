@@ -40,7 +40,8 @@ class Agent(Object):
         self.Aggression = int(self.geneticString[3])
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
-        self.energy = int(self.geneticString[6:7])
+        self.energy = int(self.geneticString[6:8])
+        self.energy = 5 #TODO: remove this line
         self.jumpVal = int(self.geneticString[8])
         self.swimVal = int(self.geneticString[9])
         # self.score = 0

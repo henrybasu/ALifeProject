@@ -50,8 +50,8 @@ class ALifeGUI:
         randomGeneticStrings.append("1210059900")
         randomGeneticStrings.append("1110029900")
         randomGeneticStrings.append("1210069900")
-        # randomGeneticStrings.append("1210079900")
-        # randomGeneticStrings.append("1210089900")
+        randomGeneticStrings.append("1210079900")
+        randomGeneticStrings.append("1210089900")
 
         # randomGeneticStrings.append("12110299")
         # for n in range(self.numberAgents - 1):
@@ -294,6 +294,7 @@ class ALifeGUI:
         """This is both a callback for the New Grid button, but also called from other
         places where the ruleString is set to a non-None value"""
         self._removeGridItems()
+        self.canvas.delete('all')
 
         rowSize = self.rowDimensionText.get()
         colSize = self.colDimensionText.get()
@@ -1021,7 +1022,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
+    numberOfAgents = 5
     s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

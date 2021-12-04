@@ -16,12 +16,12 @@ class ALifeSimTest(object):
     in clusters. Each agent has a certain amount of health that is depleted a bit each time step,
     and that is depleted more if the agent moves. They can regain health by eating, up to a max amount."""
 
-    FOOD_PERCENT = 0.01
+    FOOD_PERCENT = 0.1
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
     time = 12
-    numStones = 10
+    numStones = 0
     numWaters = 0
     numTrees = 0
 
@@ -30,12 +30,12 @@ class ALifeSimTest(object):
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
         self.numAgents = numAgents
-        self.numStones = 0
+        self.numStones = numStones
         self.numWaters = 0
-        self.numTrees = 0
-        self.numRivers = 0
+        self.numTrees = 1
+        self.numRivers = 2
         self.initialGeneticStrings = geneticStrings
-        self.maxFood = 1
+        self.maxFood = 0
         self.globalMap = dict()
 
         for row in range(gridSize):
@@ -56,7 +56,7 @@ class ALifeSimTest(object):
         self._placeWaters()
         self._placeStones()
         self._placeTrees()
-        self._placeFood()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -194,16 +194,12 @@ class ALifeSimTest(object):
 
             place = random.randint(0, self.gridSize-1)
             for i in range(self.gridSize):
-                # while True:
-                #     place = random.choice([place-1, place, place+1])
-                #     if place < 0 or place > self.gridSize-1:
-                #         place = random.choice([place - 1, place, place + 1])
-                #     else:
-                #         break
-
-                place = random.choice([place-1, place, place+1]) % self.gridSize
-
-
+                while True:
+                    place = random.choice([place-1, place, place+1])
+                    if place < 0 or place > self.gridSize-1:
+                        place = random.choice([place - 1, place, place + 1])
+                    else:
+                        break
 
                 if randomOrientation == 0:
                     if len(self.waterAt(i, place)) == 0:
@@ -330,7 +326,7 @@ class ALifeSimTest(object):
             # self.agentList[i]._printSmell(self, "agent")
             # print(self.agentList[i].detectSmellRadius(self), "agent")
 
-        self.printGrid()
+        # self.printGrid()
         # print(self.globalMap)
         # print("self.globalMap:",self.globalMap)
 
@@ -424,15 +420,15 @@ class ALifeSimTest(object):
                     self.makeABaby(twoAgents[0], twoAgents[1])
                     for ag in agentsHere:
                         ag.setReadyToBreed(24)
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 elif action == 'eat':
                     self.eatFood(agentR, agentC)
-                    isOkay = agent.changeEnergy(100)
+                    isOkay = agent.changeEnergy(50)
 
                 elif action == 'attack':
                     self.agentList[i].attackCreature(self, agentR, agentC)
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(50)
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
@@ -449,19 +445,21 @@ class ALifeSimTest(object):
 
                 elif action == 'left':
                     agent.updatePose(agentR, agentC, agent._leftTurn())
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 elif action == 'right':
                     agent.updatePose(agentR, agentC, agent._rightTurn())
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 elif action == 'turnAround':
                     agent.updatePose(agentR, agentC, agent._turnAround())
-                    isOkay = agent.changeEnergy(0)
+                    isOkay = agent.changeEnergy(-1)
 
                 else:
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
+
+                print("new energy:", agent.getEnergy())
 
                 agentR, agentC, agentH = agent.getPose()
                 rAhead, cAhead = agent._computeAhead(self.gridSize)
