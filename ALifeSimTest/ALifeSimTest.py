@@ -312,15 +312,17 @@ class ALifeSimTest(object):
         self._growFood()
         self._updateAgents()
 
+        print("--------------------------------------------------------------------------------------------")
+
         for i in range(len(self.agentList)):
             print("\n\n")
             print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
-        #     print("~ Energy ~")
-        #     print(self.agentList[i].getEnergy())
+            print("~ Energy ~")
+            print("   ", self.agentList[i].getEnergy())
         #     print("~ Vision ~")
         #     self._printVision(self.agentList[i])
         #     print("~ Smell Food ~")
-            self.agentList[i]._printSmell(self, "food")
+        #     self.agentList[i]._printSmell(self, "food")
 
             # print("~ Smell Agent ~")
             # self.agentList[i]._printSmell(self, "agent")
@@ -407,8 +409,7 @@ class ALifeSimTest(object):
 
             if not agent.isDead:
                 action = agent.determineAction(self.agentList[i], isCreatureHere, isCreatureAhead, canSmellCreature, self.time, isFoodHere, detectedRocks, detectedWater)
-                print(action)
-
+                print(agent.colorNumberToText(agent.getColor()), action)
                 if action == 'breed':
                     twoAgents = []
                     agentsHere = self.agentsAt(agentR,agentC)
@@ -459,7 +460,7 @@ class ALifeSimTest(object):
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
 
-                print("new energy:", agent.getEnergy())
+                # print("new energy:", agent.getEnergy())
 
                 agentR, agentC, agentH = agent.getPose()
                 rAhead, cAhead = agent._computeAhead(self.gridSize)
@@ -530,9 +531,9 @@ class ALifeSimTest(object):
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at current location: (" + str(row) + "," + str(col) + ")")
         creatureAmt = self.agentsAt(row,col)
-        print("creatureHere",creatureAmt)
-        for i in range(len(creatureAmt)):
-            print(creatureAmt[i].getColor())
+        # print("creatureHere",creatureAmt)
+        # for i in range(len(creatureAmt)):
+        #     print(creatureAmt[i].getColor())
         #print("Row and Col: " + str(row) + ", " + str(col))
         #print("self: " + str(self))
 

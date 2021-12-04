@@ -441,10 +441,10 @@ class Agent(Object):
         listOfRandomActionsPossible = self.filterActionsByRocks(listOfRandomActionsPossible,detectedRocks)
         if self.isAwake(agent.sleepValue, time) == "awake":
             if agent.Aggression == 0:
-                print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible))
+                # print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible))
                 return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible)
             elif agent.Aggression == 1:
-                print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible))
+                # print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible))
                 return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible)
             else:
                 print("SHOULD NOT GET HERE")
@@ -456,11 +456,11 @@ class Agent(Object):
     def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible):
         # print("Creatures around: " + str(creaturesAround))
         # if the agent is on the same square as a friend
-        print("list of actions possible docile:", listOfRandomActionsPossible)
+        # print("list of actions possible docile:", listOfRandomActionsPossible)
         if len(listOfRandomActionsPossible) == 0:
             return "turnAround"
 
-        print(listOfRandomActionsPossible)
+        # print(listOfRandomActionsPossible)
 
         if isCreatureHere == 2:
             if agent.getReadyToBreed() == 0:
@@ -495,7 +495,7 @@ class Agent(Object):
 
         # if it can't see any creatures, and but it can smell creatures:
         elif isCreatureAhead == 0 and cellsSmelled != "none":
-            print("MADE IT HERE - can't see anything, can smell something")
+            # print("MADE IT HERE - can't see anything, can smell something")
             if cellsSmelled[1] == 1:
                 if cellsSmelled[0] == "above":
                     if 'forward' in listOfRandomActionsPossible:
@@ -568,7 +568,7 @@ class Agent(Object):
             return 'forward'
 
     def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible):
-        print("list of actions possible aggressive:",listOfRandomActionsPossible)
+        # print("list of actions possible aggressive:",listOfRandomActionsPossible)
 
         if len(listOfRandomActionsPossible) == 0:
             return "turnAround"
@@ -778,7 +778,7 @@ class Agent(Object):
         cellsSmelled.append(cellBelowLeft)
         cellsSmelled.append(cellBelowRight)
 
-        print("Cells Smelled: ", cellsSmelled)
+        # print("Cells Smelled: ", cellsSmelled)
 
         return cellsSmelled
 
