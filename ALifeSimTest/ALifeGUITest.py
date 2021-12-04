@@ -682,7 +682,7 @@ class ALifeGUI:
                 for wt in waters:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    wtId = self.canvas.create_image(coords, image=self.treeFruitImage)
+                    wtId = self.canvas.create_image(coords, image=self.waveImage)
                     self.agentIdToPose[wtId] = wt.getPose()
                     wt.setVisId(wtId)
                 for ag in agents:
