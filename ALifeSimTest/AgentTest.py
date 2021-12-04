@@ -572,7 +572,7 @@ class Agent(Object):
 
     def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks):
         listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-
+        print(detectedRocks)
         if agent.getJump() == 0:
             if detectedRocks[0] == -1:
                 listOfRandomActionsPossible.remove('forward')

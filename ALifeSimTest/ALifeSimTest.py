@@ -507,7 +507,7 @@ class ALifeSimTest(object):
         """Given a row and column, examine the amount of creatures there, and divide it into
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at location: (" + str(row) + "," + str(col) + ")")
-        creatureAmt = self.globalMap[row, col]
+        creatureAmt = self.agentsAt(row,col)
         # print("AgentMap: " + str(self.agentMap))
         # print("Row and Col: " + str(row) + ", " + str(col))
         # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
