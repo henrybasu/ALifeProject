@@ -12,7 +12,11 @@ class Tree(Object):
         """
         super().__init__()
         self.geneticString = geneticString
+        self.canGrowFood = geneticString[0]
         # self.color = int(self.geneticString[0])
+        
+    def getCanGrowFood(self):
+        return self.canGrowFood
 
     def getTypeAbbreviation(self):
         return "t"

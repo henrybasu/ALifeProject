@@ -708,9 +708,14 @@ class ALifeGUI:
                 for tr in trees:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    trId = self.canvas.create_image(coords, image=self.treeImage)
-                    self.agentIdToPose[trId] = tr.getPose()
-                    tr.setVisId(trId)
+                    if tr.getCanGrowFood() == '0':
+                        trId = self.canvas.create_image(coords, image=self.treeImage)
+                        self.agentIdToPose[trId] = tr.getPose()
+                        tr.setVisId(trId)
+                    elif tr.getCanGrowFood() == '1':
+                        trId = self.canvas.create_image(coords, image=self.treeFruitImage)
+                        self.agentIdToPose[trId] = tr.getPose()
+                        tr.setVisId(trId)
                 for ag in agents:
                     self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
@@ -1031,6 +1036,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 3
-    s = ALifeGUI(20, numberOfAgents)
+    s = ALifeGUI(12, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

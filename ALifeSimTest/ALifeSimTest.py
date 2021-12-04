@@ -63,7 +63,7 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeWaters()
+        # self._placeWaters()
         self._placePits()
         self._placeTrees(self.numForests, random.randint(4, 10))
         # self._placeStones()
@@ -284,7 +284,7 @@ class ALifeSimTest(object):
         for forest in range(numForests):
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
             colLoc = random.randint(-r + 1, self.gridSize - r + 1)
-            print("row, col: ", rowLoc, colLoc)
+            # print("row, col: ", rowLoc, colLoc)
 
             width = forestSize
             height = forestSize
@@ -303,7 +303,9 @@ class ALifeSimTest(object):
                         if isTreeHere == 1:
                             if self.gridSize > rowLoc + i >= 0 and self.gridSize > colLoc + j >= 0:
                                 if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
-                                    nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString="00")
+                                    nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString=random.choice(["0","0","0","0","1"]))
+                                    # print(nextTree.geneticString)
+                                    # print(nextTree.getCanGrowFood())
                                     self.treeList.append(nextTree)
                                     self.globalMap[rowLoc + i, colLoc + j].append(nextTree)
 
