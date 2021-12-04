@@ -29,24 +29,14 @@ class ALifeSimTest(object):
         self.gridSize = gridSize
         self.numAgents = numAgents
         self.numStones = numStones
-        self.numWaters = 2
+        self.numWaters = 0
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
-        self.stoneMap = dict()
-        self.waterMap = dict()
-        self.foodMap = dict()
-        self.agentMap = dict()
         self.globalMap = dict()
 
         for row in range(gridSize):
             for col in range(gridSize):
-                self.stoneMap[row, col] = []
-                self.waterMap[row,col] = []
-                self.foodMap[row, col] = []
-                self.agentMap[row, col] = []
                 self.globalMap[row, col] = []
-
-        # self.printGrid()
 
         self.foodList = []
         self.stoneList = []
@@ -60,14 +50,12 @@ class ALifeSimTest(object):
 
         self._placeStones()
         self._placeWaters()
-        # print('placing water')
         self._placeFood()
         self._placeAgents()
 
     def getSize(self):
         """Returns the size of the grid"""
         return self.gridSize
-
 
     def getAgentNumber(self):
         """Returns the number of agents placed on the grid"""
@@ -103,7 +91,6 @@ class ALifeSimTest(object):
             if type(ob) is not Stone:
                 stonesAtList.remove(ob)
         print(stonesAtList)
-        # return self.stoneMap[row, col]
         return stonesAtList
 
     def waterAt(self,row,col):
@@ -116,14 +103,11 @@ class ALifeSimTest(object):
 
     def foodAt(self, row, col):
         """Given a row and column, returns the amount of food at that location."""
-
         foodAtList = self.globalMap[row, col].copy()
         for ob in foodAtList:
             if type(ob) is not Food:
                 foodAtList.remove(ob)
         return foodAtList
-
-        # return self.foodMap[row, col]
 
     def agentsAt(self, row, col):
         # TODO: Potential issue here
@@ -136,7 +120,6 @@ class ALifeSimTest(object):
 
     def objectsAt(self, row, col):
         return self.globalMap[row, col]
-
 
     def _placeFood(self):
         """Places food in random clumps so that roughly self.percentFood cells have food."""
@@ -165,7 +148,6 @@ class ALifeSimTest(object):
                 pass
 
             self.agentList.append(nextAgent)
-            # self.agentMap[r, c].append(nextAgent)
             self.globalMap[r, c].append(nextAgent)
 
     def _placeStones(self):
@@ -178,7 +160,6 @@ class ALifeSimTest(object):
                     break
             nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
             self.stoneList.append(nextStone)
-            # self.stoneMap[randRow, randCol].append(nextStone)
             self.globalMap[randRow, randCol].append(nextStone)
 
     def _placeWaters(self):
@@ -192,7 +173,6 @@ class ALifeSimTest(object):
                     break
             nextWater = Water(initPose=(randRow, randCol), geneticString="00")
             self.waterList.append(nextWater)
-            # self.waterMap[randRow, randCol].append(nextWater)
             self.globalMap[randRow, randCol].append(nextWater)
 
 
@@ -207,7 +187,6 @@ class ALifeSimTest(object):
 
         nextFood = Food(initPose=(randRow, randCol))
         self.foodList.append(nextFood)
-        # self.foodMap[randRow, randCol].append(nextFood)
         self.globalMap[randRow, randCol].append(nextFood)
 
 
@@ -228,42 +207,6 @@ class ALifeSimTest(object):
 
     def printGrid(self):
         """Prints the foodMap, giving each square 3 places"""
-        # rowLen = 5 * self.gridSize + 1
-        # cellStr = "{0:<4d}|"
-        # print("-" * rowLen)
-        # for row in range(self.gridSize):
-        #     foodStr = "|"
-        #     agInCellA = "|"
-        #     agInCellB = "|"
-        #     agInCellC = "|"
-        #     for col in range(self.gridSize):
-        #         sA, sB, sC = self._agentStringCodes(row, col)
-        #         agInCellA += sA
-        #         agInCellB += sB
-        #         agInCellC += sC
-        #         foodStr += cellStr.format(self.foodMap[row, col])
-        #     print(foodStr)
-        #     print(agInCellA)
-        #     print(agInCellB)
-        #     print(agInCellC)
-        #     print("-" * rowLen)
-
-        # for row in range(self.gridSize):
-        #     for col in range(self.gridSize):
-        #         if len(self.stoneMap[row, col]) > 0:
-        #             print("|   s   |", end="")
-        #         elif len(self.agentMap[row, col]) > 1:
-        #             print("|  " + str(len(self.agentMap[row, col])) + " a  |", end="")
-        #         elif len(self.foodMap[row, col]) > 0 and len(self.agentMap[row, col]) > 0:
-        #             print("|  f a  |", end="")
-        #         elif len(self.foodMap[row, col]) > 0:
-        #             print("|   f   |", end="")
-        #         elif len(self.agentMap[row, col]) > 0:
-        #             print("|   a   |", end="")
-        #         else:
-        #             print("|       |", end="")
-        #     print("\n")
-
         for row in range(self.gridSize):
             for col in range(self.gridSize):
                 if len(self.globalMap[row, col]) == 0:
@@ -313,11 +256,8 @@ class ALifeSimTest(object):
         #     self.time += 1
         # else:
         #     self.time = 0
-
-
         self._growFood()
         self._updateAgents()
-        # print(self.foodMap)
 
         for i in range(len(self.agentList)):
             print("\n\n")
@@ -335,10 +275,7 @@ class ALifeSimTest(object):
 
         self.printGrid()
         # print(self.globalMap)
-        # print(self.agentMap)
         print("self.globalMap:",self.globalMap)
-        # print("self.agentMap:", self.agentMap)
-
 
 
     def _growFood(self):
@@ -431,20 +368,14 @@ class ALifeSimTest(object):
 
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
-                    # if agent in (self.agentMap[agentR, agentC]):
-                    #     # print("REMOVING",agent,"from agentMap")
-                    #     self.agentMap[agentR, agentC].remove(agent)
-                    #     # print(self.agentMap)
                     # TODO: this if shouldn't be here, and it should remove the agent every time it moves
                     if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
                         # print(self.globalMap)
 
-                    # self.agentMap[rAhead, cAhead].append(agent)
                     self.globalMap[rAhead, cAhead].append(agent)
                     # print("globalMap:",self.globalMap)
-                    # print("agentMap",self.agentMap)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(0)
 
@@ -495,8 +426,6 @@ class ALifeSimTest(object):
             else:
                 self.deadAgents.append((agent, self.stepNum-agent.stepSpawned))
                 self.agentList.pop(i)
-                # if agent in self.agentMap[agentR,agentC]:
-                #     self.agentMap[agentR, agentC].remove(agent)
                 if agent in self.globalMap[agentR,agentC]:
                     self.globalMap[agentR, agentC].remove(agent)
                 i = i + 1
@@ -519,11 +448,6 @@ class ALifeSimTest(object):
         no creatures, and some creatures: returning 0 or 1."""
         # print("Looking at location: (" + str(row) + "," + str(col) + ")")
         creatureAmt = self.agentsAt(row,col)
-        # print("AgentMap: " + str(self.agentMap))
-        # print("Row and Col: " + str(row) + ", " + str(col))
-        # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
-        # print(self.agentMap[row, col])
-        # print("self: " + str(self))
 
         if creatureAmt == []:
             # print("no creature ahead")
@@ -544,10 +468,7 @@ class ALifeSimTest(object):
         print("creatureHere",creatureAmt)
         for i in range(len(creatureAmt)):
             print(creatureAmt[i].getColor())
-        #print("AgentMap: " + str(self.agentMap))
         #print("Row and Col: " + str(row) + ", " + str(col))
-        # print("CreatureAmt = AgentMap[" + str(row) + "," + str(col) + "]: " + str(self.agentMap[row, col]))
-        #print(self.agentMap[row, col])
         #print("self: " + str(self))
 
         if len(creatureAmt) <= 1:
@@ -582,7 +503,6 @@ class ALifeSimTest(object):
             self.eatenFood.append(foodAtCell)
             for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
-                    # self.foodMap[row, col] = []
                     self.globalMap[row, col].remove(ob) #TODO: what if there is something else on that square other than food?
 
             for i in range(len(self.foodList)):
@@ -613,7 +533,6 @@ class ALifeSimTest(object):
             # print("baby",babyAgent.stepSpawned)
 
             self.agentList.append(babyAgent)
-            # self.agentMap[r, c].append(babyAgent)
             self.globalMap[r,c].append(babyAgent)
 
             agent1.setReadyToBreed(24)
