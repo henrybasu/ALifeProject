@@ -650,6 +650,8 @@ class ALifeGUI:
         self.posToPatchId = {}
         self.agentIdToPose = {}
 
+        self.resizeAllImages()
+
         if self.gridDim * 50 < self.canvasSize:
             self.cellSize = 50
         else:
@@ -929,8 +931,8 @@ class ALifeGUI:
 
     def resizeAllImages(self):
         if self.sim.gridSize > 10:
-            scale_w = 10
-            scale_h = 10
+            scale_w = 1
+            scale_h = 1
             self.waveImage = self.waveImage.zoom(scale_w,scale_h)
 
 
