@@ -10,6 +10,7 @@ from StoneTest import *
 from FoodTest import *
 from WaterTest import *
 from TreeTest import *
+from PitTest import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -25,17 +26,21 @@ class ALifeSimTest(object):
     numStones = 0
     numWaters = 0
     numTrees = 0
+    numPits = 0
 
     def __init__(self, gridSize, numAgents, numStones, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
+
         self.numAgents = numAgents
         self.numStones = numStones
         self.numWaters = 0
         self.numTrees = 1
         self.numRivers = 2
         self.numForrests = 3
+        self.numPits = 0
+
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
         self.globalMap = dict()
@@ -46,6 +51,7 @@ class ALifeSimTest(object):
 
         self.foodList = []
         self.stoneList = []
+        self.pitList = []
         self.waterList = []
         self.treeList = []
         self.agentList = []
@@ -57,6 +63,7 @@ class ALifeSimTest(object):
 
         # self._placeWaters()
         # self._placeStones()
+        self._placePits()
         # self._placeTrees(self.numForrests, random.randint(1, 5))
         self._placeTrees(self.numForrests, 7)
         # self._placeFood()
@@ -82,6 +89,10 @@ class ALifeSimTest(object):
         """Returns the list of agents"""
         return self.stoneList[:]
 
+    def getPits(self):
+        """Returns the list of agents"""
+        return self.pitList[:]
+
     def getWaters(self):
         return self.waterList[:]
 
@@ -103,6 +114,14 @@ class ALifeSimTest(object):
             if type(ob) is not Stone:
                 stonesAtList.remove(ob)
         return stonesAtList
+
+    def pitAt(self, row, col):
+        """Given a row and column, returns a list of the pits at that location."""
+        pitsAtList = self.globalMap[row, col].copy()
+        for ob in pitsAtList:
+            if type(ob) is not Pit:
+                pitsAtList.remove(ob)
+        return pitsAtList
 
     def waterAt(self,row,col):
         waterAtList = self.globalMap[row, col].copy()
@@ -190,6 +209,18 @@ class ALifeSimTest(object):
             nextStone = Stone(initPose=(randRow, randCol), geneticString="00")
             self.stoneList.append(nextStone)
             self.globalMap[randRow, randCol].append(nextStone)
+
+    def _placePits(self):
+        for i in range(self.numPits):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextPit = Pit(initPose=(randRow, randCol), geneticString="00")
+            self.pitList.append(nextPit)
+            self.globalMap[randRow, randCol].append(nextPit)
 
     def _placeWaters(self):
         for numberOfRivers in range(self.numRivers):
@@ -608,6 +639,8 @@ class ALifeSimTest(object):
                     return -2
                 elif type(ob) is Tree:
                     return 4
+                elif type(ob) is Pit:
+                    return -3
         return 0
 
     def eatFood(self, row, col):

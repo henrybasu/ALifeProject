@@ -1,7 +1,7 @@
 from ObjectTest import Object
 
-class Tree(Object):
-    """A tree object in the ALife simulation."""
+class Pit(Object):
+    """A pit object in the ALife simulation."""
 
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
         """
@@ -15,6 +15,6 @@ class Tree(Object):
         # self.color = int(self.geneticString[0])
 
     def getTypeAbbreviation(self):
-        return "t"
+        return "p"
 
 

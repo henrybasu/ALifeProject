@@ -672,6 +672,7 @@ class ALifeGUI:
                 agents = self.sim.agentsAt(row, col)
                 stones = self.sim.stonesAt(row,col)
                 waters = self.sim.waterAt(row,col)
+                pits = self.sim.pitAt(row,col)
                 trees = self.sim.treeAt(row,col)
                 # print(agents)
                 # print(self.sim.foodAt(row,col))
@@ -698,6 +699,12 @@ class ALifeGUI:
                     wtId = self.canvas.create_image(coords, image=self.waveImage)
                     self.agentIdToPose[wtId] = wt.getPose()
                     wt.setVisId(wtId)
+                for pt in pits:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    ptId = self.canvas.create_image(coords, image=self.pitImage)
+                    self.agentIdToPose[ptId] = pt.getPose()
+                    pt.setVisId(ptId)
                 for tr in trees:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
