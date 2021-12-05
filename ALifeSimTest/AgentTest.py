@@ -151,17 +151,16 @@ class Agent(Object):
         print("Object Here: ", sim._assessObjectsHere(ownY, ownX, self))
         if sim._assessObjectsHere(ownY, ownX, self) == 4:
             print("IM ON A TREE")
-            visionRange = 0
+            return 0
 
         if heading == "n":
             for i in range(int(visionRange)):
-                if sim._assessObjectsHere(ownY, ownX, self) == 4:
-                    return 0
                 for ob in sim._listOfObjectsHere((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self):
                     if type(ob) is Tree:
-                        visionList.append(sim._assessCreature((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self))
-                    else:
                         visionList.append(0)
+                        break
+                    else:
+                        visionList.append(sim._assessCreature((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self))
                 # if visionList[i] != 0:
                 #     return 1
                 if len(visionList) == 0:
@@ -169,13 +168,12 @@ class Agent(Object):
 
         elif heading == "s":
             for i in range(int(visionRange)):
-                if sim._assessObjectsHere(ownY, ownX, self) == 4:
-                    return 0
                 for ob in sim._listOfObjectsHere((ownY + i + 1) % sim.gridSize, ownX, self):
-                    if type(ob) is not Tree:
-                        visionList.append(sim._assessCreature((ownY + i + 1) % sim.gridSize, ownX, self))
-                    else:
+                    if type(ob) is Tree:
                         visionList.append(0)
+                        break
+                    else:
+                        visionList.append(sim._assessCreature((ownY + i + 1) % sim.gridSize, ownX, self))
                 # if visionList[i] != 0:
                 #     return 1
                 if len(visionList) == 0:
@@ -183,13 +181,12 @@ class Agent(Object):
 
         elif heading == "e":
             for i in range(int(visionRange)):
-                if sim._assessObjectsHere(ownY, ownX, self) == 4:
-                    return 0
                 for ob in sim._listOfObjectsHere(ownY, (ownX + i + 1) % sim.gridSize, self):
-                    if type(ob) is not Tree:
-                        visionList.append(sim._assessCreature(ownY, (ownX + i + 1) % sim.gridSize, self))
-                    else:
+                    if type(ob) is Tree:
                         visionList.append(0)
+                        break
+                    else:
+                        visionList.append(sim._assessCreature(ownY, (ownX + i + 1) % sim.gridSize, self))
                 # if visionList[i] != 0:
                 #     return 1
                 if len(visionList) == 0:
@@ -197,21 +194,20 @@ class Agent(Object):
 
         elif heading == "w":
             for i in range(int(visionRange)):
-                if sim._assessObjectsHere(ownY, ownX, self) == 4:
-                    return 0
                 for ob in sim._listOfObjectsHere(ownY, (ownX - (int(self.geneticString[0]) - i)) % sim.gridSize, self):
-                    if type(ob) is not Tree:
-                        visionList.append(sim._assessCreature(ownY, (ownX - (int(self.geneticString[0]) - i)) % sim.gridSize, self))
-                    else:
+                    if type(ob) is Tree:
                         visionList.append(0)
+                        break
+                    else:
+                        visionList.append(sim._assessCreature(ownY, (ownX - (int(self.geneticString[0]) - i)) % sim.gridSize, self))
                 # if visionList[i] != 0:
                 #     return 1
                 if len(visionList) == 0:
                     return 0
 
-        for i in range(len(visionList)):
-            if visionList[i] != 0:
-                return visionList[i]
+        for v in visionList:
+            if v != 0:
+                return v
 
         # if they don't see anything
         return 0
