@@ -146,10 +146,16 @@ class Agent(Object):
     def _areCreaturesInVision(self, sim):
         ownY, ownX, heading = self.getPose()
         visionList = []
+        visionRange = self.visionRange
+
+        print("Object Here: ", sim._assessObjectsHere(ownY, ownX, self))
+        if sim._assessObjectsHere(ownY, ownX, self) == 4:
+            print("IM ON A TREE")
+            visionRange = 0
 
         if heading == "n":
-            for i in range(int(self.visionRange)):
-                if sim._assessObjectsHere == 4:
+            for i in range(int(visionRange)):
+                if sim._assessObjectsHere(ownY, ownX, self) == 4:
                     return 0
                 for ob in sim._listOfObjectsHere((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self):
                     if type(ob) is Tree:
@@ -162,8 +168,8 @@ class Agent(Object):
                     return 0
 
         elif heading == "s":
-            for i in range(int(self.visionRange)):
-                if sim._assessObjectsHere == 4:
+            for i in range(int(visionRange)):
+                if sim._assessObjectsHere(ownY, ownX, self) == 4:
                     return 0
                 for ob in sim._listOfObjectsHere((ownY + i + 1) % sim.gridSize, ownX, self):
                     if type(ob) is not Tree:
@@ -176,8 +182,8 @@ class Agent(Object):
                     return 0
 
         elif heading == "e":
-            for i in range(int(self.visionRange)):
-                if sim._assessObjectsHere == 4:
+            for i in range(int(visionRange)):
+                if sim._assessObjectsHere(ownY, ownX, self) == 4:
                     return 0
                 for ob in sim._listOfObjectsHere(ownY, (ownX + i + 1) % sim.gridSize, self):
                     if type(ob) is not Tree:
@@ -190,8 +196,8 @@ class Agent(Object):
                     return 0
 
         elif heading == "w":
-            for i in range(int(self.visionRange)):
-                if sim._assessObjectsHere == 4:
+            for i in range(int(visionRange)):
+                if sim._assessObjectsHere(ownY, ownX, self) == 4:
                     return 0
                 for ob in sim._listOfObjectsHere(ownY, (ownX - (int(self.geneticString[0]) - i)) % sim.gridSize, self):
                     if type(ob) is not Tree:
@@ -475,10 +481,11 @@ class Agent(Object):
         isCreatureHere = sim._assessCreatureHere(agentR, agentC)
         # checks to see if there is a creature in the agent's vision
         isCreatureAhead = self._areCreaturesInVision(sim)
-        print("Can I see a creature: ", isCreatureAhead)
 
         if sim._assessObjectsHere == 4:
             isCreatureAhead=[]
+        print("Can I see a creature: ", isCreatureAhead)
+
         # checks to see if there is food where the agent currently is
         isFoodHere = sim.foodAt(agentR, agentC)
         # checks to see if there is a creature in the agent's smell radius

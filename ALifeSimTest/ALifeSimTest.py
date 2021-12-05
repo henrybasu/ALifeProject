@@ -64,13 +64,13 @@ class ALifeSimTest(object):
         self.verbose = False
 
         # self._placeWaters()
-        self._placeAgents()
         self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
         self._placeTrees(self.numForests, 20)
 
         # self._placeStones()
         # self._placeFood()
+        self._placeAgents()
 
     def getSize(self):
         """Returns the size of the grid"""
@@ -428,15 +428,15 @@ class ALifeSimTest(object):
 
         print("--------------------------------------------------------------------------------------------")
 
-        for i in range(len(self.agentList)):
-            print("\n\n")
-            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
-            print("~ Energy ~")
-            print("   ", self.agentList[i].getEnergy())
-            print(self.agentList)
-            print(self.getDeadAgents())
-            print("~ Vision ~")
-            self.agentList[i]._printVision(self)
+        # for i in range(len(self.agentList)):
+        #     print("\n\n")
+        #     print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+        #     print("~ Energy ~")
+        #     print("   ", self.agentList[i].getEnergy())
+        #     print(self.agentList)
+        #     print(self.getDeadAgents())
+        #     print("~ Vision ~")
+        #     self.agentList[i]._printVision(self)
         #     print("~ Smell Food ~")
         #     self.agentList[i]._printSmell(self, "food")
 
