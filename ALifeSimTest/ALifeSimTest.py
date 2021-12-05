@@ -36,10 +36,10 @@ class ALifeSimTest(object):
         self.numAgents = numAgents
         self.numStones = numStones
         self.numWaters = 0
-        self.numTrees = 1
+        self.numTrees = 10
         self.numRivers = 1
         self.numPonds = 2
-        self.numForests = 5
+        self.numForests = 10
         self.numPits = 0
 
 
@@ -64,11 +64,13 @@ class ALifeSimTest(object):
         self.verbose = False
 
         # self._placeWaters()
+        self._placeAgents()
         self._placePits()
-        self._placeTrees(self.numForests, random.randint(3,5))
+        # self._placeTrees(self.numForests, random.randint(3,5))
+        self._placeTrees(self.numForests, 20)
+
         # self._placeStones()
         # self._placeFood()
-        self._placeAgents()
 
     def getSize(self):
         """Returns the size of the grid"""
@@ -280,6 +282,7 @@ class ALifeSimTest(object):
     def _placeTrees(self, numForests, forestSize):
 
         r = forestSize // 2
+        # r = self.gridSize
 
         for forest in range(numForests):
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
@@ -432,8 +435,8 @@ class ALifeSimTest(object):
             print("   ", self.agentList[i].getEnergy())
             print(self.agentList)
             print(self.getDeadAgents())
-        #     print("~ Vision ~")
-        #     self._printVision(self.agentList[i])
+            print("~ Vision ~")
+            self.agentList[i]._printVision(self)
         #     print("~ Smell Food ~")
         #     self.agentList[i]._printSmell(self, "food")
 
@@ -634,12 +637,14 @@ class ALifeSimTest(object):
                     return 1
             return 2
 
-    def _assessObjects(self, row, col, agent):
+    def _assessObjectsHere(self, row, col, agent):
         listOfObjects = self.globalMap[row, col]
         # print("listOfObjects",listOfObjects)
         if listOfObjects != []:
             for ob in listOfObjects:
-                if type(ob) is Stone:
+                if type(ob) is Tree:
+                    return 4
+                elif type(ob) is Stone:
                     return -1
                 elif type(ob) is Agent:
                     if ob.getColor() == agent.getColor():
@@ -650,11 +655,33 @@ class ALifeSimTest(object):
                     return 3
                 elif type(ob) is Water:
                     return -2
-                elif type(ob) is Tree:
-                    return 4
                 elif type(ob) is Pit:
                     return -3
         return 0
+
+    def _listOfObjectsHere(self, row, col, agent):
+        listOfObjects = self.globalMap[row, col]
+        # print("listOfObjects",listOfObjects)
+        listOfObjectsHere = []
+
+        if listOfObjects != []:
+            for ob in listOfObjects:
+                if type(ob) is Stone:
+                    listOfObjectsHere.append(-1)
+                elif type(ob) is Agent:
+                    if ob.getColor() == agent.getColor():
+                        listOfObjectsHere.append(2)
+                    else:
+                        listOfObjectsHere.append(1)
+                elif type(ob) is Food:
+                    listOfObjectsHere.append(3)
+                elif type(ob) is Water:
+                    listOfObjectsHere.append(-2)
+                elif type(ob) is Tree:
+                    listOfObjectsHere.append(4)
+                elif type(ob) is Pit:
+                    listOfObjectsHere.append(-3)
+        return listOfObjectsHere
 
     def eatFood(self, row, col):
         """Determines what, if any, food is eaten from the current given location. It returns the

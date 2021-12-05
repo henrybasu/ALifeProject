@@ -1,5 +1,7 @@
 import random
 from ObjectTest import Object
+from ALifeSimTest import *
+from TreeTest import Tree
 
 class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
@@ -147,33 +149,65 @@ class Agent(Object):
 
         if heading == "n":
             for i in range(int(self.visionRange)):
-                visionList.append(sim._assessCreature((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self))
+                if sim._assessObjectsHere == 4:
+                    return 0
+                for ob in sim._listOfObjectsHere((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self):
+                    if type(ob) is Tree:
+                        visionList.append(sim._assessCreature((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self))
+                    else:
+                        visionList.append(0)
                 # if visionList[i] != 0:
                 #     return 1
-                return visionList[i]
+                if len(visionList) == 0:
+                    return 0
 
         elif heading == "s":
             for i in range(int(self.visionRange)):
-                visionList.append(sim._assessCreature((ownY + i + 1) % sim.gridSize, ownX, self))
+                if sim._assessObjectsHere == 4:
+                    return 0
+                for ob in sim._listOfObjectsHere((ownY + i + 1) % sim.gridSize, ownX, self):
+                    if type(ob) is not Tree:
+                        visionList.append(sim._assessCreature((ownY + i + 1) % sim.gridSize, ownX, self))
+                    else:
+                        visionList.append(0)
                 # if visionList[i] != 0:
                 #     return 1
-                return visionList[i]
+                if len(visionList) == 0:
+                    return 0
 
         elif heading == "e":
             for i in range(int(self.visionRange)):
-                visionList.append(sim._assessCreature(ownY, (ownX + i + 1) % sim.gridSize, self))
+                if sim._assessObjectsHere == 4:
+                    return 0
+                for ob in sim._listOfObjectsHere(ownY, (ownX + i + 1) % sim.gridSize, self):
+                    if type(ob) is not Tree:
+                        visionList.append(sim._assessCreature(ownY, (ownX + i + 1) % sim.gridSize, self))
+                    else:
+                        visionList.append(0)
                 # if visionList[i] != 0:
                 #     return 1
-                return visionList[i]
+                if len(visionList) == 0:
+                    return 0
 
         elif heading == "w":
             for i in range(int(self.visionRange)):
-                visionList.append(sim._assessCreature(ownY, (ownX - (int(self.geneticString[0]) - i)) % sim.gridSize, self))
+                if sim._assessObjectsHere == 4:
+                    return 0
+                for ob in sim._listOfObjectsHere(ownY, (ownX - (int(self.geneticString[0]) - i)) % sim.gridSize, self):
+                    if type(ob) is not Tree:
+                        visionList.append(sim._assessCreature(ownY, (ownX - (int(self.geneticString[0]) - i)) % sim.gridSize, self))
+                    else:
+                        visionList.append(0)
                 # if visionList[i] != 0:
                 #     return 1
+                if len(visionList) == 0:
+                    return 0
+
+        for i in range(len(visionList)):
+            if visionList[i] != 0:
                 return visionList[i]
 
-        # print("DON't SEE ANYONE")
+        # if they don't see anything
         return 0
 
     def smellRadius1(self, sim):
@@ -441,7 +475,9 @@ class Agent(Object):
         isCreatureHere = sim._assessCreatureHere(agentR, agentC)
         # checks to see if there is a creature in the agent's vision
         isCreatureAhead = self._areCreaturesInVision(sim)
-        if sim._assessObjects == 4:
+        print("Can I see a creature: ", isCreatureAhead)
+
+        if sim._assessObjectsHere == 4:
             isCreatureAhead=[]
         # checks to see if there is food where the agent currently is
         isFoodHere = sim.foodAt(agentR, agentC)
@@ -747,10 +783,10 @@ class Agent(Object):
     def smellRadiusGlobal1(self, sim):
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
-        cellAbove = sim._assessObjects((ownY - 1) % sim.gridSize, ownX, self)
-        cellBelow = sim._assessObjects((ownY + 1) % sim.gridSize, ownX, self)
-        cellRight = sim._assessObjects(ownY, (ownX + 1) % sim.gridSize, self)
-        cellLeft = sim._assessObjects(ownY, (ownX - 1) % sim.gridSize, self)
+        cellAbove = sim._assessObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
+        cellBelow = sim._assessObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
+        cellRight = sim._assessObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
+        cellLeft = sim._assessObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
 
         cellsSmelled.append(cellAbove)
         cellsSmelled.append(cellBelow)
@@ -762,20 +798,20 @@ class Agent(Object):
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
 
-        cellAbove = sim._assessObjects((ownY - 1) % sim.gridSize, ownX, self)
-        cellBelow = sim._assessObjects((ownY + 1) % sim.gridSize, ownX, self)
-        cellRight = sim._assessObjects(ownY, (ownX + 1) % sim.gridSize, self)
-        cellLeft = sim._assessObjects(ownY, (ownX - 1) % sim.gridSize, self)
+        cellAbove = sim._assessObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
+        cellBelow = sim._assessObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
+        cellRight = sim._assessObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
+        cellLeft = sim._assessObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
 
-        cellTwoAbove = sim._assessObjects((ownY - 2) % sim.gridSize, ownX, self)
-        cellTwoBelow = sim._assessObjects((ownY + 2) % sim.gridSize, ownX, self)
-        cellTwoRight = sim._assessObjects(ownY, (ownX + 2) % sim.gridSize, self)
-        cellTwoLeft = sim._assessObjects(ownY, (ownX - 2) % sim.gridSize, self)
+        cellTwoAbove = sim._assessObjectsHere((ownY - 2) % sim.gridSize, ownX, self)
+        cellTwoBelow = sim._assessObjectsHere((ownY + 2) % sim.gridSize, ownX, self)
+        cellTwoRight = sim._assessObjectsHere(ownY, (ownX + 2) % sim.gridSize, self)
+        cellTwoLeft = sim._assessObjectsHere(ownY, (ownX - 2) % sim.gridSize, self)
 
-        cellAboveLeft = sim._assessObjects((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
-        cellAboveRight = sim._assessObjects((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-        cellBelowRight = sim._assessObjects((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-        cellBelowLeft = sim._assessObjects((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+        cellAboveLeft = sim._assessObjectsHere((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+        cellAboveRight = sim._assessObjectsHere((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+        cellBelowRight = sim._assessObjectsHere((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+        cellBelowLeft = sim._assessObjectsHere((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
 
         cellsSmelled.append(cellAbove)
         cellsSmelled.append(cellBelow)
