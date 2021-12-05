@@ -63,10 +63,12 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
+        self._placeTreesOnHalf()
+
         # self._placeWaters()
         self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
-        self._placeTrees(self.numForests, 20)
+        # self._placeTrees(self.numForests, 20)
 
         # self._placeStones()
         # self._placeFood()
@@ -278,6 +280,15 @@ class ALifeSimTest(object):
                 if self.dist(cx, cy, x, y) <= r:
                     tiles[x][y] = 1
 
+
+    def _placeTreesOnHalf(self):
+        for row in range(self.gridSize):
+            for col in range(self.gridSize//2):
+                if len(self.objectsAt(row,col)) == 0:
+                    nextTree = Tree(initPose=(row,col),
+                                    geneticString=random.choice(["1"]))
+                    self.treeList.append(nextTree)
+                    self.globalMap[row,col].append(nextTree)
 
     def _placeTrees(self, numForests, forestSize):
 
