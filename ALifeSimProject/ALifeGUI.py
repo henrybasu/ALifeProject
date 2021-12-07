@@ -48,8 +48,8 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("4210079901")
-        randomGeneticStrings.append("4211059901")
-        randomGeneticStrings.append("1111029901")
+        randomGeneticStrings.append("4210059901")
+        randomGeneticStrings.append("1110029901")
         randomGeneticStrings.append("1211069901") #TODO: this one lives
         randomGeneticStrings.append("1210089901")
 
@@ -666,7 +666,7 @@ class ALifeGUI:
                 food = self.sim.foodAt(row, col)
 
                 cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
-                currId = self.canvas.create_rectangle(x1, y1, x2, y2, fill=cellColor)
+                currId = self.canvas.create_rectangle(x1, y1, x2, y2, fill=cellColor, outline=cellColor)
                 self.patchIdToPos[currId] = (row, col)
                 self.posToPatchId[row, col] = currId
                 agents = self.sim.agentsAt(row, col)
@@ -1011,8 +1011,10 @@ class ALifeGUI:
         """Given a row and column position, this converts that into a position on the frame"""
         x1 = col * self.cellSize + 5
         y1 = row * self.cellSize + 5
-        x2 = x1 + (self.cellSize - 2)
-        y2 = y1 + (self.cellSize - 2)
+        # x2 = x1 + (self.cellSize - 2)
+        # y2 = y1 + (self.cellSize - 2)
+        x2 = x1 + (self.cellSize)
+        y2 = y1 + (self.cellSize)
         return (x1, y1, x2, y2)
 
     def _coordToPos(self, x, y):
@@ -1035,7 +1037,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
-    s = ALifeGUI(10, numberOfAgents)
+    numberOfAgents = 3
+    s = ALifeGUI(30, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

@@ -41,7 +41,8 @@ class Agent(Object):
         """
 
         self.visionRange = int(self.geneticString[0])
-        self.moveSpeed = int(self.geneticString[2])
+        # self.moveSpeed = int(self.geneticString[2])
+        self.moveSpeed = 1
         self.Aggression = int(self.geneticString[3])
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
@@ -82,9 +83,11 @@ class Agent(Object):
 
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
+        print("before updating pos",self)
         self.row = newRow
         self.col = newCol
         self.heading = newHeading
+        print("after updating pos", self)
 
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
@@ -487,9 +490,10 @@ class Agent(Object):
                 deadCreature.isDead = True
 
     def removeSelfFromList(self, list):
-        if self in list:
-            list.remove(self)
-        return list
+        newList = list.copy()
+        if self in newList:
+            newList.remove(self)
+        return newList
 
 
     def checkHere(self, sim, listOfPossibleActions):

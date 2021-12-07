@@ -66,12 +66,12 @@ class ALifeSimTest(object):
         # self._placeTreesOnHalf()
 
         self._placeWaters()
-        self._placePits()
+        # self._placePits()
         self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
         self._placeStones()
-        # self._placeFood()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -495,17 +495,17 @@ class ALifeSimTest(object):
 
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
-            rAhead, cAhead = self.agentList[i]._computeAhead(self.gridSize)
+            rAhead, cAhead = agent._computeAhead(self.gridSize)
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
             # foodAheadRating = self._assessFood(rAhead, cAhead)
             # print("foodAheadRating " + str(foodAheadRating))
 
-            creatureHereRating = self._assessCreatureHere(agentR, agentC)
+            # creatureHereRating = self._assessCreatureHere(agentR, agentC)
             # print("Creatures at current location: " + str(creatureHereRating))
 
-            creatureAheadRating = self._assessCreature(rAhead,cAhead, agent)
+            # creatureAheadRating = self._assessCreature(rAhead,cAhead, agent)
             # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
             # print("-------------------------------------------------")
             #TODO: replace 0s with foodHereRating and foodAheadRating
@@ -542,12 +542,12 @@ class ALifeSimTest(object):
                     agent.updatePose(rAhead, cAhead, agentH)
                     # TODO: this if shouldn't be here, and it should remove the agent every time it moves
                     if agent in (self.globalMap[agentR, agentC]):
-                        # print("REMOVING",agent,"from globalMap")
+                        print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
-                        # print(self.globalMap)
+                        print("globalMap after removing before adding:",self.globalMap)
 
                     self.globalMap[rAhead, cAhead].append(agent)
-                    # print("globalMap:",self.globalMap)
+                    print("globalMap after removing AND adding:",self.globalMap)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(-1)
 
@@ -573,8 +573,8 @@ class ALifeSimTest(object):
 
                 agentR, agentC, agentH = agent.getPose()
                 rAhead, cAhead = agent._computeAhead(self.gridSize)
-                creatureHereRating = self._assessCreatureHere(agentR, agentC)
-                creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
+                # creatureHereRating = self._assessCreatureHere(agentR, agentC)
+                # creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
 
                 if self.verbose:
                     print("--------------------------------------------------------------------------------------------")
@@ -590,8 +590,23 @@ class ALifeSimTest(object):
             #         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
-            if len(self.agentList) != len(set(self.agentList)):
-                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATES~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            # if len(self.agentList) != len(set(self.agentList)):
+            #     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATES~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+            numAgentsInGlobalMap = 0
+            for r, c in self.globalMap:
+                for n in self.globalMap[r, c]:
+                    if type(n) is Agent:
+                        numAgentsInGlobalMap += 1
+
+            if len(self.agentList) < numAgentsInGlobalMap:
+                print("!!!!!!!!!! GHOST AGENT CREATED")
+                print("agentList", self.agentList)
+                for j in self.agentList:
+                    print(j)
+                print("globalMap", self.globalMap)
+
+            print('printGrid:',self.printGrid())
 
             if agent.energy <= 0:
                 isOkay = False
@@ -604,7 +619,7 @@ class ALifeSimTest(object):
                 self.agentList.pop(i)
                 if agent in self.globalMap[agentR,agentC]:
                     self.globalMap[agentR, agentC].remove(agent)
-                i = i + 1
+                # i = i + 1
 
             if isOkay:
                 i = i + 1
