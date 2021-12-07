@@ -48,7 +48,7 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("4210079901")
-        randomGeneticStrings.append("4211059901")
+        randomGeneticStrings.append("4211079901")
         randomGeneticStrings.append("1111029901")
         randomGeneticStrings.append("1211069901") #TODO: this one lives
         randomGeneticStrings.append("1210089901")
@@ -851,10 +851,10 @@ class ALifeGUI:
 
 
     def _UpdateAgentColor(self, color, energy):
-        if energy <= 0:
-            color = 'black'
-        else:
-            color = self._setAgentColor(color)
+        # if energy <= 0:
+        #     color = 'black'
+        # else:
+        color = self._setAgentColor(color)
 
         return color
 
@@ -1035,7 +1035,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 5
+    numberOfAgents = 2
     s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

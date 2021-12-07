@@ -502,8 +502,11 @@ class Agent(Object):
         elif len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
             # the agent is a friend
             if self.getColor() == self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getColor():
-                print("There is an friend here")
-                pass
+                print("Time to breed")
+                # if both agents are ready to breed
+                if self.getReadyToBreed() == 0 and self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getReadyToBreed() == 0:
+                    return 'breed'
+
 
             # the agent is not a friend
             else:
