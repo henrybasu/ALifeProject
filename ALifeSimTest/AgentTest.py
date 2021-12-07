@@ -55,6 +55,9 @@ class Agent(Object):
     def getAggression(self):
         return self.Aggression
 
+    def getVisionRange(self):
+        return self.visionRange
+
     def getGeneticString(self):
         return self.geneticString
 
@@ -471,211 +474,219 @@ class Agent(Object):
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
-    def determineAction(self, sim, agent, time):
-        agentR, agentC, agentH = self.getPose()
-        # checks to see if there is a creature where the agent currently is
-        isCreatureHere = sim._assessCreatureHere(agentR, agentC)
-        # checks to see if there is a creature in the agent's vision
-        isCreatureAhead = self._areCreaturesInVision(sim)
-
-        if sim._assessObjectsHere == 4:
-            isCreatureAhead=[]
-        print("Can I see a creature: ", isCreatureAhead)
-
-        # checks to see if there is food where the agent currently is
-        isFoodHere = sim.foodAt(agentR, agentC)
-        # checks to see if there is a creature in the agent's smell radius
-        cellsSmelled = self.detectSmellRadius(sim)
-        detectedRocks = self.detectRocks(sim)
-        detectedWater = self.detectWater(sim)
-
-        listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-        listOfRandomActionsPossible = self.filterActionsByWater(listOfRandomActionsPossible, detectedWater)
-        listOfRandomActionsPossible = self.filterActionsByRocks(listOfRandomActionsPossible,detectedRocks)
-        if self.isAwake(agent.sleepValue, time) == "awake":
-            if agent.Aggression == 0:
-                # print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible))
-                return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible)
-            elif agent.Aggression == 1:
-                # print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible))
-                return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible)
-            else:
-                print("SHOULD NOT GET HERE")
-
-        elif self.isAwake(agent.sleepValue, time) == "sleeping":
-            return "none"
+    def determineAction(self, sim, time):
+        ownX, ownY, ownH = self.getPose()
+        objectHere = sim._listOfObjectsHere(ownX, ownY, self)
+        print(objectHere)
+        return 'forward'
 
 
-    def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible):
-        # print("Creatures around: " + str(creaturesAround))
-        # if the agent is on the same square as a friend
-        # print("list of actions possible docile:", listOfRandomActionsPossible)
-        if len(listOfRandomActionsPossible) == 0:
-            return "turnAround"
 
-        # print(listOfRandomActionsPossible)
-
-        if isCreatureHere == 2:
-            if agent.getReadyToBreed() == 0:
-                return "breed"
-            else:
-                return random.choice(listOfRandomActionsPossible)
-
-        elif len(isFoodHere) > 0:
-            return "eat"
-
-        # if the agent sees an enemy on a square ahead
-        elif isCreatureAhead == 1:
-            if 'forward' in listOfRandomActionsPossible:
-                if len(listOfRandomActionsPossible) != 1:
-                    listOfRandomActionsPossible.remove('forward')
-            return random.choice(listOfRandomActionsPossible)
-
-        # if the agent sees a friend ahead
-        elif isCreatureAhead == 2:
-            # if they are ready to breed, go forward
-            if agent.getReadyToBreed() == 0:
-                return "forward"
-            # if they aren't, go a anywhere
-            else:
-                return random.choice(listOfRandomActionsPossible)
-
-        # if it can't see any creatures, and can't smell any creatures: go anywhere
-        elif isCreatureAhead == 0 and cellsSmelled == "none":
-            # for i in range(2):
-            #     listOfRandomActionsPossible.append('forward')
-            return random.choice(listOfRandomActionsPossible)
-
-        # if it can't see any creatures, and but it can smell creatures:
-        elif isCreatureAhead == 0 and cellsSmelled != "none":
-            # print("MADE IT HERE - can't see anything, can smell something")
-            if cellsSmelled[1] == 1:
-                if cellsSmelled[0] == "above":
-                    if 'forward' in listOfRandomActionsPossible:
-                        if len(listOfRandomActionsPossible) != 1:
-                            listOfRandomActionsPossible.remove('forward')
-                    return random.choice(listOfRandomActionsPossible)
-
-                elif cellsSmelled[0] == "left":
-                    if 'left' in listOfRandomActionsPossible:
-                        if len(listOfRandomActionsPossible) != 1:
-                            listOfRandomActionsPossible.remove('left')
-                    if detectedRocks[0] == -1:
-                        return random.choice(listOfRandomActionsPossible)
-                    else:
-                        if 'forward' in listOfRandomActionsPossible:
-                            listOfRandomActionsPossible.append('forward')
-                        return random.choice(listOfRandomActionsPossible)
-
-                elif cellsSmelled[0] == "right":
-                    if 'right' in listOfRandomActionsPossible:
-                        if len(listOfRandomActionsPossible) != 1:
-                            listOfRandomActionsPossible.remove('right')
-                    if detectedRocks[0] == -1:
-                        return random.choice(listOfRandomActionsPossible)
-                    else:
-                        if 'forward' in listOfRandomActionsPossible:
-                            listOfRandomActionsPossible.append('forward')
-                        return random.choice(listOfRandomActionsPossible)
-
-                elif cellsSmelled[0] == "below":
-                    if 'turnAround' in listOfRandomActionsPossible:
-                        if len(listOfRandomActionsPossible) != 1:
-                            listOfRandomActionsPossible.remove('turnAround')
-                    if detectedRocks[0] == -1:
-                        return random.choice(listOfRandomActionsPossible)
-                    else:
-                        if 'forward' in listOfRandomActionsPossible:
-                            listOfRandomActionsPossible.append('forward')
-                        return random.choice(listOfRandomActionsPossible)
-
-            elif (cellsSmelled[1] == 2 and agent.getReadyToBreed()) or cellsSmelled[1] == 3:
-                if cellsSmelled[0] == "above":
-                    if 'forward' in listOfRandomActionsPossible:
-                        return "forward"
-                    else:
-                        return random.choice(listOfRandomActionsPossible)
-                elif cellsSmelled[0] == "left":
-                    if 'left' in listOfRandomActionsPossible:
-                        return "left"
-                    else:
-                        return random.choice(listOfRandomActionsPossible)
-                elif cellsSmelled[0] == "right":
-                    if 'right' in listOfRandomActionsPossible:
-                        return "right"
-                    else:
-                        return random.choice(listOfRandomActionsPossible)
-                elif cellsSmelled[0] == "below":
-                    if 'turnAround' in listOfRandomActionsPossible:
-                        return "turnAround"
-                    else:
-                        return random.choice(listOfRandomActionsPossible)
-            else:
-                # if 'forward' in listOfRandomActionsPossible:
-                #     for i in range(2):
-                #         listOfRandomActionsPossible.append('forward')
-                return random.choice(listOfRandomActionsPossible)
-
-        else:
-            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-            return 'forward'
-
-    def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible):
-        # print("list of actions possible aggressive:",listOfRandomActionsPossible)
-
-        if len(listOfRandomActionsPossible) == 0:
-            return "turnAround"
-
-        creaturesAround = cellsSmelled
-
-        if isCreatureHere == 1:
-            return "attack"
-
-        # if the agent is on the same square as a friend
-        elif isCreatureHere == 2:
-            if agent.getReadyToBreed() == 0:
-                return "breed"
-            else:
-                return random.choice(listOfRandomActionsPossible)
-
-        elif isCreatureAhead == 1:
-            return "forward"
-
-        # if it can't see any creatures, and can't smell any creatures: go anywhere, prioritizing forward moves
-        elif isCreatureAhead == 0 and creaturesAround == "none":
-            for i in range(2):
-                listOfRandomActionsPossible.append('forward')
-            return random.choice(listOfRandomActionsPossible)
-
-        # if it can't see any creatures, and but it can smell any creatures:
-        elif isCreatureAhead == 0 and creaturesAround != "none":
-            if creaturesAround[1] == 1:
-                if creaturesAround[0] == "above":
-                    return 'forward'
-                elif creaturesAround[0] == "left":
-                    return 'left'
-                elif creaturesAround[0] == "right":
-                    return 'right'
-                elif creaturesAround[0] == "below":
-                    return 'turnAround'
-            elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
-                if creaturesAround[0] == "above":
-                    return "forward"
-                elif creaturesAround[0] == "left":
-                    return "left"
-                elif creaturesAround[0] == "right":
-                    return "right"
-                elif creaturesAround[0] == "below":
-                    return "turnAround"
-            elif creaturesAround[1] == -1:
-                return random.choice(listOfRandomActionsPossible)
-
-            else:
-                return random.choice(listOfRandomActionsPossible)
-
-        else:
-            print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-            return 'forward'
+    # def determineAction(self, sim, agent, time):
+    #     agentR, agentC, agentH = self.getPose()
+    #     # checks to see if there is a creature where the agent currently is
+    #     isCreatureHere = sim._assessCreatureHere(agentR, agentC)
+    #     # checks to see if there is a creature in the agent's vision
+    #     isCreatureAhead = self._areCreaturesInVision(sim)
+    #
+    #     if sim._assessObjectsHere == 4:
+    #         isCreatureAhead=[]
+    #     print("Can I see a creature: ", isCreatureAhead)
+    #
+    #     # checks to see if there is food where the agent currently is
+    #     isFoodHere = sim.foodAt(agentR, agentC)
+    #     # checks to see if there is a creature in the agent's smell radius
+    #     cellsSmelled = self.detectSmellRadius(sim)
+    #     detectedRocks = self.detectRocks(sim)
+    #     detectedWater = self.detectWater(sim)
+    #
+    #     listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
+    #     listOfRandomActionsPossible = self.filterActionsByWater(listOfRandomActionsPossible, detectedWater)
+    #     listOfRandomActionsPossible = self.filterActionsByRocks(listOfRandomActionsPossible,detectedRocks)
+    #     if self.isAwake(agent.sleepValue, time) == "awake":
+    #         if agent.Aggression == 0:
+    #             # print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible))
+    #             return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible)
+    #         elif agent.Aggression == 1:
+    #             # print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible))
+    #             return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible)
+    #         else:
+    #             print("SHOULD NOT GET HERE")
+    #
+    #     elif self.isAwake(agent.sleepValue, time) == "sleeping":
+    #         return "none"
+    #
+    #
+    # def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible):
+    #     # print("Creatures around: " + str(creaturesAround))
+    #     # if the agent is on the same square as a friend
+    #     # print("list of actions possible docile:", listOfRandomActionsPossible)
+    #     if len(listOfRandomActionsPossible) == 0:
+    #         return "turnAround"
+    #
+    #     # print(listOfRandomActionsPossible)
+    #
+    #     if isCreatureHere == 2:
+    #         if agent.getReadyToBreed() == 0:
+    #             return "breed"
+    #         else:
+    #             return random.choice(listOfRandomActionsPossible)
+    #
+    #     elif len(isFoodHere) > 0:
+    #         return "eat"
+    #
+    #     # if the agent sees an enemy on a square ahead
+    #     elif isCreatureAhead == 1:
+    #         if 'forward' in listOfRandomActionsPossible:
+    #             if len(listOfRandomActionsPossible) != 1:
+    #                 listOfRandomActionsPossible.remove('forward')
+    #         return random.choice(listOfRandomActionsPossible)
+    #
+    #     # if the agent sees a friend ahead
+    #     elif isCreatureAhead == 2:
+    #         # if they are ready to breed, go forward
+    #         if agent.getReadyToBreed() == 0:
+    #             return "forward"
+    #         # if they aren't, go a anywhere
+    #         else:
+    #             return random.choice(listOfRandomActionsPossible)
+    #
+    #     # if it can't see any creatures, and can't smell any creatures: go anywhere
+    #     elif isCreatureAhead == 0 and cellsSmelled == "none":
+    #         # for i in range(2):
+    #         #     listOfRandomActionsPossible.append('forward')
+    #         return random.choice(listOfRandomActionsPossible)
+    #
+    #     # if it can't see any creatures, and but it can smell creatures:
+    #     elif isCreatureAhead == 0 and cellsSmelled != "none":
+    #         # print("MADE IT HERE - can't see anything, can smell something")
+    #         if cellsSmelled[1] == 1:
+    #             if cellsSmelled[0] == "above":
+    #                 if 'forward' in listOfRandomActionsPossible:
+    #                     if len(listOfRandomActionsPossible) != 1:
+    #                         listOfRandomActionsPossible.remove('forward')
+    #                 return random.choice(listOfRandomActionsPossible)
+    #
+    #             elif cellsSmelled[0] == "left":
+    #                 if 'left' in listOfRandomActionsPossible:
+    #                     if len(listOfRandomActionsPossible) != 1:
+    #                         listOfRandomActionsPossible.remove('left')
+    #                 if detectedRocks[0] == -1:
+    #                     return random.choice(listOfRandomActionsPossible)
+    #                 else:
+    #                     if 'forward' in listOfRandomActionsPossible:
+    #                         listOfRandomActionsPossible.append('forward')
+    #                     return random.choice(listOfRandomActionsPossible)
+    #
+    #             elif cellsSmelled[0] == "right":
+    #                 if 'right' in listOfRandomActionsPossible:
+    #                     if len(listOfRandomActionsPossible) != 1:
+    #                         listOfRandomActionsPossible.remove('right')
+    #                 if detectedRocks[0] == -1:
+    #                     return random.choice(listOfRandomActionsPossible)
+    #                 else:
+    #                     if 'forward' in listOfRandomActionsPossible:
+    #                         listOfRandomActionsPossible.append('forward')
+    #                     return random.choice(listOfRandomActionsPossible)
+    #
+    #             elif cellsSmelled[0] == "below":
+    #                 if 'turnAround' in listOfRandomActionsPossible:
+    #                     if len(listOfRandomActionsPossible) != 1:
+    #                         listOfRandomActionsPossible.remove('turnAround')
+    #                 if detectedRocks[0] == -1:
+    #                     return random.choice(listOfRandomActionsPossible)
+    #                 else:
+    #                     if 'forward' in listOfRandomActionsPossible:
+    #                         listOfRandomActionsPossible.append('forward')
+    #                     return random.choice(listOfRandomActionsPossible)
+    #
+    #         elif (cellsSmelled[1] == 2 and agent.getReadyToBreed()) or cellsSmelled[1] == 3:
+    #             if cellsSmelled[0] == "above":
+    #                 if 'forward' in listOfRandomActionsPossible:
+    #                     return "forward"
+    #                 else:
+    #                     return random.choice(listOfRandomActionsPossible)
+    #             elif cellsSmelled[0] == "left":
+    #                 if 'left' in listOfRandomActionsPossible:
+    #                     return "left"
+    #                 else:
+    #                     return random.choice(listOfRandomActionsPossible)
+    #             elif cellsSmelled[0] == "right":
+    #                 if 'right' in listOfRandomActionsPossible:
+    #                     return "right"
+    #                 else:
+    #                     return random.choice(listOfRandomActionsPossible)
+    #             elif cellsSmelled[0] == "below":
+    #                 if 'turnAround' in listOfRandomActionsPossible:
+    #                     return "turnAround"
+    #                 else:
+    #                     return random.choice(listOfRandomActionsPossible)
+    #         else:
+    #             # if 'forward' in listOfRandomActionsPossible:
+    #             #     for i in range(2):
+    #             #         listOfRandomActionsPossible.append('forward')
+    #             return random.choice(listOfRandomActionsPossible)
+    #
+    #     else:
+    #         print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
+    #         return 'forward'
+    #
+    # def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible):
+    #     # print("list of actions possible aggressive:",listOfRandomActionsPossible)
+    #
+    #     if len(listOfRandomActionsPossible) == 0:
+    #         return "turnAround"
+    #
+    #     creaturesAround = cellsSmelled
+    #
+    #     if isCreatureHere == 1:
+    #         return "attack"
+    #
+    #     # if the agent is on the same square as a friend
+    #     elif isCreatureHere == 2:
+    #         if agent.getReadyToBreed() == 0:
+    #             return "breed"
+    #         else:
+    #             return random.choice(listOfRandomActionsPossible)
+    #
+    #     elif isCreatureAhead == 1:
+    #         return "forward"
+    #
+    #     # if it can't see any creatures, and can't smell any creatures: go anywhere, prioritizing forward moves
+    #     elif isCreatureAhead == 0 and creaturesAround == "none":
+    #         for i in range(2):
+    #             listOfRandomActionsPossible.append('forward')
+    #         return random.choice(listOfRandomActionsPossible)
+    #
+    #     # if it can't see any creatures, and but it can smell any creatures:
+    #     elif isCreatureAhead == 0 and creaturesAround != "none":
+    #         if creaturesAround[1] == 1:
+    #             if creaturesAround[0] == "above":
+    #                 return 'forward'
+    #             elif creaturesAround[0] == "left":
+    #                 return 'left'
+    #             elif creaturesAround[0] == "right":
+    #                 return 'right'
+    #             elif creaturesAround[0] == "below":
+    #                 return 'turnAround'
+    #         elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
+    #             if creaturesAround[0] == "above":
+    #                 return "forward"
+    #             elif creaturesAround[0] == "left":
+    #                 return "left"
+    #             elif creaturesAround[0] == "right":
+    #                 return "right"
+    #             elif creaturesAround[0] == "below":
+    #                 return "turnAround"
+    #         elif creaturesAround[1] == -1:
+    #             return random.choice(listOfRandomActionsPossible)
+    #
+    #         else:
+    #             return random.choice(listOfRandomActionsPossible)
+    #
+    #     else:
+    #         print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
+    #         return 'forward'
 
     def filterActionsByWater(self, listOfRandomActionsPossible, detectedWater):
         newListOfRandomActionsPossible = listOfRandomActionsPossible.copy()
