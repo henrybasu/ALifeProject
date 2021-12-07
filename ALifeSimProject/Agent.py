@@ -498,15 +498,30 @@ class Agent(Object):
                 print("There is water here")
                 return 'die'
 
-        # if standing on agent, attack
+        # if standing on agent
         elif len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
-            print("There is an agent here")
-            return 'attack'
+            # the agent is a friend
+            if self.getColor() == self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getColor():
+                print("There is an friend here")
+                pass
+
+            # the agent is not a friend
+            else:
+                # if we aren't aggressive
+                if self.getAggression() == 0:
+                    # TODO: change to random movement
+                    return 'forward'
+                # if we are aggressive
+                else:
+                    return 'attack'
 
         # if standing on food, eat
         elif len(self.removeSelfFromList(sim.foodAt(ownX, ownY))) > 0:
             print("There is food here")
-            return 'eat'
+            # if we can eat
+            if self.getAggression() == 0:
+                return 'eat'
+
 
         # if standing on tree, forward
         elif len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0:

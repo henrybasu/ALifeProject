@@ -48,10 +48,10 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("4210079901")
-        randomGeneticStrings.append("4211059900")
-        randomGeneticStrings.append("1110029900")
-        randomGeneticStrings.append("1210069900") #TODO: this one lives
-        randomGeneticStrings.append("1210089900")
+        randomGeneticStrings.append("4211059901")
+        randomGeneticStrings.append("1111029901")
+        randomGeneticStrings.append("1211069901") #TODO: this one lives
+        randomGeneticStrings.append("1210089901")
 
         randomGeneticStrings.append("1211019900")
         randomGeneticStrings.append("1211039900")
@@ -310,7 +310,7 @@ class ALifeGUI:
             self._postMessage("Dimension must be positive integer.")
             return
 
-        self.sim = ALifeSim.ALifeSim(self.gridDim, self.numberAgents, self.numberStones, self.generateRandomGeneticStrings())
+        self.sim = ALifeSim.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, self.generateRandomGeneticStrings())
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
@@ -1035,7 +1035,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
+    numberOfAgents = 5
     s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
