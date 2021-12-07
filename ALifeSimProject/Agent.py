@@ -758,11 +758,29 @@ class Agent(Object):
                             listOfPossibleActions.remove('forward')
                     except ValueError:
                         pass
-                #TODO: put agent above food
+
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['forward']
+                        #if not ready to breed
+                        else:
+                            return listOfPossibleActions
+                    #enemy is in front
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('forward')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['forward']
 
                 if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
                     return ['forward']
-
 
             # Looking at the cell behind
             for object in cellsSmelled[1]:
@@ -772,6 +790,26 @@ class Agent(Object):
                             listOfPossibleActions.remove('turnAround')
                     except ValueError:
                         pass
+
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['turnAround']
+                        #if not ready to brred
+                        else:
+                            return listOfPossibleActions
+                    #enemy is behind
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('turnAround')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['turnAround']
 
                 if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
                     return ['turnAround']
@@ -785,6 +823,25 @@ class Agent(Object):
                     except ValueError:
                         pass
 
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['right']
+                        #if not ready to brred
+                        else:
+                            return listOfPossibleActions
+                    #enemy is to the right
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('right')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['right']
 
                 if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
                     return ['right']
@@ -798,12 +855,28 @@ class Agent(Object):
                     except ValueError:
                         pass
 
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['left']
+                        #if not ready to breed
+                        else:
+                            return listOfPossibleActions
+                    #enemy is to the left
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('left')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['left']
+
                 if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
                     return ['left']
-
-
-            # if len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0
-
 
         elif self.getSmellRadius() == 2:
             pass

@@ -47,7 +47,7 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("4110079900")
+        randomGeneticStrings.append("4111079900")
         randomGeneticStrings.append("4110059900")
         randomGeneticStrings.append("1110029900")
         randomGeneticStrings.append("1211069900") #TODO: this one lives
@@ -1037,7 +1037,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
-    s = ALifeGUI(10, numberOfAgents)
+    numberOfAgents = 3
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
