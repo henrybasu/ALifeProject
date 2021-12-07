@@ -18,7 +18,7 @@ class ALifeSimTest(object):
     in clusters. Each agent has a certain amount of health that is depleted a bit each time step,
     and that is depleted more if the agent moves. They can regain health by eating, up to a max amount."""
 
-    FOOD_PERCENT = 0.01
+    FOOD_PERCENT = 0.1
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
@@ -34,10 +34,10 @@ class ALifeSimTest(object):
         self.gridSize = gridSize
 
         self.numAgents = numAgents
-        self.numStones = 5
+        self.numStones = numStones
         self.numWaters = 0
         self.numTrees = 10
-        self.numRivers = 3
+        self.numRivers = 1
         self.numPonds = 2
         self.numForests = 10
         self.numPits = 0
@@ -65,13 +65,13 @@ class ALifeSimTest(object):
 
         # self._placeTreesOnHalf()
 
-        self._placeWaters()
-        self._placePits()
-        self._placeTrees(random.randint(3, 5))
+        # self._placeWaters()
+        # self._placePits()
+        # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
         self._placeStones()
-        self._placeFood()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -188,13 +188,10 @@ class ALifeSimTest(object):
 
     def _placeAgents(self):
         for i in range(self.numAgents):
-            agentPose = self._genRandomPose()
-            r, c, h = agentPose
-
             while True:
-                if len(self.globalMap[r, c]) != 0:
-                    (r, c, h) = self._genRandomPose()
-                else:
+                agentPose = self._genRandomPose()
+                (r, c, h) = agentPose
+                if len(self.globalMap[r, c]) == 0:
                     break
 
             if self.initialGeneticStrings is None or len(self.initialGeneticStrings) <= i:
@@ -295,12 +292,12 @@ class ALifeSimTest(object):
                     self.treeList.append(nextTree)
                     self.globalMap[row,col].append(nextTree)
 
-    def _placeTrees(self, forestSize):
+    def _placeTrees(self, numForests, forestSize):
 
         r = forestSize // 2
         # r = self.gridSize
 
-        for forest in range(self.numForests):
+        for forest in range(numForests):
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
             colLoc = random.randint(-r + 1, self.gridSize - r + 1)
             # print("row, col: ", rowLoc, colLoc)
@@ -433,6 +430,7 @@ class ALifeSimTest(object):
         """Update one step of the simulation. This means growing food, and then updating each agent
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
+        print("----------------------------------------- STEP " + str(self.stepNum) + " ---------------------------------------------------")
         #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
         # if self.time != 24:
@@ -488,6 +486,7 @@ class ALifeSimTest(object):
         if self.verbose:
             print("--------------------------------------------------------------------------------------------")
         while i < len(self.agentList):
+
             if self.verbose:
                 print("")
                 print("")
@@ -495,17 +494,20 @@ class ALifeSimTest(object):
 
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
-            rAhead, cAhead = self.agentList[i]._computeAhead(self.gridSize)
+            rAhead, cAhead = agent._computeAhead(self.gridSize)
+            print()
+            print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
+            self.printGrid()
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
             # foodAheadRating = self._assessFood(rAhead, cAhead)
             # print("foodAheadRating " + str(foodAheadRating))
 
-            creatureHereRating = self._assessCreatureHere(agentR, agentC)
+            # creatureHereRating = self._assessCreatureHere(agentR, agentC)
             # print("Creatures at current location: " + str(creatureHereRating))
 
-            creatureAheadRating = self._assessCreature(rAhead,cAhead, agent)
+            # creatureAheadRating = self._assessCreature(rAhead,cAhead, agent)
             # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
             # print("-------------------------------------------------")
             #TODO: replace 0s with foodHereRating and foodAheadRating
@@ -541,13 +543,22 @@ class ALifeSimTest(object):
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
                     # TODO: this if shouldn't be here, and it should remove the agent every time it moves
-                    # if agent in (self.globalMap[agentR, agentC]):
+                    if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from globalMap")
-                    self.globalMap[agentR, agentC].remove(agent)
-                        # print(self.globalMap)
+                        self.globalMap[agentR, agentC].remove(agent)
+                        print("globalMap after removing before adding:")
+                        self.printGrid()
+                    else:
+                        print("Agent not where expected:", agent, agentR, agentC)
+                        self.printGrid()
+                        # print("globalMap after removing before adding:",self.globalMap)
 
                     self.globalMap[rAhead, cAhead].append(agent)
-                    # print("globalMap:",self.globalMap)
+                    print("globalMap after removing AND adding:")
+                    self.printGrid()
+                    print('-----------')
+
+                    # print("globalMap after removing AND adding:",self.globalMap)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(-1)
 
@@ -571,10 +582,10 @@ class ALifeSimTest(object):
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
 
-                agentR, agentC, agentH = agent.getPose()
-                rAhead, cAhead = agent._computeAhead(self.gridSize)
-                creatureHereRating = self._assessCreatureHere(agentR, agentC)
-                creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
+                # agentR, agentC, agentH = agent.getPose()
+                # rAhead, cAhead = agent._computeAhead(self.gridSize)
+                # creatureHereRating = self._assessCreatureHere(agentR, agentC)
+                # creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
 
                 if self.verbose:
                     print("--------------------------------------------------------------------------------------------")
@@ -590,8 +601,23 @@ class ALifeSimTest(object):
             #         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
 
-            if len(self.agentList) != len(set(self.agentList)):
-                print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATES~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            # if len(self.agentList) != len(set(self.agentList)):
+            #     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATES~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+            # numAgentsInGlobalMap = 0
+            # for r, c in self.globalMap:
+            #     for n in self.globalMap[r, c]:
+            #         if type(n) is Agent:
+            #             numAgentsInGlobalMap += 1
+
+            # if len(self.agentList) < numAgentsInGlobalMap:
+            #     print("!!!!!!!!!! GHOST AGENT CREATED")
+            #     print("agentList", self.agentList)
+            #     for j in self.agentList:
+            #         print(j)
+            #     print("globalMap", self.globalMap)
+            #
+            # print('printGrid:',self.printGrid())
 
             if agent.energy <= 0:
                 isOkay = False
@@ -604,7 +630,7 @@ class ALifeSimTest(object):
                 self.agentList.pop(i)
                 if agent in self.globalMap[agentR,agentC]:
                     self.globalMap[agentR, agentC].remove(agent)
-                i = i + 1
+                # i = i + 1
 
             if isOkay:
                 i = i + 1

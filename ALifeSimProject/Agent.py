@@ -6,6 +6,7 @@ from Stone import Stone
 from Water import Water
 from Food import Food
 
+
 class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
     a string, and it has an amount of energy and a location on the agentMap (given when created and then updated)."""
@@ -19,6 +20,8 @@ class Agent(Object):
         :param stepSpawned: integer giving the simulation step the agent was created in
         """
         super().__init__()
+        self.colorNames = ['none', 'black', 'red', 'orange', 'yellow', 'blue', 'green', 'purple', 'brown', 'pink', 'gray']
+        self.colorAbbrevs = ['non', 'blk', 'red', 'org', 'yel', 'blu', 'grn', 'pur', 'brn', 'pnk', 'gry']
         self.row, self.col, self.heading = initPose
         self.geneticString = geneticString
         # self.whichScenarios = dict()
@@ -41,7 +44,9 @@ class Agent(Object):
         """
 
         self.visionRange = int(self.geneticString[0])
-        self.moveSpeed = int(self.geneticString[2])
+        self.smellRadius = int(self.geneticString[1])
+        # self.moveSpeed = int(self.geneticString[2])
+        self.moveSpeed = 1
         self.Aggression = int(self.geneticString[3])
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
@@ -70,6 +75,9 @@ class Agent(Object):
     def getVisionRange(self):
         return self.visionRange
 
+    def getSmellRadius(self):
+        return self.smellRadius
+
     def getGeneticString(self):
         return self.geneticString
 
@@ -82,9 +90,11 @@ class Agent(Object):
 
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
+        # print("before updating pos",self)
         self.row = newRow
         self.col = newCol
         self.heading = newHeading
+        # print("after updating pos", self)
 
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
@@ -487,9 +497,10 @@ class Agent(Object):
                 deadCreature.isDead = True
 
     def removeSelfFromList(self, list):
-        if self in list:
-            list.remove(self)
-        return list
+        newList = list.copy()
+        if self in newList:
+            newList.remove(self)
+        return newList
 
 
     def checkHere(self, sim, listOfPossibleActions):
@@ -708,6 +719,176 @@ class Agent(Object):
                 # if len(visionList) == 0:
                 #     return 0
 
+    def reorderListBasedOnHeading(self, list):
+        heading = self.heading
+        if heading == 'n':
+            return list
+        elif heading == 's':
+            order = [1,0,3,2]
+        elif heading == 'e':
+            order = [2,3,1,0]
+        elif heading == 'w':
+            order = [3,2,0,1]
+        else:
+            print("heading invalid in reorder list function, returning north")
+            return list
+
+        list = [list[i] for i in order]
+        return list
+
+    def checkSmell(self,sim, listOfPossibleActions):
+        ownY, ownX, heading = self.getPose()
+        cellsSmelled = []
+
+        if self.getSmellRadius() == 1:
+            cellAbove = sim._listOfObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
+            cellBelow = sim._listOfObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
+            cellRight = sim._listOfObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
+            cellLeft = sim._listOfObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
+
+            cellsSmelled.append(cellAbove)
+            cellsSmelled.append(cellBelow)
+            cellsSmelled.append(cellRight)
+            cellsSmelled.append(cellLeft)
+
+            cellsSmelled = self.reorderListBasedOnHeading(cellsSmelled)
+
+            #Looking at the cell in front
+            for object in cellsSmelled[0]:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('forward')
+                    except ValueError:
+                        pass
+
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['forward']
+                        #if not ready to breed
+                        else:
+                            return listOfPossibleActions
+                    #enemy is in front
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('forward')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['forward']
+
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['forward']
+
+            # Looking at the cell behind
+            for object in cellsSmelled[1]:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('turnAround')
+                    except ValueError:
+                        pass
+
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['turnAround']
+                        #if not ready to brred
+                        else:
+                            return listOfPossibleActions
+                    #enemy is behind
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('turnAround')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['turnAround']
+
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['turnAround']
+
+            # Looking at the cell to the right
+            for object in cellsSmelled[2]:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('right')
+                    except ValueError:
+                        pass
+
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['right']
+                        #if not ready to brred
+                        else:
+                            return listOfPossibleActions
+                    #enemy is to the right
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('right')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['right']
+
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['right']
+
+            # Looking at the cell to the left
+            for object in cellsSmelled[3]:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('left')
+                    except ValueError:
+                        pass
+
+                if (type(object) is Agent):
+                    #if it is a friend
+                    if (object.getColor() == self.getColor()) :
+                        #if ready to breeed
+                        if self.getReadyToBreed() == 0:
+                            return ['left']
+                        #if not ready to breed
+                        else:
+                            return listOfPossibleActions
+                    #enemy is to the left
+                    elif (object.getColor() != self.getColor()):
+                        if self.getAggression() == 0:
+                            try:
+                                while True:
+                                    listOfPossibleActions.remove('left')
+                            except ValueError:
+                                pass
+                        else:
+                            return ['left']
+
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['left']
+
+        elif self.getSmellRadius() == 2:
+            pass
+
+        else:
+            print("CANT SMELL")
+
+        print("Actions after smell: " + str(listOfPossibleActions))
+        return listOfPossibleActions
 
 
     def determineAction(self, sim, time):
@@ -728,6 +909,17 @@ class Agent(Object):
 
         if len(listOfPossibleActions) == 1:
             return listOfPossibleActions[0]
+
+        # sets the action based on what we can smell
+        listOfPossibleActions = self.checkSmell(sim, listOfPossibleActions)
+        print("Actions after smell: ", listOfPossibleActions)
+
+        # if it can smell something, return the action
+        if len(listOfPossibleActions) == 1:
+            return listOfPossibleActions[0]
+
+        if listOfPossibleActions == []:
+            return random.choice(['left', 'right', 'turnAround', 'forward', 'forward', 'forward'])
 
         action = random.choice(listOfPossibleActions)
         print("Action: ", action)
@@ -1376,11 +1568,13 @@ class Agent(Object):
         return finalString
 
     def getTypeAbbreviation(self):
-        return "a"
+        # return "a"
+        return self.colorAbbrevs[self.color]
+
 
     def __str__(self):
-        formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}      {4}"
-        return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString)
+        formStr = "Agent: col={5}  pos=({0:>3d}, {1:>3d}, {2:^3s})   energ={3:^6d}     genStr={4}"
+        return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString, self.colorNames[self.color])
 
 
 
