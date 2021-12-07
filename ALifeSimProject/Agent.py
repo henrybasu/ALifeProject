@@ -733,7 +733,7 @@ class Agent(Object):
         print("Action: ", action)
         return action
 
-
+    # TEST
     # def determineAction(self, sim, agent, time):
     #     agentR, agentC, agentH = self.getPose()
     #     # checks to see if there is a creature where the agent currently is
