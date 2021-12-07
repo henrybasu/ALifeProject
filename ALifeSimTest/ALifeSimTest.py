@@ -672,6 +672,7 @@ class ALifeSimTest(object):
 
     def _listOfObjectsHere(self, row, col, agent):
         listOfObjects = self.globalMap[row, col]
+
         # print("listOfObjects",listOfObjects)
         listOfObjectsHere = []
 
