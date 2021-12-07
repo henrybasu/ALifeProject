@@ -65,13 +65,13 @@ class ALifeSimTest(object):
 
         # self._placeTreesOnHalf()
 
-        self._placeWaters()
+        # self._placeWaters()
         # self._placePits()
-        self._placeTrees(self.numForests, random.randint(3,5))
+        # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
-        self._placeStones()
-        self._placeFood()
+        # self._placeStones()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -188,13 +188,10 @@ class ALifeSimTest(object):
 
     def _placeAgents(self):
         for i in range(self.numAgents):
-            agentPose = self._genRandomPose()
-            r, c, h = agentPose
-
             while True:
-                if len(self.globalMap[r, c]) != 0:
-                    (r, c, h) = self._genRandomPose()
-                else:
+                agentPose = self._genRandomPose()
+                (r, c, h) = agentPose
+                if len(self.globalMap[r, c]) == 0:
                     break
 
             if self.initialGeneticStrings is None or len(self.initialGeneticStrings) <= i:
@@ -488,6 +485,7 @@ class ALifeSimTest(object):
         if self.verbose:
             print("--------------------------------------------------------------------------------------------")
         while i < len(self.agentList):
+
             if self.verbose:
                 print("")
                 print("")
@@ -496,6 +494,9 @@ class ALifeSimTest(object):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = agent._computeAhead(self.gridSize)
+            print()
+            print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
+            self.printGrid()
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
@@ -544,10 +545,16 @@ class ALifeSimTest(object):
                     if agent in (self.globalMap[agentR, agentC]):
                         print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
-                        print("globalMap after removing before adding:",self.globalMap)
-
+                        print("globalMap after removing before adding:")
+                        self.printGrid()
+                    else:
+                        print("Agent not where expected:", agent, agentR, agentC)
+                        self.printGrid()
                     self.globalMap[rAhead, cAhead].append(agent)
-                    print("globalMap after removing AND adding:",self.globalMap)
+                    print("globalMap after removing AND adding:")
+                    self.printGrid()
+                    print('-----------')
+
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(-1)
 
@@ -571,8 +578,8 @@ class ALifeSimTest(object):
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
 
-                agentR, agentC, agentH = agent.getPose()
-                rAhead, cAhead = agent._computeAhead(self.gridSize)
+                # agentR, agentC, agentH = agent.getPose()
+                # rAhead, cAhead = agent._computeAhead(self.gridSize)
                 # creatureHereRating = self._assessCreatureHere(agentR, agentC)
                 # creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
 
@@ -600,14 +607,18 @@ class ALifeSimTest(object):
                         numAgentsInGlobalMap += 1
 
             if len(self.agentList) < numAgentsInGlobalMap:
+                print("=======================")
                 print("!!!!!!!!!! GHOST AGENT CREATED")
                 print("agentList", self.agentList)
                 for j in self.agentList:
                     print(j)
-                print("globalMap", self.globalMap)
-
-            print('printGrid:',self.printGrid())
-
+                print("globalMap:")
+                self.printGrid()
+                print("values:", agentR, agentC, rAhead, cAhead)
+                print("=======================")
+                print()
+                print()
+                exit()
             if agent.energy <= 0:
                 isOkay = False
 
