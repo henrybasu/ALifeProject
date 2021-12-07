@@ -63,14 +63,14 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeTreesOnHalf()
+        # self._placeTreesOnHalf()
 
-        self._placeWaters()
+        # self._placeWaters()
         self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
-        self._placeStones()
+        # self._placeStones()
         # self._placeFood()
         self._placeAgents()
 
@@ -118,6 +118,7 @@ class ALifeSimTest(object):
         for ob in stonesAtList:
             if type(ob) is not Stone:
                 stonesAtList.remove(ob)
+        print("Stones at: ", stonesAtList)
         return stonesAtList
 
     def pitAt(self, row, col):
