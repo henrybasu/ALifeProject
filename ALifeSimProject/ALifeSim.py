@@ -34,7 +34,7 @@ class ALifeSimTest(object):
         self.gridSize = gridSize
 
         self.numAgents = numAgents
-        self.numStones = numStones
+        self.numStones = 5
         self.numWaters = 0
         self.numTrees = 10
         self.numRivers = 1
@@ -70,7 +70,7 @@ class ALifeSimTest(object):
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
-        # self._placeStones()
+        self._placeStones()
         # self._placeFood()
         self._placeAgents()
 
@@ -656,23 +656,19 @@ class ALifeSimTest(object):
         listOfObjects = self.globalMap[row, col]
         # print("listOfObjects",listOfObjects)
         if listOfObjects != []:
-            for ob in listOfObjects:
-                if type(ob) is Tree:
-                    return 4
-                elif type(ob) is Stone:
-                    return -1
-                elif type(ob) is Agent:
-                    if ob.getColor() == agent.getColor():
-                        return 2
-                    else:
-                        return 1
-                elif type(ob) is Food:
-                    return 3
-                elif type(ob) is Water:
-                    return -2
-                elif type(ob) is Pit:
-                    return -3
-        return 0
+
+            if len(agent.removeSelfFromList(self.treeAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.treeAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.stonesAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.stonesAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.agentsAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.agentsAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.foodAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.foodAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.waterAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.waterAt(row, col))[0]
+
+        return None
 
     def _listOfObjectsHere(self, row, col, agent):
         """Looks at the global map, returns all agents at a location, minus the agent that is in the input"""

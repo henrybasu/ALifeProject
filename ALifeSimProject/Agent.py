@@ -48,9 +48,13 @@ class Agent(Object):
         self.swimVal = int(self.geneticString[9])
 
         self.canSwim = False
+        self.canJump = False
 
         if self.swimVal == 1:
             self.canSwim = True
+        if self.jumpVal == 1:
+            self.canJump = True
+
         # self.score = 0
 
     def getEnergy(self):
@@ -484,13 +488,16 @@ class Agent(Object):
             list.remove(self)
         return list
 
-    def determineAction(self, sim, time):
-        ownX, ownY, ownH = self.getPose()
-        objectHere = sim._listOfObjectsHere(ownX, ownY, self)
 
+    def checkHere(self, sim):
+        ownX, ownY, ownH = self.getPose()
+
+        # Might not need this -------- VVV
+        objectHere = sim._listOfObjectsHere(ownX, ownY, self)
         # list of objects without the current agent
         objectHere = self.removeSelfFromList(objectHere)
         print(objectHere)
+        # Might not need this -------- ^^^^
 
         if not self.canSwim:
             # if standing on water, die
@@ -498,13 +505,20 @@ class Agent(Object):
                 print("There is water here")
                 return 'die'
 
+        if not self.canJump:
+            # if standing on rocks, die
+            if len(self.removeSelfFromList(sim.stonesAt(ownX, ownY))) > 0:
+                print("There is a rock here")
+                return 'die'
+
         # if standing on agent
-        elif len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
+        if len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
             # the agent is a friend
             if self.getColor() == self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getColor():
                 print("Time to breed")
                 # if both agents are ready to breed
-                if self.getReadyToBreed() == 0 and self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getReadyToBreed() == 0:
+                if self.getReadyToBreed() == 0 and self.removeSelfFromList(sim.agentsAt(ownX, ownY))[
+                    0].getReadyToBreed() == 0:
                     return 'breed'
 
 
@@ -529,13 +543,114 @@ class Agent(Object):
         # if standing on tree, forward
         elif len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0:
             print("There is an tree here")
-            return 'forward'
+            # TODO: change this to break so that it has to use smell
+            return 'nothing'
+
+        print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'nothing' as action")
+        return 'nothing'
+
+    def checkVision(self, sim):
+        ownY, ownX, heading = self.getPose()
+        visionList = []
+        visionRange = self.visionRange
+
+
+        # if the heading is north
+        if heading == "n":
+            # loop through vision length
+            for i in range(int(visionRange)):
+
+                currentAboveCell = (ownY - i - 1) % sim.gridSize
+
+                # if it sees a tree, return the vision list
+                if len(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))) > 0:
+                    break
+
+                # if it doesn't see a tree, add whatever it sees
+                else:
+                    visionList.append(sim._assessObjectsHere(currentAboveCell, ownX, self))
+
+
+        # if the heading is south
+        elif heading == "s":
+            # loop through vision length
+            for i in range(int(visionRange)):
+
+                currentAboveCell = (ownY + i + 1) % sim.gridSize
+
+                # if it sees a tree, return the vision list
+                if len(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))) > 0:
+                    break
+
+                # if it doesn't see a tree, add whatever it sees
+                else:
+                    visionList.append(sim._assessObjectsHere(currentAboveCell, ownX, self))
+
+        # if the heading is east
+        elif heading == "e":
+            # loop through vision length
+            for i in range(int(visionRange)):
+
+                currentAboveCell = (ownX + i + 1) % sim.gridSize
+
+                # if it sees a tree, return the vision list
+                if len(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))) > 0:
+                    break
+
+                # if it doesn't see a tree, add whatever it sees
+                else:
+                    visionList.append(sim._assessObjectsHere(ownY, currentAboveCell, self))
+
+        # if the heading is west
+        elif heading == "w":
+            # loop through vision length
+            for i in range(int(visionRange)):
+
+                currentAboveCell = (ownX - i - 1) % sim.gridSize
+
+                # if it sees a tree, return the vision list
+                if len(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))) > 0:
+                    break
+
+                # if it doesn't see a tree, add whatever it sees
+                else:
+                    visionList.append(sim._assessObjectsHere(ownY, currentAboveCell, self))
 
 
 
+        print("Vision List: ", visionList)
 
-        return 'forward'
 
+        # TODO: add logic for what the agent does based on the first thing in vision list
+
+
+                # for ob in sim._listOfObjectsHere((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self):
+                #     if type(ob) is Tree:
+                #         visionList.append(0)
+                #         break
+                #     else:
+                #         visionList.append(sim._assessCreature((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self))
+                # # if visionList[i] != 0:
+                # #     return 1
+                # if len(visionList) == 0:
+                #     return 0
+
+
+
+    def determineAction(self, sim, time):
+        # sets the action based on what we are standing on
+        action = self.checkHere(sim)
+
+        # if it is standing on something, return the action
+        if action != "nothing":
+            return action
+
+        # if it isn't standing on anything, keep going
+        # sets the action based on what we see
+        action = self.checkVision(sim)
+
+        if action != "nothing":
+            return action
 
 
     # def determineAction(self, sim, agent, time):
