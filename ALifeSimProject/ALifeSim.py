@@ -114,40 +114,43 @@ class ALifeSimTest(object):
 
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
-        stonesAtList = self.globalMap[row, col].copy()
-        for ob in stonesAtList:
+        objectsHereList = self.globalMap[row, col].copy()
+        stonesAtList = objectsHereList.copy()
+        for ob in objectsHereList:
             if type(ob) is not Stone:
                 stonesAtList.remove(ob)
-        print("Stones at: ", stonesAtList)
         return stonesAtList
 
     def pitAt(self, row, col):
         """Given a row and column, returns a list of the pits at that location."""
-        pitsAtList = self.globalMap[row, col].copy()
-        for ob in pitsAtList:
+        objectsHereList = self.globalMap[row, col].copy()
+        pitsAtList = objectsHereList.copy()
+        for ob in objectsHereList:
             if type(ob) is not Pit:
                 pitsAtList.remove(ob)
         return pitsAtList
 
     def waterAt(self,row,col):
-        waterAtList = self.globalMap[row, col].copy()
-        for ob in waterAtList:
+        objectsHereList = self.globalMap[row, col].copy()
+        waterAtList = objectsHereList.copy()
+        for ob in objectsHereList:
             if type(ob) is not Water:
                 waterAtList.remove(ob)
         return waterAtList
 
     def treeAt(self,row,col):
-        treeAtList = self.globalMap[row, col].copy()
-        for ob in treeAtList:
+        objectsHereList = self.globalMap[row, col].copy()
+        treeAtList = objectsHereList.copy()
+        for ob in objectsHereList:
             if type(ob) is not Tree:
                 treeAtList.remove(ob)
         return treeAtList
 
     def foodAt(self, row, col):
         """Given a row and column, returns the food at that location."""
-        foodAtList = self.globalMap[row, col].copy()
-        # print("Before: ", foodAtList)
-        for ob in foodAtList:
+        objectsHereList = self.globalMap[row, col].copy()
+        foodAtList = objectsHereList.copy()
+        for ob in objectsHereList:
             if type(ob) is Food:
                 return [ob]
         return []
@@ -166,8 +169,9 @@ class ALifeSimTest(object):
     def agentsAt(self, row, col):
         # TODO: Potential issue here
         """Given a row and column, returns a list of the agents at that location."""
-        agentAtList = self.globalMap[row, col].copy()
-        for ob in agentAtList:
+        objectsHereList = self.globalMap[row, col].copy()
+        agentAtList = objectsHereList.copy()
+        for ob in objectsHereList:
             if type(ob) is not Agent:
                 agentAtList.remove(ob)
         return agentAtList
