@@ -3,14 +3,14 @@ import random
 import tkinter
 import math
 
-from ALifeGUITest import *
-from AgentTest import *
-from ObjectTest import *
-from StoneTest import *
-from FoodTest import *
-from WaterTest import *
-from TreeTest import *
-from PitTest import *
+from ALifeGUI import *
+from Agent import *
+from Object import *
+from Stone import *
+from Food import *
+from Water import *
+from Tree import *
+from Pit import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -65,13 +65,13 @@ class ALifeSimTest(object):
 
         self._placeTreesOnHalf()
 
-        # self._placeWaters()
+        self._placeWaters()
         self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
         # self._placeStones()
-        # self._placeFood()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -558,6 +558,10 @@ class ALifeSimTest(object):
                     agent.updatePose(agentR, agentC, agent._turnAround())
                     isOkay = agent.changeEnergy(-1)
 
+                elif action == 'die':
+                    agent.updatePose(agentR, agentC, agent._turnAround())
+                    isOkay = agent.changeEnergy(-1000)
+
                 else:
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
@@ -672,8 +676,7 @@ class ALifeSimTest(object):
 
     def _listOfObjectsHere(self, row, col, agent):
         """Looks at the global map, returns all agents at a location, minus the agent that is in the input"""
-        listOfObjects = self.globalMap[row, col]
-        listOfObjects.remove(agent)
+        listOfObjects = self.globalMap[row, col].copy()
         return listOfObjects
 
     def eatFood(self, row, col):

@@ -1,4 +1,4 @@
-from ObjectTest import Object
+from Object import Object
 
 class Water(Object):
     """A stone object in the ALife simulation."""

@@ -14,8 +14,8 @@ from tkinter import *
 import tkinter.filedialog as tkFileDialog
 from PIL import Image,ImageTk
 
-import ALifeSimTest
-from LocalSearchSolverTest import RulesetState, HillClimber, BeamSearcher, GASearcher
+import ALifeSim
+from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
 
 
 class ALifeGUI:
@@ -47,7 +47,7 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("4210079900")
+        randomGeneticStrings.append("4210079901")
         randomGeneticStrings.append("4211059900")
         randomGeneticStrings.append("1110029900")
         randomGeneticStrings.append("1210069900") #TODO: this one lives
@@ -87,7 +87,7 @@ class ALifeGUI:
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
-        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, randomGeneticStrings)
+        self.sim = ALifeSim.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, randomGeneticStrings)
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -310,7 +310,7 @@ class ALifeGUI:
             self._postMessage("Dimension must be positive integer.")
             return
 
-        self.sim = ALifeSimTest.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, self.generateRandomGeneticStrings())
+        self.sim = ALifeSim.ALifeSim(self.gridDim, self.numberAgents, self.numberStones, self.generateRandomGeneticStrings())
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
@@ -1035,7 +1035,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
-    s = ALifeGUI(4, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
