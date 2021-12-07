@@ -63,7 +63,7 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        # self._placeTreesOnHalf()
+        self._placeTreesOnHalf()
 
         # self._placeWaters()
         self._placePits()
@@ -510,7 +510,7 @@ class ALifeSimTest(object):
             isOkay = True
 
             if not agent.isDead:
-                action = agent.determineAction(self, self.agentList[i], self.time)
+                action = agent.determineAction(self, self.time)
                 print(agent.colorNumberToText(agent.getColor()), action)
                 if action == 'breed':
                     twoAgents = []
@@ -671,29 +671,10 @@ class ALifeSimTest(object):
         return 0
 
     def _listOfObjectsHere(self, row, col, agent):
+        """Looks at the global map, returns all agents at a location, minus the agent that is in the input"""
         listOfObjects = self.globalMap[row, col]
-
-        # print("listOfObjects",listOfObjects)
-        listOfObjectsHere = []
-
-        if listOfObjects != []:
-            for ob in listOfObjects:
-                if type(ob) is Stone:
-                    listOfObjectsHere.append(-1)
-                elif type(ob) is Agent:
-                    if ob.getColor() == agent.getColor():
-                        listOfObjectsHere.append(2)
-                    else:
-                        listOfObjectsHere.append(1)
-                elif type(ob) is Food:
-                    listOfObjectsHere.append(3)
-                elif type(ob) is Water:
-                    listOfObjectsHere.append(-2)
-                elif type(ob) is Tree:
-                    listOfObjectsHere.append(4)
-                elif type(ob) is Pit:
-                    listOfObjectsHere.append(-3)
-        return listOfObjectsHere
+        listOfObjects.remove(agent)
+        return listOfObjects
 
     def eatFood(self, row, col):
         """Determines what, if any, food is eaten from the current given location. It returns the
