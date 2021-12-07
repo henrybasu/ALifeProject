@@ -70,7 +70,7 @@ class ALifeSimTest(object):
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
-        self._placeStones()
+        # self._placeStones()
         # self._placeFood()
         self._placeAgents()
 
