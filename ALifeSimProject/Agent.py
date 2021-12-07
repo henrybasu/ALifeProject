@@ -506,13 +506,13 @@ class Agent(Object):
             # if standing on water, die
             if len(self.removeSelfFromList(sim.waterAt(ownX, ownY))) > 0:
                 print("There is water here")
-                return 'die'
+                return ['die']
 
         if not self.canJump:
             # if standing on rocks, die
             if len(self.removeSelfFromList(sim.stonesAt(ownX, ownY))) > 0:
                 print("There is a rock here")
-                return 'die'
+                return ['die']
 
         # if standing on agent
         if len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
@@ -521,7 +521,7 @@ class Agent(Object):
                 print("Time to breed")
                 # if both agents are ready to breed
                 if self.getReadyToBreed() == 0 and self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getReadyToBreed() == 0:
-                    return 'breed'
+                    return ['breed']
 
 
             # the agent is not a friend
@@ -529,17 +529,17 @@ class Agent(Object):
                 # if we aren't aggressive
                 if self.getAggression() == 0:
                     # TODO: change to random movement
-                    return 'forward'
+                    return ['forward']
                 # if we are aggressive
                 else:
-                    return 'attack'
+                    return ['attack']
 
         # if standing on food, eat
         elif len(self.removeSelfFromList(sim.foodAt(ownX, ownY))) > 0:
             print("There is food here")
             # if we can eat
             if self.getAggression() == 0:
-                return 'eat'
+                return ['eat']
 
 
         # if standing on tree, forward
@@ -624,8 +624,6 @@ class Agent(Object):
         if visionList == []:
             return listOfPossibleActions
 
-        print("Situation 1: ", listOfPossibleActions)
-
         # if the vision is not blocked by a tree
         firstThingInVision = None
         for i in visionList:
@@ -633,14 +631,11 @@ class Agent(Object):
                 firstThingInVision = i
                 break
 
-        print("Situation 2: ", listOfPossibleActions)
-
         # if the thing it can see is none, return nothing
         if firstThingInVision is None:
             return listOfPossibleActions
 
-        print("Situation 3: ", listOfPossibleActions)
-
+        # if there is a stone directly in front and we can't jump, then take 'forward' out of the options
         if type(firstThingInVision) is Stone and visionList[0] == firstThingInVision:
             if self.canJump:
                 return listOfPossibleActions
@@ -650,9 +645,9 @@ class Agent(Object):
                         listOfPossibleActions.remove('forward')
                 except ValueError:
                     pass
-                print("Situation 4: ", listOfPossibleActions)
                 return listOfPossibleActions
 
+        # if there is a water directly in front and we can't swim, then take 'forward' out of the options
         if type(firstThingInVision) is Water and visionList[0] == firstThingInVision:
             if self.canSwim:
                 return listOfPossibleActions
@@ -662,11 +657,39 @@ class Agent(Object):
                         listOfPossibleActions.remove('forward')
                 except ValueError:
                     pass
-                print("Situation 5: ", listOfPossibleActions)
                 return listOfPossibleActions
 
+        # if the first thing it sees is food
+        if type(firstThingInVision) is Food and self.getAggression == 0:
+            # if we are hungry, eat
+            if self.getEnergy() < 50:
+                return ['forward']
+            # if we aren't, random
+            else:
+                return listOfPossibleActions
 
-        print("Situation 6: ", listOfPossibleActions)
+        # if the first thing we see is an agent
+        if type(firstThingInVision) is Agent:
+            # if we are friends
+            if self.getColor() == firstThingInVision.getColor():
+                if self.getReadyToBreed() == 0:
+                    return ['forward']
+                else:
+                    return listOfPossibleActions
+            # if we aren't friends
+            else:
+                # if I'm not aggressive, run
+                if self.getAggression() == 0:
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('forward')
+                    except ValueError:
+                        pass
+                # if I am, try to attack
+                else:
+                    return ['forward']
+
+        print("possible actions: ", listOfPossibleActions)
         return listOfPossibleActions
 
 
