@@ -1,6 +1,6 @@
-from ObjectTest import Object
+from Object import Object
 
-class Food(Object):
+class Stone(Object):
     """A stone object in the ALife simulation."""
 
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
@@ -12,10 +12,9 @@ class Food(Object):
         """
         super().__init__()
         self.geneticString = geneticString
-
-    def __str__(self):
-        formStr = "Food: {0:>3d}  {1:>3d}  {2}"
-        return formStr.format(self.row, self.col, self.geneticString)
+        self.color = int(self.geneticString[0])
 
     def getTypeAbbreviation(self):
-        return "f"
+        return "s"
+
+

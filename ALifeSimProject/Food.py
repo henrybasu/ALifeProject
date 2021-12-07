@@ -1,7 +1,7 @@
-from ObjectTest import Object
+from Object import Object
 
-class Tree(Object):
-    """A tree object in the ALife simulation."""
+class Food(Object):
+    """A stone object in the ALife simulation."""
 
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
         """
@@ -12,13 +12,10 @@ class Tree(Object):
         """
         super().__init__()
         self.geneticString = geneticString
-        self.canGrowFood = geneticString[0]
-        # self.color = int(self.geneticString[0])
-        
-    def getCanGrowFood(self):
-        return self.canGrowFood
+
+    def __str__(self):
+        formStr = "Food: {0:>3d}  {1:>3d}  {2}"
+        return formStr.format(self.row, self.col, self.geneticString)
 
     def getTypeAbbreviation(self):
-        return "t"
-
-
+        return "f"

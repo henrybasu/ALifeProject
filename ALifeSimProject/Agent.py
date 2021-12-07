@@ -1,7 +1,7 @@
 import random
-from ObjectTest import Object
-from ALifeSimTest import *
-from TreeTest import Tree
+from Object import Object
+from ALifeSim import *
+from Tree import Tree
 
 class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
@@ -46,6 +46,11 @@ class Agent(Object):
         # self.energy = self.color #TODO: remove this line
         self.jumpVal = int(self.geneticString[8])
         self.swimVal = int(self.geneticString[9])
+
+        self.canSwim = False
+
+        if self.swimVal == 1:
+            self.canSwim = True
         # self.score = 0
 
     def getEnergy(self):
@@ -474,10 +479,43 @@ class Agent(Object):
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
+    def removeSelfFromList(self, list):
+        if self in list:
+            list.remove(self)
+        return list
+
     def determineAction(self, sim, time):
         ownX, ownY, ownH = self.getPose()
         objectHere = sim._listOfObjectsHere(ownX, ownY, self)
+
+        # list of objects without the current agent
+        objectHere = self.removeSelfFromList(objectHere)
         print(objectHere)
+
+        if not self.canSwim:
+            # if standing on water, die
+            if len(self.removeSelfFromList(sim.waterAt(ownX, ownY))) > 0:
+                print("There is water here")
+                return 'die'
+
+        # if standing on agent, attack
+        elif len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
+            print("There is an agent here")
+            return 'attack'
+
+        # if standing on food, eat
+        elif len(self.removeSelfFromList(sim.foodAt(ownX, ownY))) > 0:
+            print("There is food here")
+            return 'eat'
+
+        # if standing on tree, forward
+        elif len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0:
+            print("There is an tree here")
+            return 'forward'
+
+
+
+
         return 'forward'
 
 

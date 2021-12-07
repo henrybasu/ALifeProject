@@ -1,7 +1,7 @@
-from ObjectTest import Object
+from Object import Object
 
-class Stone(Object):
-    """A stone object in the ALife simulation."""
+class Pit(Object):
+    """A pit object in the ALife simulation."""
 
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
         """
@@ -12,9 +12,9 @@ class Stone(Object):
         """
         super().__init__()
         self.geneticString = geneticString
-        self.color = int(self.geneticString[0])
+        # self.color = int(self.geneticString[0])
 
     def getTypeAbbreviation(self):
-        return "s"
+        return "p"
 
 
