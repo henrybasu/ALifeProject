@@ -65,7 +65,7 @@ class ALifeSimTest(object):
 
         self._placeTreesOnHalf()
 
-        # self._placeWaters()
+        self._placeWaters()
         self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
