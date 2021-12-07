@@ -44,6 +44,7 @@ class Agent(Object):
         """
 
         self.visionRange = int(self.geneticString[0])
+        self.smellRadius = int(self.geneticString[1])
         # self.moveSpeed = int(self.geneticString[2])
         self.moveSpeed = 1
         self.Aggression = int(self.geneticString[3])
@@ -74,6 +75,9 @@ class Agent(Object):
     def getVisionRange(self):
         return self.visionRange
 
+    def getSmellRadius(self):
+        return self.smellRadius
+
     def getGeneticString(self):
         return self.geneticString
 
@@ -86,11 +90,11 @@ class Agent(Object):
 
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
-        print("before updating pos",self)
+        # print("before updating pos",self)
         self.row = newRow
         self.col = newCol
         self.heading = newHeading
-        print("after updating pos ", self)
+        # print("after updating pos", self)
 
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero

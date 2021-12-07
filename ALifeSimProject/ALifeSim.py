@@ -71,7 +71,7 @@ class ALifeSimTest(object):
         # self._placeTrees(self.numForests, 20)
 
         # self._placeStones()
-        # self._placeFood()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -430,6 +430,7 @@ class ALifeSimTest(object):
         """Update one step of the simulation. This means growing food, and then updating each agent
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
+        print("----------------------------------------- STEP " + str(self.stepNum) + " ---------------------------------------------------")
         #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
         # if self.time != 24:
@@ -543,18 +544,21 @@ class ALifeSimTest(object):
                     agent.updatePose(rAhead, cAhead, agentH)
                     # TODO: this if shouldn't be here, and it should remove the agent every time it moves
                     if agent in (self.globalMap[agentR, agentC]):
-                        print("REMOVING",agent,"from globalMap")
+                        # print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
                         print("globalMap after removing before adding:")
                         self.printGrid()
                     else:
                         print("Agent not where expected:", agent, agentR, agentC)
                         self.printGrid()
+                        # print("globalMap after removing before adding:",self.globalMap)
+
                     self.globalMap[rAhead, cAhead].append(agent)
                     print("globalMap after removing AND adding:")
                     self.printGrid()
                     print('-----------')
 
+                    # print("globalMap after removing AND adding:",self.globalMap)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(-1)
 
@@ -600,25 +604,21 @@ class ALifeSimTest(object):
             # if len(self.agentList) != len(set(self.agentList)):
             #     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~DUPLICATES~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
-            numAgentsInGlobalMap = 0
-            for r, c in self.globalMap:
-                for n in self.globalMap[r, c]:
-                    if type(n) is Agent:
-                        numAgentsInGlobalMap += 1
+            # numAgentsInGlobalMap = 0
+            # for r, c in self.globalMap:
+            #     for n in self.globalMap[r, c]:
+            #         if type(n) is Agent:
+            #             numAgentsInGlobalMap += 1
 
-            if len(self.agentList) < numAgentsInGlobalMap:
-                print("=======================")
-                print("!!!!!!!!!! GHOST AGENT CREATED")
-                print("agentList", self.agentList)
-                for j in self.agentList:
-                    print(j)
-                print("globalMap:")
-                self.printGrid()
-                print("values:", agentR, agentC, rAhead, cAhead)
-                print("=======================")
-                print()
-                print()
-                exit()
+            # if len(self.agentList) < numAgentsInGlobalMap:
+            #     print("!!!!!!!!!! GHOST AGENT CREATED")
+            #     print("agentList", self.agentList)
+            #     for j in self.agentList:
+            #         print(j)
+            #     print("globalMap", self.globalMap)
+            #
+            # print('printGrid:',self.printGrid())
+
             if agent.energy <= 0:
                 isOkay = False
 
