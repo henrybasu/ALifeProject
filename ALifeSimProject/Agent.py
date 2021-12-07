@@ -6,6 +6,7 @@ from Stone import Stone
 from Water import Water
 from Food import Food
 
+
 class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
     a string, and it has an amount of energy and a location on the agentMap (given when created and then updated)."""
@@ -19,6 +20,8 @@ class Agent(Object):
         :param stepSpawned: integer giving the simulation step the agent was created in
         """
         super().__init__()
+        self.colorNames = ['none', 'black', 'red', 'orange', 'yellow', 'blue', 'green', 'purple', 'brown', 'pink', 'gray']
+        self.colorAbbrevs = ['non', 'blk', 'red', 'org', 'yel', 'blu', 'grn', 'pur', 'brn', 'pnk', 'gry']
         self.row, self.col, self.heading = initPose
         self.geneticString = geneticString
         # self.whichScenarios = dict()
@@ -1565,11 +1568,13 @@ class Agent(Object):
         return finalString
 
     def getTypeAbbreviation(self):
-        return "a"
+        # return "a"
+        return self.colorAbbrevs[self.color]
+
 
     def __str__(self):
-        formStr = "Agent: {0:>3d}  {1:>3d}  {2:^3s}   {3:^6d}      {4}"
-        return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString)
+        formStr = "Agent: col={5}  pos=({0:>3d}, {1:>3d}, {2:^3s})   energ={3:^6d}     genStr={4}"
+        return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString, self.colorNames[self.color])
 
 
 

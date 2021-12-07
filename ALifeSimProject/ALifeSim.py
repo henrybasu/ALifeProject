@@ -188,13 +188,10 @@ class ALifeSimTest(object):
 
     def _placeAgents(self):
         for i in range(self.numAgents):
-            agentPose = self._genRandomPose()
-            r, c, h = agentPose
-
             while True:
-                if len(self.globalMap[r, c]) != 0:
-                    (r, c, h) = self._genRandomPose()
-                else:
+                agentPose = self._genRandomPose()
+                (r, c, h) = agentPose
+                if len(self.globalMap[r, c]) == 0:
                     break
 
             if self.initialGeneticStrings is None or len(self.initialGeneticStrings) <= i:
@@ -443,6 +440,8 @@ class ALifeSimTest(object):
         self._growFood()
         self._updateAgents()
 
+        print("--------------------------------------------------------------------------------------------")
+
         # for i in range(len(self.agentList)):
         #     print("\n\n")
         #     print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
@@ -487,6 +486,7 @@ class ALifeSimTest(object):
         if self.verbose:
             print("--------------------------------------------------------------------------------------------")
         while i < len(self.agentList):
+
             if self.verbose:
                 print("")
                 print("")
@@ -495,6 +495,9 @@ class ALifeSimTest(object):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = agent._computeAhead(self.gridSize)
+            print()
+            print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
+            self.printGrid()
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
@@ -543,9 +546,18 @@ class ALifeSimTest(object):
                     if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
+                        print("globalMap after removing before adding:")
+                        self.printGrid()
+                    else:
+                        print("Agent not where expected:", agent, agentR, agentC)
+                        self.printGrid()
                         # print("globalMap after removing before adding:",self.globalMap)
 
                     self.globalMap[rAhead, cAhead].append(agent)
+                    print("globalMap after removing AND adding:")
+                    self.printGrid()
+                    print('-----------')
+
                     # print("globalMap after removing AND adding:",self.globalMap)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(-1)
@@ -570,8 +582,8 @@ class ALifeSimTest(object):
                     print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
 
-                agentR, agentC, agentH = agent.getPose()
-                rAhead, cAhead = agent._computeAhead(self.gridSize)
+                # agentR, agentC, agentH = agent.getPose()
+                # rAhead, cAhead = agent._computeAhead(self.gridSize)
                 # creatureHereRating = self._assessCreatureHere(agentR, agentC)
                 # creatureAheadRating = self._assessCreature(rAhead, cAhead, agent)
 
