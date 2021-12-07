@@ -63,7 +63,7 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeTreesOnHalf()
+        # self._placeTreesOnHalf()
 
         # self._placeWaters()
         self._placePits()
