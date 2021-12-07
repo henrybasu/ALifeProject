@@ -18,7 +18,7 @@ class ALifeSimTest(object):
     in clusters. Each agent has a certain amount of health that is depleted a bit each time step,
     and that is depleted more if the agent moves. They can regain health by eating, up to a max amount."""
 
-    FOOD_PERCENT = 0.1
+    FOOD_PERCENT = 0.01
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
@@ -37,7 +37,7 @@ class ALifeSimTest(object):
         self.numStones = 5
         self.numWaters = 0
         self.numTrees = 10
-        self.numRivers = 1
+        self.numRivers = 3
         self.numPonds = 2
         self.numForests = 10
         self.numPits = 0
@@ -65,13 +65,13 @@ class ALifeSimTest(object):
 
         # self._placeTreesOnHalf()
 
-        # self._placeWaters()
+        self._placeWaters()
         self._placePits()
-        # self._placeTrees(self.numForests, random.randint(3,5))
+        self._placeTrees(random.randint(3, 5))
         # self._placeTrees(self.numForests, 20)
 
-        # self._placeStones()
-        # self._placeFood()
+        self._placeStones()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -295,12 +295,12 @@ class ALifeSimTest(object):
                     self.treeList.append(nextTree)
                     self.globalMap[row,col].append(nextTree)
 
-    def _placeTrees(self, numForests, forestSize):
+    def _placeTrees(self, forestSize):
 
         r = forestSize // 2
         # r = self.gridSize
 
-        for forest in range(numForests):
+        for forest in range(self.numForests):
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
             colLoc = random.randint(-r + 1, self.gridSize - r + 1)
             # print("row, col: ", rowLoc, colLoc)
@@ -541,9 +541,9 @@ class ALifeSimTest(object):
                 elif action == 'forward':
                     agent.updatePose(rAhead, cAhead, agentH)
                     # TODO: this if shouldn't be here, and it should remove the agent every time it moves
-                    if agent in (self.globalMap[agentR, agentC]):
+                    # if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from globalMap")
-                        self.globalMap[agentR, agentC].remove(agent)
+                    self.globalMap[agentR, agentC].remove(agent)
                         # print(self.globalMap)
 
                     self.globalMap[rAhead, cAhead].append(agent)
