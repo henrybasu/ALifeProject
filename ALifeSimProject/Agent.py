@@ -2,6 +2,9 @@ import random
 from Object import Object
 from ALifeSim import *
 from Tree import Tree
+from Stone import Stone
+from Water import Water
+from Food import Food
 
 class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
@@ -489,7 +492,7 @@ class Agent(Object):
         return list
 
 
-    def checkHere(self, sim):
+    def checkHere(self, sim, listOfPossibleActions):
         ownX, ownY, ownH = self.getPose()
 
         # Might not need this -------- VVV
@@ -517,8 +520,7 @@ class Agent(Object):
             if self.getColor() == self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getColor():
                 print("Time to breed")
                 # if both agents are ready to breed
-                if self.getReadyToBreed() == 0 and self.removeSelfFromList(sim.agentsAt(ownX, ownY))[
-                    0].getReadyToBreed() == 0:
+                if self.getReadyToBreed() == 0 and self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getReadyToBreed() == 0:
                     return 'breed'
 
 
@@ -543,13 +545,11 @@ class Agent(Object):
         # if standing on tree, forward
         elif len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0:
             print("There is an tree here")
-            # TODO: change this to break so that it has to use smell
-            return 'nothing'
+            return listOfPossibleActions
 
-        print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'nothing' as action")
-        return 'nothing'
+        return listOfPossibleActions
 
-    def checkVision(self, sim):
+    def checkVision(self, sim, listOfPossibleActions):
         ownY, ownX, heading = self.getPose()
         visionList = []
         visionRange = self.visionRange
@@ -620,6 +620,56 @@ class Agent(Object):
 
         print("Vision List: ", visionList)
 
+        # if it can't see anything, return nothing
+        if visionList == []:
+            return listOfPossibleActions
+
+        print("Situation 1: ", listOfPossibleActions)
+
+        # if the vision is not blocked by a tree
+        firstThingInVision = None
+        for i in visionList:
+            if i is not None:
+                firstThingInVision = i
+                break
+
+        print("Situation 2: ", listOfPossibleActions)
+
+        # if the thing it can see is none, return nothing
+        if firstThingInVision is None:
+            return listOfPossibleActions
+
+        print("Situation 3: ", listOfPossibleActions)
+
+        if type(firstThingInVision) is Stone and visionList[0] == firstThingInVision:
+            if self.canJump:
+                return listOfPossibleActions
+            else:
+                try:
+                    while True:
+                        listOfPossibleActions.remove('forward')
+                except ValueError:
+                    pass
+                print("Situation 4: ", listOfPossibleActions)
+                return listOfPossibleActions
+
+        if type(firstThingInVision) is Water and visionList[0] == firstThingInVision:
+            if self.canSwim:
+                return listOfPossibleActions
+            else:
+                try:
+                    while True:
+                        listOfPossibleActions.remove('forward')
+                except ValueError:
+                    pass
+                print("Situation 5: ", listOfPossibleActions)
+                return listOfPossibleActions
+
+
+        print("Situation 6: ", listOfPossibleActions)
+        return listOfPossibleActions
+
+
 
         # TODO: add logic for what the agent does based on the first thing in vision list
 
@@ -638,19 +688,27 @@ class Agent(Object):
 
 
     def determineAction(self, sim, time):
+        listOfPossibleActions = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
+
         # sets the action based on what we are standing on
-        action = self.checkHere(sim)
+        listOfPossibleActions = self.checkHere(sim, listOfPossibleActions)
+        print("Actions after here: ", listOfPossibleActions)
 
         # if it is standing on something, return the action
-        if action != "nothing":
-            return action
+        if len(listOfPossibleActions) == 1:
+            return listOfPossibleActions[0]
 
         # if it isn't standing on anything, keep going
         # sets the action based on what we see
-        action = self.checkVision(sim)
+        listOfPossibleActions = self.checkVision(sim, listOfPossibleActions)
+        print("Actions after vision: ", listOfPossibleActions)
 
-        if action != "nothing":
-            return action
+        if len(listOfPossibleActions) == 1:
+            return listOfPossibleActions[0]
+
+        action = random.choice(listOfPossibleActions)
+        print("Action: ", action)
+        return action
 
 
     # def determineAction(self, sim, agent, time):
