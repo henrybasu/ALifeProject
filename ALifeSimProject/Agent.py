@@ -41,6 +41,7 @@ class Agent(Object):
         """
 
         self.visionRange = int(self.geneticString[0])
+        self.smellRadius = int(self.geneticString[1])
         # self.moveSpeed = int(self.geneticString[2])
         self.moveSpeed = 1
         self.Aggression = int(self.geneticString[3])
@@ -71,6 +72,9 @@ class Agent(Object):
     def getVisionRange(self):
         return self.visionRange
 
+    def getSmellRadius(self):
+        return self.smellRadius
+
     def getGeneticString(self):
         return self.geneticString
 
@@ -83,11 +87,11 @@ class Agent(Object):
 
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
-        print("before updating pos",self)
+        # print("before updating pos",self)
         self.row = newRow
         self.col = newCol
         self.heading = newHeading
-        print("after updating pos", self)
+        # print("after updating pos", self)
 
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
@@ -712,6 +716,88 @@ class Agent(Object):
                 # if len(visionList) == 0:
                 #     return 0
 
+    def reorderListBasedOnHeading(self, list):
+        heading = self.heading
+        if heading == 'n':
+            return list
+        elif heading == 's':
+            order = [1,0,3,2]
+        elif heading == 'e':
+            order = [2,3,1,0]
+        elif heading == 'w':
+            order = [3,2,0,1]
+        else:
+            print("heading invalid in reorder list function, returning north")
+            return list
+
+        list = [list[i] for i in order]
+        return list
+
+    def checkSmell(self,sim, listOfPossibleActions):
+        ownY, ownX, heading = self.getPose()
+        cellsSmelled = []
+
+        if self.getSmellRadius() == 1:
+            cellAbove = sim._listOfObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
+            cellBelow = sim._listOfObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
+            cellRight = sim._listOfObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
+            cellLeft = sim._listOfObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
+
+            cellsSmelled.append(cellAbove)
+            cellsSmelled.append(cellBelow)
+            cellsSmelled.append(cellRight)
+            cellsSmelled.append(cellLeft)
+
+            cellsSmelled = self.reorderListBasedOnHeading(cellsSmelled)
+
+            #Looking at the cell in front
+            for object in cellsSmelled[0]:
+                if type(object) is Stone and not self.canJump:
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('forward')
+                    except ValueError:
+                        pass
+
+            # Looking at the cell behind
+            for object in cellsSmelled[1]:
+                if type(object) is Stone and not self.canJump:
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('turnAround')
+                    except ValueError:
+                        pass
+
+            # Looking at the cell to the right
+            for object in cellsSmelled[2]:
+                if type(object) is Stone and not self.canJump:
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('right')
+                    except ValueError:
+                        pass
+
+            # Looking at the cell to the left
+            for object in cellsSmelled[3]:
+                if type(object) is Stone and not self.canJump:
+                    try:
+                        while True:
+                            listOfPossibleActions.remove('left')
+                    except ValueError:
+                        pass
+
+
+            # if len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0
+
+
+        elif self.getSmellRadius() == 2:
+            pass
+
+        else:
+            print("CANT SMELL")
+
+        print("Actions after smell: " + str(listOfPossibleActions))
+        return listOfPossibleActions
 
 
     def determineAction(self, sim, time):
@@ -730,6 +816,14 @@ class Agent(Object):
         listOfPossibleActions = self.checkVision(sim, listOfPossibleActions)
         print("Actions after vision: ", listOfPossibleActions)
 
+        if len(listOfPossibleActions) == 1:
+            return listOfPossibleActions[0]
+
+        # sets the action based on what we can smell
+        listOfPossibleActions = self.checkSmell(sim, listOfPossibleActions)
+        print("Actions after smell: ", listOfPossibleActions)
+
+        # if it can smell something, return the action
         if len(listOfPossibleActions) == 1:
             return listOfPossibleActions[0]
 
