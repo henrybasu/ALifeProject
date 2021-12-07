@@ -47,11 +47,11 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("4110079901")
-        randomGeneticStrings.append("4110059901")
-        randomGeneticStrings.append("1110029901")
-        randomGeneticStrings.append("1211069901") #TODO: this one lives
-        randomGeneticStrings.append("1210089901")
+        randomGeneticStrings.append("4110079900")
+        randomGeneticStrings.append("4110059900")
+        randomGeneticStrings.append("1110029900")
+        randomGeneticStrings.append("1211069900") #TODO: this one lives
+        randomGeneticStrings.append("1210089900")
 
         randomGeneticStrings.append("1211019900")
         randomGeneticStrings.append("1211039900")
@@ -1038,6 +1038,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 1
-    s = ALifeGUI(7, numberOfAgents)
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

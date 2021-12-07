@@ -752,39 +752,54 @@ class Agent(Object):
 
             #Looking at the cell in front
             for object in cellsSmelled[0]:
-                if type(object) is Stone and not self.canJump:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
                     try:
                         while True:
                             listOfPossibleActions.remove('forward')
                     except ValueError:
                         pass
+                #TODO: put agent above food
+
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['forward']
+
 
             # Looking at the cell behind
             for object in cellsSmelled[1]:
-                if type(object) is Stone and not self.canJump:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
                     try:
                         while True:
                             listOfPossibleActions.remove('turnAround')
                     except ValueError:
                         pass
 
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['turnAround']
+
             # Looking at the cell to the right
             for object in cellsSmelled[2]:
-                if type(object) is Stone and not self.canJump:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
                     try:
                         while True:
                             listOfPossibleActions.remove('right')
                     except ValueError:
                         pass
 
+
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['right']
+
             # Looking at the cell to the left
             for object in cellsSmelled[3]:
-                if type(object) is Stone and not self.canJump:
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
                     try:
                         while True:
                             listOfPossibleActions.remove('left')
                     except ValueError:
                         pass
+
+                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
+                    return ['left']
 
 
             # if len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0
@@ -826,6 +841,9 @@ class Agent(Object):
         # if it can smell something, return the action
         if len(listOfPossibleActions) == 1:
             return listOfPossibleActions[0]
+
+        if listOfPossibleActions == []:
+            return random.choice(['left', 'right', 'turnAround', 'forward', 'forward', 'forward'])
 
         action = random.choice(listOfPossibleActions)
         print("Action: ", action)

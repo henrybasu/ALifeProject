@@ -34,7 +34,7 @@ class ALifeSimTest(object):
         self.gridSize = gridSize
 
         self.numAgents = numAgents
-        self.numStones = 10
+        self.numStones = numStones
         self.numWaters = 0
         self.numTrees = 10
         self.numRivers = 1
@@ -70,8 +70,8 @@ class ALifeSimTest(object):
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
-        self._placeStones()
-        # self._placeFood()
+        # self._placeStones()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
