@@ -471,7 +471,8 @@ class ALifeSimTest(object):
                 tree.setStepsUntilBloom(tree.getStepsUntilBloom() - 1)
             if tree.getStepsUntilBloom() == 0:
                 tree.setHasFood("1")
-                tree.setStepsUntilBloom(5)
+                # TODO: WHy can't we call this from the tree V ???
+                tree.setStepsUntilBloom(random.randint(10,40))
 
             i = i + 1
 
@@ -534,6 +535,9 @@ class ALifeSimTest(object):
                 elif action == 'eat':
                     self.eatFood(agentR, agentC)
                     isOkay = agent.changeEnergy(50)
+
+                elif action == 'eatBerries':
+                    isOkay = agent.changeEnergy(5)
 
                 elif action == 'attack':
                     self.agentList[i].attackCreature(self, agentR, agentC)
@@ -771,7 +775,13 @@ class ALifeSimTest(object):
         elif randElem == 7:
             newVal = random.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         elif randElem == 8:
-            newVal = random.choice([0, 1])
+            newVal = random.choice([0, 0, 1])
+        elif randElem == 9:
+            newVal = random.choice([0, 0, 1])
+        elif randElem == 10:
+            newVal = random.choice([0, 0, 1])
+        elif randElem == 11:
+            newVal = random.choice([0, 0, 1])
 
         babyGeneticStringAsList = list(newBabyGeneticString)
         print(babyGeneticStringAsList)

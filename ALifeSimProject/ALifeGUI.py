@@ -20,7 +20,7 @@ from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearche
 
 class ALifeGUI:
     """Set up and manage all the variables for the GUI interface."""
-    
+
     def __init__(self, gridDim, numAgents=10, maxSteps=100):
         """Given the dimension of the grid, and the number of agents set up a new Tk object of the right size"""
         self.root = Tk()
@@ -47,28 +47,30 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("02110799001")
-        randomGeneticStrings.append("02100799001")
-        randomGeneticStrings.append("11100299001")
-        randomGeneticStrings.append("12110699001")
-        randomGeneticStrings.append("12100899001")
+        randomGeneticStrings.append("221107990011")
+        randomGeneticStrings.append("021007990011")
+        randomGeneticStrings.append("111002990011")
+        randomGeneticStrings.append("121106990011")
+        randomGeneticStrings.append("121008990011")
 
         randomGeneticStrings.append("12110199001")
         randomGeneticStrings.append("12110399001")
         # for n in range(self.numberAgents - 1):
         #     randomGeneticStrings.append("11100599")
 
-
         """
-        X000000000 - Vision [0]
-        0X00000000 - Smell [1]
-        00X0000000 - Movement [2]
-        000X000000 - Aggression [3]
-        0000X00000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
-        00000X0000 - Color [5]
-        0000000X00 - Energy [6:7]
-        00000000X0 - Jump [8]
-        000000000X - Swim [9]
+        X000000000000000 - Vision [0]
+        0X00000000000000 - Smell [1]
+        00X0000000000000 - Movement [2]
+        000X000000000000 - Aggression [3]
+        0000X00000000000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
+        00000X0000000000 - Color [5]
+        0000000X00000000 - Energy [6:7]
+        00000000X0000000 - Jump [8]
+        000000000X000000 - Swim [9]
+        0000000000X00000 - Fly [10]
+        00000000000X0000 - Scavenge [11]
+
         """
         # for n in range(self.numberAgents):
         #     randomVision = str(random.randint(0, 5))
@@ -109,7 +111,18 @@ class ALifeGUI:
             randomJump = str(random.choice([0, 0, 0, 1]))
             randomSwim = str(random.choice([0, 0, 0, 1]))
             randomFly = str(random.choice([0, 0, 0, 1]))
-            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy + randomJump + randomSwim + randomFly
+            randomScavenge = str(random.choice([0, 0, 0, 1]))
+            randomGeneticString = randomVision + \
+                                  randomSmell + \
+                                  randomMovement + \
+                                  randomAggression + \
+                                  randomSleepType + \
+                                  randomColor + \
+                                  randomEnergy + \
+                                  randomJump + \
+                                  randomSwim + \
+                                  randomFly + \
+                                  randomScavenge
             randomGeneticStrings.append(randomGeneticString)
             print("randomGeneticString: ", randomGeneticString)
         return randomGeneticStrings
@@ -135,7 +148,7 @@ class ALifeGUI:
         self._initSearchTools()
 
 
-              
+
     def goProgram(self):
         """This starts the whole GUI going"""
         self.root.mainloop()
@@ -143,7 +156,7 @@ class ALifeGUI:
 
     # =================================================================
     # Widget-creating helper functions
-        
+
     def _initTitle(self):
         """Sets up the title section of the GUI, where the Quit and Help buttons are located"""
         titleButtonFrame = Frame(self.root, bd=5, padx=5, pady=5)
@@ -158,7 +171,7 @@ class ALifeGUI:
                            anchor=CENTER, padx=5, pady=5)
         titleLabel.grid(row=1, column=1)
 
-    
+
 
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
@@ -477,7 +490,7 @@ class ALifeGUI:
             id = tr.getVisId()
 
             (newRow, newCol) = tr.getPose()
-            print("New coords:",newRow,newCol)
+            # print("New coords:",newRow,newCol)
             (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
 
             # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
@@ -973,7 +986,7 @@ class ALifeGUI:
         """Clears the message in the message box"""
         self.messageVar.set("")
         print()
-        
+
     def _addMessage(self, messageText):
         oldMessage = self.messageVar.get()
         newMessage = oldMessage + '\n' + messageText
@@ -1055,7 +1068,7 @@ class ALifeGUI:
         """Given the id of a cell, it looks up and returns the row and column position of that cell"""
         return self.patchIdToPos[currId]
 
-    
+
     def _posToCoords(self, row, col):
         """Given a row and column position, this converts that into a position on the frame"""
         x1 = col * self.cellSize + 5
@@ -1086,7 +1099,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
+    numberOfAgents = 1
     s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

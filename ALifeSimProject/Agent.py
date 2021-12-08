@@ -43,6 +43,7 @@ class Agent(Object):
         00000000X0000000 - Jump [8]
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
+        00000000000X0000 - Scavenge [11]
         
         """
 
@@ -58,10 +59,12 @@ class Agent(Object):
         self.jumpVal = int(self.geneticString[8])
         self.swimVal = int(self.geneticString[9])
         self.flyVal = int(self.geneticString[10])
+        self.scavengeVal = int(self.geneticString[11])
 
         self.canSwim = False
         self.canJump = False
         self.canFly = False
+        self.canScavenge = False
 
         if self.swimVal == 1:
             self.canSwim = True
@@ -69,6 +72,8 @@ class Agent(Object):
             self.canJump = True
         if self.flyVal == 1:
             self.canFly = True
+        if self.scavengeVal == 1:
+            self.canScavenge = True
         # self.score = 0
 
     def getEnergy(self):
@@ -564,6 +569,13 @@ class Agent(Object):
             if self.getAggression() == 0:
                 return ['eat']
 
+        # if standing on tree
+        elif len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0:
+            print("There is a tree here")
+            if self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].getHasFood() == "1":
+                self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].setHasFood("0")
+                print(self.removeSelfFromList(sim.treeAt(ownX, ownY))[0])
+                return ['eatBerries']
         return listOfPossibleActions
 
     def checkVision(self, sim, listOfPossibleActions):
@@ -581,7 +593,11 @@ class Agent(Object):
 
                 # if it sees a tree, return the vision list
                 if len(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))) > 0:
-                    break
+                    if self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
+                        visionList.append(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0])
+                        listOfPossibleActions = ['forward']
+                    else:
+                        break
 
                 # if it doesn't see a tree, add whatever it sees
                 else:
@@ -597,7 +613,11 @@ class Agent(Object):
 
                 # if it sees a tree, return the vision list
                 if len(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))) > 0:
-                    break
+                    if self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
+                        visionList.append(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0])
+                        listOfPossibleActions = ['forward']
+                    else:
+                        break
 
                 # if it doesn't see a tree, add whatever it sees
                 else:
@@ -612,7 +632,11 @@ class Agent(Object):
 
                 # if it sees a tree, return the vision list
                 if len(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))) > 0:
-                    break
+                    if self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
+                        visionList.append(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell)))
+                        listOfPossibleActions = ['forward']
+                    else:
+                        break
 
                 # if it doesn't see a tree, add whatever it sees
                 else:
@@ -627,7 +651,11 @@ class Agent(Object):
 
                 # if it sees a tree, return the vision list
                 if len(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))) > 0:
-                    break
+                    if self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
+                        visionList.append(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell)))
+                        listOfPossibleActions = ['forward']
+                    else:
+                        break
 
                 # if it doesn't see a tree, add whatever it sees
                 else:

@@ -1,4 +1,5 @@
 from Object import Object
+import random
 
 class Tree(Object):
     """A tree object in the ALife simulation."""
@@ -16,7 +17,8 @@ class Tree(Object):
         self.row,self.col = initPose
         self.stepSpawned = stepSpawned
         self.justChanged = False
-        self.stepsUntilBloom = 5
+        self.stepsUntilBloom = random.randint(5,40)
+
         # self.color = int(self.geneticString[0])
         
     def getHasFood(self):
@@ -37,5 +39,9 @@ class Tree(Object):
 
     def getTypeAbbreviation(self):
         return "t"
+
+    def __str__(self):
+        formStr = "Tree: row={5}  col={0:>3d}, hasFood={1:>3d}, stepsSpawned={2:^3s})   justChanged={3:^6d}     stepsUntilBloom={4}"
+        return formStr.format(self.row, self.col, self.hasFood, self.stepSpawned, self.justChanged, self.stepsUntilBloom)
 
 
