@@ -71,7 +71,7 @@ class ALifeSimTest(object):
         # self._placeTrees(self.numForests, 20)
 
         # self._placeStones()
-        # self._placeFood() $dsjhgfjhds
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
