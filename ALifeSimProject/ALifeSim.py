@@ -320,7 +320,7 @@ class ALifeSimTest(object):
                                 if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
                                     nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString=random.choice(["0","0","0","0","1"]),stepSpawned=self.stepNum)
                                     # print(nextTree.geneticString)
-                                    # print(nextTree.getCanGrowFood())
+                                    # print(nextTree.getHasFood())
                                     self.treeList.append(nextTree)
                                     self.globalMap[rowLoc + i, colLoc + j].append(nextTree)
 
@@ -467,8 +467,12 @@ class ALifeSimTest(object):
         while i < len(self.treeList):
             tree = self.treeList[i]
             treeR, treeC = tree.getPose()
-            if self.stepNum - tree.stepSpawned > 5:
-                tree.setCanGrowFood("1")
+            if tree.getStepsUntilBloom() > 0:
+                tree.setStepsUntilBloom(tree.getStepsUntilBloom() - 1)
+            if tree.getStepsUntilBloom() == 0:
+                tree.setHasFood("1")
+                tree.setStepsUntilBloom(5)
+
             i = i + 1
 
 

@@ -486,7 +486,7 @@ class ALifeGUI:
             # tr.setVisId(ghostGuy)
             # self.canvas.lift(ghostGuy)
 
-            if tr.getCanGrowFood() == '0' and tr.justChanged == True:
+            if tr.getHasFood() == '0' and tr.justChanged == True:
                 # deletes the object
                 self.canvas.delete(id)
                 trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeImage)
@@ -494,7 +494,7 @@ class ALifeGUI:
                 tr.setVisId(trId)
                 self.canvas.lift(trId)
                 tr.setJustChangedBloom(False)
-            elif tr.getCanGrowFood() == '1' and tr.justChanged == True:
+            elif tr.getHasFood() == '1' and tr.justChanged == True:
                 # deletes the object
                 self.canvas.delete(id)
                 trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeFruitImage)
@@ -511,11 +511,11 @@ class ALifeGUI:
             # self.canvas.delete(currentId)
             # self.canvas.update()
             # coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-            # if tr.getCanGrowFood() == '0':
+            # if tr.getHasFood() == '0':
             #     trId = self.canvas.create_image(coords, image=self.treeImage)
             #     self.agentIdToPose[trId] = tr.getPose()
             #     tr.setVisId(trId)
-            # elif tr.getCanGrowFood() == '1':
+            # elif tr.getHasFood() == '1':
             #     trId = self.canvas.create_image(coords, image=self.treeFruitImage)
             #     self.agentIdToPose[trId] = tr.getPose()
             #     tr.setVisId(trId)
@@ -757,11 +757,11 @@ class ALifeGUI:
                 for tr in trees:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    if tr.getCanGrowFood() == '0':
+                    if tr.getHasFood() == '0':
                         trId = self.canvas.create_image(coords, image=self.treeImage)
                         self.agentIdToPose[trId] = tr.getPose()
                         tr.setVisId(trId)
-                    elif tr.getCanGrowFood() == '1':
+                    elif tr.getHasFood() == '1':
                         trId = self.canvas.create_image(coords, image=self.treeFruitImage)
                         self.agentIdToPose[trId] = tr.getPose()
                         tr.setVisId(trId)
