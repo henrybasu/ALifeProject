@@ -1197,38 +1197,47 @@ class Agent(Object):
     def determineAction(self, sim, time):
         listOfPossibleActions = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
 
+        if self.isAwake(self.sleepValue, time) == "awake":
 
-        # ---------- Check where we are ---------- #
-        # sets the action based on what we are standing on
-        listOfPossibleActions = self.checkHere(sim, listOfPossibleActions)
-        print("Actions after here: ", listOfPossibleActions)
+            # ---------- Check where we are ---------- #
+            # sets the action based on what we are standing on
+            listOfPossibleActions = self.checkHere(sim, listOfPossibleActions)
+            print("Actions after here: ", listOfPossibleActions)
 
-        # ---------- Check what we see ---------- #
-        # if it isn't standing on anything, keep going
-        # sets the action based on what we see
-        listOfPossibleActions = self.checkVision(sim, listOfPossibleActions)
-        print("Actions after vision: ", listOfPossibleActions)
+            # ---------- Check what we see ---------- #
+            # if it isn't standing on anything, keep going
+            # sets the action based on what we see
+            listOfPossibleActions = self.checkVision(sim, listOfPossibleActions)
+            print("Actions after vision: ", listOfPossibleActions)
 
-        # ---------- Check what we smell ---------- #
-        # sets the action based on what we can smell
-        listOfPossibleActions = self.checkSmell(sim, listOfPossibleActions)
-        print("Actions after smell: ", listOfPossibleActions)
+            # ---------- Check what we smell ---------- #
+            # sets the action based on what we can smell
+            listOfPossibleActions = self.checkSmell(sim, listOfPossibleActions)
+            print("Actions after smell: ", listOfPossibleActions)
 
 
-        if listOfPossibleActions == []:
-            return random.choice(['left', 'right', 'turnAround'])
+            if listOfPossibleActions == []:
+                return random.choice(['left', 'right', 'turnAround'])
 
-        if listOfPossibleActions == ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']:
-            if self.getEnergy() < 25:
-                if self.canFly and len(self.removeSelfFromList(sim.treeAt(self.getPose()[0], self.getPose()[1]))) > 0:
-                    print("I AM ROOSTING")
-                    listOfPossibleActions = ['roost']
-                else:
-                    listOfPossibleActions = ['rest']
+            if listOfPossibleActions == ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']:
+                if self.getEnergy() < 25:
+                    if self.canFly and len(self.removeSelfFromList(sim.treeAt(self.getPose()[0], self.getPose()[1]))) > 0:
+                        print("I AM ROOSTING")
+                        listOfPossibleActions = ['roost']
+                    else:
+                        listOfPossibleActions = ['rest']
 
-        action = random.choice(listOfPossibleActions)
-        print("Action: ", action)
-        return action
+            action = random.choice(listOfPossibleActions)
+            print("Action: ", action)
+            return action
+
+        elif self.isAwake(self.sleepValue, time) == "sleeping":
+            listOfPossibleActions = ['rest']
+            action = random.choice(listOfPossibleActions)
+            print("Action: ", action)
+            return action
+        else:
+            print("ERROR WITH SLEEP VALUE")
 
     # TEST
     # def determineAction(self, sim, agent, time):

@@ -47,14 +47,14 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("221007300011")
-        randomGeneticStrings.append("021003990011")
-        randomGeneticStrings.append("111002990011")
-        randomGeneticStrings.append("121106990011")
-        randomGeneticStrings.append("121008990011")
-
-        randomGeneticStrings.append("12110199001")
-        randomGeneticStrings.append("12110399001")
+        randomGeneticStrings.append("221017300011")
+        # randomGeneticStrings.append("021003990011")
+        # randomGeneticStrings.append("111002990011")
+        # randomGeneticStrings.append("121106990011")
+        # randomGeneticStrings.append("121008990011")
+        #
+        # randomGeneticStrings.append("12110199001")
+        # randomGeneticStrings.append("12110399001")
         # for n in range(self.numberAgents - 1):
         #     randomGeneticStrings.append("11100599")
 
@@ -106,8 +106,8 @@ class ALifeGUI:
             randomMovement = str(random.randint(1, 1))
             randomAggression = str(random.randint(0, 1))
             randomSleepType = str(random.randint(0, 0))
-            randomColor = str(random.randint(3, 6))
-            randomEnergy = "99"
+            randomColor = str(random.randint(1, 9))
+            randomEnergy = str(random.randint(10, 60))
             randomJump = str(random.choice([0, 0, 0, 1]))
             randomSwim = str(random.choice([0, 0, 0, 1]))
             randomFly = str(random.choice([0, 0, 0, 1]))
@@ -444,8 +444,8 @@ class ALifeGUI:
     def stepSimulation(self):
         """Runs one step of the simulation, then updates the grid with new colors and moving agents."""
         self.sim.step()
-        # for row in range(self.gridDim):
-        #     for col in range(self.gridDim):
+        for row in range(self.gridDim):
+            for col in range(self.gridDim):
         #         food = self.sim.foodAt(row, col)
         #
         #         if food == 1:
@@ -453,9 +453,9 @@ class ALifeGUI:
         #             turnipImage = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.TurnipImage)
         #             self.canvas.lift(turnipImage)
         #
-        #         cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
-        #         patchId = self.posToPatchId[row, col]
-        #         self.canvas.itemconfig(patchId, fill=cellColor)
+                cellColor = self._determinePatchColor()
+                patchId = self.posToPatchId[row, col]
+                self.canvas.itemconfig(patchId, fill=cellColor, outline=cellColor)
 
         if len(self.sim.getAgents()) == 0:
             return False
@@ -727,7 +727,7 @@ class ALifeGUI:
                 (x1, y1, x2, y2) = self._posToCoords(row, col)
                 food = self.sim.foodAt(row, col)
 
-                cellColor = self._determinePatchColor(food, self.sim.MAX_FOOD)
+                cellColor = self._determinePatchColor()
                 currId = self.canvas.create_rectangle(x1, y1, x2, y2, fill=cellColor, outline=cellColor)
                 self.patchIdToPos[currId] = (row, col)
                 self.posToPatchId[row, col] = currId
@@ -839,7 +839,7 @@ class ALifeGUI:
             print("Bad heading for agent", heading)
 
 
-    def _determinePatchColor(self, foodAt, maxFood):
+    def _determinePatchColor(self):
         # if foodAt == 0:
         #     cellColor = "white"
         # else:
@@ -850,13 +850,13 @@ class ALifeGUI:
         #     greenColor = int((ratio * 245) + 10)
         #     cellColor = "#%02x%02x%02x" % (0, greenColor, 0)
 
-        night = "#02003b"
-        dusk = "#1f1c7a"
-        sunrise = "#4845a3"
-        morning = "#736fd6"
-        noon = "#a6a3ff"
-        afternoon = "#7873ff"
-        sunset = "#4944db"
+        night = "#b5b9bd"
+        dusk = "#c1c5c9"
+        sunrise = "#d0d4d9"
+        morning = "#e4e7eb"
+        noon = "#e6e7ed"
+        afternoon = "#d3d4db"
+        sunset = "#c2c3cc"
 
         if self.sim.time >= 23 or self.sim.time <= 2:
             cellColor = night
@@ -1099,7 +1099,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
-    s = ALifeGUI(5, numberOfAgents)
+    numberOfAgents = 1
+    s = ALifeGUI(30, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

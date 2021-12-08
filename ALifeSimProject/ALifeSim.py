@@ -18,12 +18,12 @@ class ALifeSimTest(object):
     in clusters. Each agent has a certain amount of health that is depleted a bit each time step,
     and that is depleted more if the agent moves. They can regain health by eating, up to a max amount."""
 
-    FOOD_PERCENT = 0.1
+    FOOD_PERCENT = 0.01
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
     time = 12
-    numStones = 0
+    numStones = 10
     numWaters = 0
     numTrees = 0
     numPits = 0
@@ -37,8 +37,8 @@ class ALifeSimTest(object):
         self.numStones = numStones
         self.numWaters = 0
         self.numTrees = 10
-        self.numRivers = 1
-        self.numPonds = 2
+        self.numRivers = 2
+        self.numPonds = 3
         self.numForests = 10
         self.numPits = 5
 
@@ -65,13 +65,12 @@ class ALifeSimTest(object):
 
         # self._placeTreesOnHalf()
 
-        # self._placeWaters()
-        # self._placePits()
-        self._placeTrees(self.numForests, random.randint(3,5))
-        # self._placeTrees(self.numForests, 20)
+        self._placeWaters()
+        self._placePits()
+        self._placeTrees(self.numForests, random.randint(3,10))
 
-        # self._placeStones()
-        # self._placeFood()
+        self._placeStones()
+        self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -432,10 +431,12 @@ class ALifeSimTest(object):
         print("----------------------------------------- STEP " + str(self.stepNum) + " ---------------------------------------------------")
         #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
-        # if self.time != 24:
-        #     self.time += 1
-        # else:
-        #     self.time = 0
+
+        if self.time != 24:
+            self.time += 1
+        else:
+            self.time = 0
+
         self._updateTrees()
         self._updateAgents()
 
