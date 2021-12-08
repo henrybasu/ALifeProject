@@ -40,7 +40,7 @@ class ALifeSimTest(object):
         self.numRivers = 1
         self.numPonds = 2
         self.numForests = 10
-        self.numPits = 0
+        self.numPits = 10
 
 
         self.initialGeneticStrings = geneticStrings
@@ -63,15 +63,15 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
-        self._placeTreesOnHalf()
+        # self._placeTreesOnHalf()
 
-        self._placeWaters()
+        # self._placeWaters()
         # self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
-        self._placeStones()
-        self._placeFood()
+        # self._placeStones()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
@@ -730,12 +730,20 @@ class ALifeSimTest(object):
             agent1GeneticString = agent1.getGeneticString()
             agent2GeneticString = agent2.getGeneticString()
 
-            # TODO: if we extend geneticString's length, this will need to be changed.
-            halfway = round(len(agent1.getGeneticString()) / 2)
-            babyGeneticStringPart1 = agent1GeneticString[:halfway]
-            babyGeneticStringPart2 = agent2GeneticString[halfway:]
+            # halfway = round(len(agent1.getGeneticString()) / 2)
+            # babyGeneticStringPart1 = agent1GeneticString[:halfway]
+            # babyGeneticStringPart2 = agent2GeneticString[halfway:]
+            # babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
 
-            babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
+            geneticStringLength = len(agent1.geneticString)
+            babyGeneticString = ''
+            for i in range(geneticStringLength):
+                if i % 2 == 0:
+                    babyGeneticString = babyGeneticString + agent1GeneticString[i]
+                else:
+                    babyGeneticString = babyGeneticString + agent2GeneticString[i]
+
+            print("BabyGeneticString before mutation",babyGeneticString)
 
             newBabyGeneticString = self.mutate(babyGeneticString)
 
@@ -778,7 +786,7 @@ class ALifeSimTest(object):
         newBabyGeneticString = ""
         for j in range(len(babyGeneticStringAsList)):
             newBabyGeneticString+=str(babyGeneticStringAsList[j])
-        print(newBabyGeneticString)
+        print("After mutation:", newBabyGeneticString)
         return newBabyGeneticString
 
 
