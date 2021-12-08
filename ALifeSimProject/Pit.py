@@ -12,6 +12,8 @@ class Pit(Object):
         """
         super().__init__()
         self.geneticString = geneticString
+        self.row,self.col = initPose
+        self.stepSpawned = stepSpawned
         # self.color = int(self.geneticString[0])
 
     def getTypeAbbreviation(self):

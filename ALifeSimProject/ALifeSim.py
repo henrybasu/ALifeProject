@@ -67,7 +67,7 @@ class ALifeSimTest(object):
 
         # self._placeWaters()
         # self._placePits()
-        # self._placeTrees(self.numForests, random.randint(3,5))
+        self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
 
         # self._placeStones()
@@ -287,8 +287,7 @@ class ALifeSimTest(object):
         for row in range(self.gridSize):
             for col in range(self.gridSize//2):
                 if len(self.objectsAt(row,col)) == 0:
-                    nextTree = Tree(initPose=(row,col),
-                                    geneticString=random.choice(["1"]))
+                    nextTree = Tree(initPose=(row,col),geneticString=random.choice(["1"]),stepSpawned=self.stepNum)
                     self.treeList.append(nextTree)
                     self.globalMap[row,col].append(nextTree)
 
@@ -319,7 +318,7 @@ class ALifeSimTest(object):
                         if isTreeHere == 1:
                             if self.gridSize > rowLoc + i >= 0 and self.gridSize > colLoc + j >= 0:
                                 if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
-                                    nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString=random.choice(["0","0","0","0","1"]))
+                                    nextTree = Tree(initPose=(rowLoc + i, colLoc + j), geneticString=random.choice(["0","0","0","0","1"]),stepSpawned=self.stepNum)
                                     # print(nextTree.geneticString)
                                     # print(nextTree.getCanGrowFood())
                                     self.treeList.append(nextTree)
@@ -340,7 +339,7 @@ class ALifeSimTest(object):
         #             isTreeHere = random.randint(0, 1)
         #             if isTreeHere == 1:
         #                 if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
-        #                     nextTree = Tree(initPose=(rowLoc + row, colLoc + col), geneticString="0")
+        #                     nextTree = Tree(initPose=(rowLoc + row, colLoc + col), geneticString="0",stepSpawned=self.stepNum)
         #                     self.treeList.append(nextTree)
         #                     self.globalMap[rowLoc + row, colLoc + col].append(nextTree)
 
@@ -351,7 +350,7 @@ class ALifeSimTest(object):
         #             (randRow, randCol) = self._genRandomLoc()
         #         else:
         #             break
-        #     nextTree = Tree(initPose=(randRow, randCol), geneticString="0")
+        #     nextTree = Tree(initPose=(randRow, randCol), geneticString="0",stepSpawned=self.stepNum)
         #     self.treeList.append(nextTree)
         #     self.globalMap[randRow, randCol].append(nextTree)
 
@@ -437,7 +436,7 @@ class ALifeSimTest(object):
         #     self.time += 1
         # else:
         #     self.time = 0
-        self._growFood()
+        self._updateTrees()
         self._updateAgents()
 
         print("--------------------------------------------------------------------------------------------")
@@ -463,19 +462,15 @@ class ALifeSimTest(object):
         # print("self.globalMap:",self.globalMap)
 
 
-    def _growFood(self):
-        """Updates every cell in the food map with more food, up to the maximum amount"""
-        # Grow food
-        for cell in self.globalMap:
-            foodAmt = self.globalMap[cell]
-            # if foodAmt < self.MAX_FOOD:
-            #     newAmt = int(foodAmt * self.GROWTH_RATE)
-            #     self.foodMap[cell] += newAmt
-            #     if self.foodMap[cell] > self.MAX_FOOD:
-            #         self.foodMap[cell] = self.MAX_FOOD
-        newClump = random.random()
-        if newClump <= self.NEW_FOOD_PERCENT:
-            self._addFoodClump()
+    def _updateTrees(self):
+        i = 0
+        while i < len(self.treeList):
+            tree = self.treeList[i]
+            treeR, treeC = tree.getPose()
+            if self.stepNum - tree.stepSpawned > 5:
+                tree.setCanGrowFood("1")
+            i = i + 1
+
 
     def _updateAgents(self):
         """Updates the position and energy of every agent based on its chosen action."""
@@ -730,13 +725,15 @@ class ALifeSimTest(object):
             agent1GeneticString = agent1.getGeneticString()
             agent2GeneticString = agent2.getGeneticString()
 
-            # TODO: if we extend geneticString's length, this will need to be changed.
-            halfway = round(len(agent1.getGeneticString()) / 2)
-            babyGeneticStringPart1 = agent1GeneticString[:halfway]
-            babyGeneticStringPart2 = agent2GeneticString[halfway:]
+            babyGeneticString = ''
+            geneticStringLength = len(agent1GeneticString)
+            for i in range(geneticStringLength):
+                if i % 2 == 0:
+                    babyGeneticString = babyGeneticString + agent1GeneticString[i]
+                else:
+                    babyGeneticString = babyGeneticString + agent2GeneticString[i]
 
-            babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
-
+            print("babyGeneticString before mutating", babyGeneticString)
             newBabyGeneticString = self.mutate(babyGeneticString)
 
             babyAgent = Agent(geneticString=newBabyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)

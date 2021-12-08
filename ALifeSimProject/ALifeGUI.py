@@ -48,7 +48,7 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("02110799001")
-        randomGeneticStrings.append("02100599001")
+        randomGeneticStrings.append("02100799001")
         randomGeneticStrings.append("11100299001")
         randomGeneticStrings.append("12110699001")
         randomGeneticStrings.append("12100899001")
@@ -471,6 +471,54 @@ class ALifeGUI:
         #     self.canvas.lift(id)
         #
         #     self.agentIdToPose[id] = object.getPose()
+        # (x1, y1, x2, y2) = self._posToCoords(treeRow, treeCol)
+        for tr in self.sim.getTrees():
+            # finds dead agent tkinter object id
+            id = tr.getVisId()
+
+            (newRow, newCol) = tr.getPose()
+            print("New coords:",newRow,newCol)
+            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+
+            # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
+            # self.canvas.create_image(x1, y1, image=self.ghostImage)
+            # ghostGuy = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.ghostImage)
+            # tr.setVisId(ghostGuy)
+            # self.canvas.lift(ghostGuy)
+
+            if tr.getCanGrowFood() == '0' and tr.justChanged == True:
+                # deletes the object
+                self.canvas.delete(id)
+                trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeImage)
+                self.agentIdToPose[trId] = tr.getPose()
+                tr.setVisId(trId)
+                self.canvas.lift(trId)
+                tr.setJustChangedBloom(False)
+            elif tr.getCanGrowFood() == '1' and tr.justChanged == True:
+                # deletes the object
+                self.canvas.delete(id)
+                trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeFruitImage)
+                self.agentIdToPose[trId] = tr.getPose()
+                tr.setVisId(trId)
+                self.canvas.lift(trId)
+                tr.setJustChangedBloom(False)
+
+            # self.canvas.update()
+            # treeRow,treeCol = tr.getPose()
+            # # finds tree's current tkinter object id
+            # currentId = tr.getVisId()
+            # # deletes the object
+            # self.canvas.delete(currentId)
+            # self.canvas.update()
+            # coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+            # if tr.getCanGrowFood() == '0':
+            #     trId = self.canvas.create_image(coords, image=self.treeImage)
+            #     self.agentIdToPose[trId] = tr.getPose()
+            #     tr.setVisId(trId)
+            # elif tr.getCanGrowFood() == '1':
+            #     trId = self.canvas.create_image(coords, image=self.treeFruitImage)
+            #     self.agentIdToPose[trId] = tr.getPose()
+            #     tr.setVisId(trId)
 
         for agent in self.sim.getAgents():
             # agColor = self._determineAgentColor(agent.getEnergy())
@@ -1038,7 +1086,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
+    numberOfAgents = 2
     s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
