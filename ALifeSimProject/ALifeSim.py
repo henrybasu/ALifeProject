@@ -730,13 +730,15 @@ class ALifeSimTest(object):
             agent1GeneticString = agent1.getGeneticString()
             agent2GeneticString = agent2.getGeneticString()
 
-            # TODO: if we extend geneticString's length, this will need to be changed.
-            halfway = round(len(agent1.getGeneticString()) / 2)
-            babyGeneticStringPart1 = agent1GeneticString[:halfway]
-            babyGeneticStringPart2 = agent2GeneticString[halfway:]
+            babyGeneticString = ''
+            geneticStringLength = len(agent1GeneticString)
+            for i in range(geneticStringLength):
+                if i % 2 == 0:
+                    babyGeneticString = babyGeneticString + agent1GeneticString[i]
+                else:
+                    babyGeneticString = babyGeneticString + agent2GeneticString[i]
 
-            babyGeneticString = babyGeneticStringPart1 + babyGeneticStringPart2
-
+            print("babyGeneticString before mutating", babyGeneticString)
             newBabyGeneticString = self.mutate(babyGeneticString)
 
             babyAgent = Agent(geneticString=newBabyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)
