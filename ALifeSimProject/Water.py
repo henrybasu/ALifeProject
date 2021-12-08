@@ -13,6 +13,8 @@ class Water(Object):
         super().__init__()
         self.geneticString = geneticString
         self.color = 5
+        self.row, self.col = initPose
+        self.stepSpawned = stepSpawned
 
     def getTypeAbbreviation(self):
         return "w"

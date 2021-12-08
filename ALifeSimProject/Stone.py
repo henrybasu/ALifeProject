@@ -13,6 +13,8 @@ class Stone(Object):
         super().__init__()
         self.geneticString = geneticString
         self.color = int(self.geneticString[0])
+        self.row, self.col = initPose
+        self.stepSpawned = stepSpawned
 
     def getTypeAbbreviation(self):
         return "s"

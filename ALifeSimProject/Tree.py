@@ -13,10 +13,20 @@ class Tree(Object):
         super().__init__()
         self.geneticString = geneticString
         self.canGrowFood = geneticString[0]
+        self.row,self.col = initPose
+        self.stepSpawned = stepSpawned
+        self.justChanged = False
         # self.color = int(self.geneticString[0])
         
     def getCanGrowFood(self):
         return self.canGrowFood
+
+    def setCanGrowFood(self, newCanGrowFood):
+        self.canGrowFood = newCanGrowFood
+        self.justChanged = True
+
+    def setJustChangedBloom(self, newVal):
+        self.justChanged = newVal
 
     def getTypeAbbreviation(self):
         return "t"
