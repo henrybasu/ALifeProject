@@ -17,7 +17,9 @@ class Tree(Object):
         self.row,self.col = initPose
         self.stepSpawned = stepSpawned
         self.justChanged = False
-        self.stepsUntilBloom = random.randint(5,40)
+        # self.stepsUntilBloom = random.randint(5,40)
+        self.stepsUntilBloom = 500
+
 
         # self.color = int(self.geneticString[0])
         

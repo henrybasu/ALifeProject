@@ -441,11 +441,11 @@ class ALifeSimTest(object):
 
         print("--------------------------------------------------------------------------------------------")
 
-        # for i in range(len(self.agentList)):
-        #     print("\n\n")
-        #     print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
-        #     print("~ Energy ~")
-        #     print("   ", self.agentList[i].getEnergy())
+        for i in range(len(self.agentList)):
+            print("\n\n")
+            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+            print("~ Energy ~")
+            print("   ", self.agentList[i].getEnergy())
         #     print(self.agentList)
         #     print(self.getDeadAgents())
         #     print("~ Vision ~")
@@ -537,6 +537,12 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(50)
 
                 elif action == 'eatBerries':
+                    isOkay = agent.changeEnergy(2)
+
+                elif action == 'roost':
+                    isOkay = agent.changeEnergy(10)
+
+                elif action == 'rest':
                     isOkay = agent.changeEnergy(5)
 
                 elif action == 'attack':

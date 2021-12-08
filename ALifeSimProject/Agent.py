@@ -572,7 +572,7 @@ class Agent(Object):
         # if standing on tree
         elif len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0:
             print("There is a tree here")
-            if self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].getHasFood() == "1":
+            if self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 50:
                 self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].setHasFood("0")
                 print(self.removeSelfFromList(sim.treeAt(ownX, ownY))[0])
                 return ['eatBerries']
@@ -593,7 +593,7 @@ class Agent(Object):
 
                 # if it sees a tree, return the vision list
                 if len(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))) > 0:
-                    if self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
+                    if self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 50:
                         visionList.append(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0])
                         listOfPossibleActions = ['forward']
                     else:
@@ -1217,6 +1217,14 @@ class Agent(Object):
 
         if listOfPossibleActions == []:
             return random.choice(['left', 'right', 'turnAround'])
+
+        if listOfPossibleActions == ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']:
+            if self.getEnergy() < 25:
+                if self.canFly and len(self.removeSelfFromList(sim.treeAt(self.getPose()[0], self.getPose()[1]))) > 0:
+                    print("I AM ROOSTING")
+                    listOfPossibleActions = ['roost']
+                else:
+                    listOfPossibleActions = ['rest']
 
         action = random.choice(listOfPossibleActions)
         print("Action: ", action)
