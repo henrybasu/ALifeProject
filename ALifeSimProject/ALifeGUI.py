@@ -47,14 +47,14 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("0211079900")
-        randomGeneticStrings.append("0210059900")
-        randomGeneticStrings.append("1110029900")
-        randomGeneticStrings.append("1211069900") #TODO: this one lives
-        randomGeneticStrings.append("1210089900")
+        randomGeneticStrings.append("02110799001")
+        randomGeneticStrings.append("02100599001")
+        randomGeneticStrings.append("11100299001")
+        randomGeneticStrings.append("12110699001")
+        randomGeneticStrings.append("12100899001")
 
-        randomGeneticStrings.append("1211019900")
-        randomGeneticStrings.append("1211039900")
+        randomGeneticStrings.append("12110199001")
+        randomGeneticStrings.append("12110399001")
         # for n in range(self.numberAgents - 1):
         #     randomGeneticStrings.append("11100599")
 
@@ -108,7 +108,8 @@ class ALifeGUI:
             randomEnergy = "99"
             randomJump = str(random.choice([0, 0, 0, 1]))
             randomSwim = str(random.choice([0, 0, 0, 1]))
-            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy + randomJump + randomSwim
+            randomFly = str(random.choice([0, 0, 0, 1]))
+            randomGeneticString = randomVision + randomSmell + randomMovement + randomAggression + randomSleepType + randomColor + randomEnergy + randomJump + randomSwim + randomFly
             randomGeneticStrings.append(randomGeneticString)
             print("randomGeneticString: ", randomGeneticString)
         return randomGeneticStrings
@@ -1037,7 +1038,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
+    numberOfAgents = 1
     s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

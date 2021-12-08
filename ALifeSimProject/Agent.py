@@ -5,6 +5,7 @@ from Tree import Tree
 from Stone import Stone
 from Water import Water
 from Food import Food
+from Pit import  Pit
 
 
 class Agent(Object):
@@ -32,15 +33,17 @@ class Agent(Object):
         self.stepSpawned = stepSpawned
 
         """
-        X000000000 - Vision [0]
-        0X00000000 - Smell [1]
-        00X0000000 - Movement [2]
-        000X000000 - Aggression [3]
-        0000X00000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
-        00000X0000 - Color [5]
-        0000000X00 - Energy [6:7]
-        00000000X0 - Jump [8]
-        000000000X - Swim [9]
+        X000000000000000 - Vision [0]
+        0X00000000000000 - Smell [1]
+        00X0000000000000 - Movement [2]
+        000X000000000000 - Aggression [3]
+        0000X00000000000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
+        00000X0000000000 - Color [5]
+        0000000X00000000 - Energy [6:7]
+        00000000X0000000 - Jump [8]
+        000000000X000000 - Swim [9]
+        0000000000X00000 - Fly [10]
+        
         """
 
         self.visionRange = int(self.geneticString[0])
@@ -54,15 +57,18 @@ class Agent(Object):
         # self.energy = self.color #TODO: remove this line
         self.jumpVal = int(self.geneticString[8])
         self.swimVal = int(self.geneticString[9])
+        self.flyVal = int(self.geneticString[10])
 
         self.canSwim = False
         self.canJump = False
+        self.canFly = False
 
         if self.swimVal == 1:
             self.canSwim = True
         if self.jumpVal == 1:
             self.canJump = True
-
+        if self.flyVal == 1:
+            self.canFly = True
         # self.score = 0
 
     def getEnergy(self):
@@ -517,13 +523,19 @@ class Agent(Object):
             # if standing on water, die
             if len(self.removeSelfFromList(sim.waterAt(ownX, ownY))) > 0:
                 print("There is water here")
-                return ['die']
+                if self.canFly:
+                    self.changeEnergy(-5)
+                else:
+                    return ['die']
 
         if not self.canJump:
             # if standing on rocks, die
             if len(self.removeSelfFromList(sim.stonesAt(ownX, ownY))) > 0:
                 print("There is a rock here")
-                return ['die']
+                if self.canFly:
+                    self.changeEnergy(-5)
+                else:
+                    return ['die']
 
         # if standing on agent
         if len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
@@ -766,7 +778,7 @@ class Agent(Object):
 
             #Looking at the cell in front
             for object in cellsSmelled[0]:
-                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim) and not self.canFly:
                     try:
                         while True:
                             listOfPossibleActions.remove('forward')
@@ -795,7 +807,7 @@ class Agent(Object):
 
             # Looking at the cell behind
             for object in cellsSmelled[1]:
-                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim) and not self.canFly:
                     try:
                         while True:
                             listOfPossibleActions.remove('turnAround')
@@ -824,7 +836,7 @@ class Agent(Object):
 
             # Looking at the cell to the right
             for object in cellsSmelled[2]:
-                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim) and not self.canFly:
                     try:
                         while True:
                             listOfPossibleActions.remove('right')
@@ -853,7 +865,7 @@ class Agent(Object):
 
             # Looking at the cell to the left
             for object in cellsSmelled[3]:
-                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim):
+                if (type(object) is Stone and not self.canJump) or (type(object) is Water and not self.canSwim) and not self.canFly:
                     try:
                         while True:
                             listOfPossibleActions.remove('left')

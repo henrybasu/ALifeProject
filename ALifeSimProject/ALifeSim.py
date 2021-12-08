@@ -40,7 +40,7 @@ class ALifeSimTest(object):
         self.numRivers = 1
         self.numPonds = 2
         self.numForests = 10
-        self.numPits = 0
+        self.numPits = 5
 
 
         self.initialGeneticStrings = geneticStrings
@@ -65,7 +65,7 @@ class ALifeSimTest(object):
 
         # self._placeTreesOnHalf()
 
-        self._placeWaters()
+        # self._placeWaters()
         # self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
