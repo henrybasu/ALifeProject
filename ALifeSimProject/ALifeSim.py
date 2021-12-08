@@ -65,7 +65,7 @@ class ALifeSimTest(object):
 
         # self._placeTreesOnHalf()
 
-        # self._placeWaters()
+        self._placeWaters()
         # self._placePits()
         # self._placeTrees(self.numForests, random.randint(3,5))
         # self._placeTrees(self.numForests, 20)
@@ -495,9 +495,9 @@ class ALifeSimTest(object):
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = agent._computeAhead(self.gridSize)
-            print()
-            print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
-            self.printGrid()
+            # print()
+            # print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
+            # self.printGrid()
 
             # foodHereRating = self._assessFood(agentR, agentC)
             # print("foodHereRating: " + str(foodHereRating))
@@ -546,16 +546,16 @@ class ALifeSimTest(object):
                     if agent in (self.globalMap[agentR, agentC]):
                         # print("REMOVING",agent,"from globalMap")
                         self.globalMap[agentR, agentC].remove(agent)
-                        print("globalMap after removing before adding:")
-                        self.printGrid()
+                        # print("globalMap after removing before adding:")
+                        # self.printGrid()
                     else:
                         print("Agent not where expected:", agent, agentR, agentC)
                         self.printGrid()
                         # print("globalMap after removing before adding:",self.globalMap)
 
                     self.globalMap[rAhead, cAhead].append(agent)
-                    print("globalMap after removing AND adding:")
-                    self.printGrid()
+                    # print("globalMap after removing AND adding:")
+                    # self.printGrid()
                     print('-----------')
 
                     # print("globalMap after removing AND adding:",self.globalMap)
