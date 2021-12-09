@@ -10,6 +10,7 @@ import collections
 import time
 import random
 import string
+import tkinter
 from tkinter import *
 import tkinter.filedialog as tkFileDialog
 from PIL import Image,ImageTk
@@ -135,8 +136,8 @@ class ALifeGUI:
         # Create control buttons
         self._initGridBuildingTools()
 
-        # Create the maze grid
-        self._initGrid()
+        # Creates a box for time info
+        self._initTimeBox()
 
         # Create the search frame
         self._initSimTools()
@@ -146,6 +147,9 @@ class ALifeGUI:
 
         # Create the search alg frame
         self._initSearchTools()
+
+        # Create the maze grid
+        self._initGrid()
 
 
 
@@ -294,6 +298,26 @@ class ALifeGUI:
         self.currentSearch = None
         self.currentSearcher = None
         self.currentNode = None
+
+    def _initTimeBox(self):
+        """Sets up the search frame, with buttons for selecting which search, for starting a search,
+        stepping or running it, and quitting from it.  You can also choose how many steps should happen
+        for each click of the "step" button"""
+        timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
+        timeBoxFrame.grid(row=4, column=1, padx=5, pady=5)
+        # timeBoxTitle = Label(timeBoxFrame, text="Time box", font="Arial 16 bold")
+        # timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
+
+        #TODO: change this if we have extra time to load where the other images load
+        self.sunImage=PhotoImage(file='images/ghost.png')
+        # print(self.ghostImage)
+        # print(self.testing)
+
+        stepsLabel = tkinter.Label(timeBoxFrame, image=self.testing)
+        # stepsLabel = tkinter.Canvas(timeBoxFrame)
+        # stepsLabel.create_image(0,0,image=self.ghostImage, anchor="nw")
+        stepsLabel.grid(row=1, column=1)
+
 
     ### =================================================================
     ### The following are callbacks for buttons
