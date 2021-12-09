@@ -313,6 +313,9 @@ class ALifeGUI:
         self.runButton = Button(simFrame, text="Run simulation", command=self.runSimulation)
         self.runButton.grid(row=7, column=1, columnspan=2, pady=5)
 
+        self.run100Button = Button(simFrame, text="Run 100 simulations", command=self.run100Simulations)
+        self.run100Button.grid(row=7, column=3, columnspan=2, pady=5)
+
 
     def _initSearchTools(self):
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
@@ -556,6 +559,21 @@ class ALifeGUI:
         self.root.update()
         time.sleep(.5)
 
+    def run100Simulations(self):
+        """Runs the simulation 100 times (for testing purposes)."""
+        for i in range(100):
+            self.maxSteps=int(self.maxStepsText.get())
+            self.delayTime = float(self.delayText.get())
+            while self.currSteps <= self.maxSteps:
+                result = self.stepSimulation()
+                self.root.update()
+                time.sleep(self.delayTime)
+                if not result:
+                    break
+            # self.reportSimResult()
+            self.root.update()
+            time.sleep(.5)
+            self.resetGridWorld()
 
     def stepSimulation(self):
         """Runs one step of the simulation, then updates the grid with new colors and moving agents."""
