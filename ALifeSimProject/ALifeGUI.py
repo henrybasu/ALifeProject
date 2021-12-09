@@ -37,7 +37,6 @@ class ALifeGUI:
         self.ghostImage = PhotoImage(file='images/ghost16x16.png')
         self.turnipImage = PhotoImage(file='images/turnip16x16.png')
         self.stoneImage = PhotoImage(file='images/stone.png')
-        self.moonImage = PhotoImage(file='images/moon.png')
         self.mushroomImage = PhotoImage(file='images/mushroom.png')
         self.treeImage = PhotoImage(file='images/tree.png')
         self.treeFruitImage = PhotoImage(file='images/tree_fruit.png')
@@ -50,7 +49,7 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("221017300011")
-        # randomGeneticStrings.append("021003990011")
+        randomGeneticStrings.append("021003990011")
         # randomGeneticStrings.append("111002990011")
         # randomGeneticStrings.append("121106990011")
         # randomGeneticStrings.append("121008990011")
@@ -311,10 +310,11 @@ class ALifeGUI:
 
         #TODO: change this if we have extra time to load where the other images load
         self.sunImage=PhotoImage(file='images/sun.png')
-        self.moonImage = PhotoImage(file='images/bone.png')
+        self.moonImage = PhotoImage(file='images/moon.png')
         # print(self.ghostImage)
         # print(self.testing)
-        if self.sim.time > 12:
+        # print(self.sim.time)
+        if self.sim.time > 6 and self.sim.time < 18:
             stepsLabel = tkinter.Label(timeBoxFrame, image=self.sunImage)
         else:
             stepsLabel = tkinter.Label(timeBoxFrame, image=self.moonImage)
@@ -1198,7 +1198,7 @@ class ALifeGUI:
 # The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
-    s = ALifeGUI(15, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(7, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
