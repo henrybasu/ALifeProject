@@ -36,6 +36,7 @@ class ALifeGUI:
         self.ghostImage = PhotoImage(file='images/ghost16x16.png')
         self.turnipImage = PhotoImage(file='images/turnip16x16.png')
         self.stoneImage = PhotoImage(file='images/stone.png')
+        self.moonImage = PhotoImage(file='images/moon.png')
         self.mushroomImage = PhotoImage(file='images/mushroom.png')
         self.treeImage = PhotoImage(file='images/tree.png')
         self.treeFruitImage = PhotoImage(file='images/tree_fruit.png')
