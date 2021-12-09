@@ -546,7 +546,7 @@ class ALifeGUI:
                     agentOutlineColor = "blue"
 
                 coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=2)
+                agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
                 self.agentIdToPose[agId] = agent.getPose()
                 agent.setVisId(agId)
 
@@ -787,7 +787,7 @@ class ALifeGUI:
                     else:
                         agOutlineColor = "blue"
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                    agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=2)
+                    agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
                     self.agentIdToPose[agId] = ag.getPose()
                     ag.setVisId(agId)
 
