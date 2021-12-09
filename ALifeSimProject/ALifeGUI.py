@@ -1059,6 +1059,43 @@ class ALifeGUI:
             fishLeftImg = fishLeftImg.resize((newW, newH))
             self.fishLeftImage = ImageTk.PhotoImage(fishLeftImg)
 
+        else:
+            ghostImg = Image.open('images/ghost16x16.png')
+            self.ghostImage = ImageTk.PhotoImage(ghostImg)
+
+            turnipImg = Image.open('images/turnip16x16.png')
+            self.turnipImage = ImageTk.PhotoImage(turnipImg)
+
+            stoneImg = Image.open('images/stone.png')
+            self.stoneImage = ImageTk.PhotoImage(stoneImg)
+
+            mushroomImg = Image.open('images/mushroom.png')
+            self.mushroomImage = ImageTk.PhotoImage(mushroomImg)
+
+            treeImg = Image.open('images/tree.png')
+            self.treeImage = ImageTk.PhotoImage(treeImg)
+
+            treeFruitImg = Image.open('images/tree_fruit.png')
+            self.treeFruitImage = ImageTk.PhotoImage(treeFruitImg)
+
+            waveImg = Image.open('images/wave.png')
+            self.waveImage = ImageTk.PhotoImage(waveImg)
+
+            pitImg = Image.open('images/pit.png')
+            self.pitImage = ImageTk.PhotoImage(pitImg)
+
+            fishUpImg = Image.open('images/fishUp.png')
+            self.fishUpImage = ImageTk.PhotoImage(fishUpImg)
+
+            fishDownImg = Image.open('images/fishDown.png')
+            self.fishDownImage = ImageTk.PhotoImage(fishDownImg)
+
+            fishRightImg = Image.open('images/fishRight.png')
+            self.fishRightImage = ImageTk.PhotoImage(fishRightImg)
+
+            fishLeftImg = Image.open('images/fishLeft.png')
+            self.fishLeftImage = ImageTk.PhotoImage(fishLeftImg)
+
 
     def _posToId(self, row, col):
         """Given row and column indices, it looks up and returns the GUI id of the cell at that location"""
