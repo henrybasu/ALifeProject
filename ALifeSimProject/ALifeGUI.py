@@ -202,8 +202,8 @@ class ALifeGUI:
         makerFrame = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
         makerFrame.grid(row=1, column=1, padx=5, pady=5)
 
-        # makerFrame2 = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
-        # makerFrame2.grid(row=1, column=2, padx=5, pady=5)
+        makerFrame2 = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
+        makerFrame2.grid(row=1, column=2, padx=5, pady=5)
 
         sizeLabel1 = Label(makerFrame, text="Grid Dim")
         # sizeLabel2 = Label(makerFrame, text="x") #TODO: Reimplement this
@@ -218,25 +218,25 @@ class ALifeGUI:
         self.agentNum.set(self.numberAgents)
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
-        stonesLabel = Label(makerFrame, text="Stones")
+        stonesLabel = Label(makerFrame2, text="Stones")
         self.stonesNum = IntVar()
         self.stonesNum.set(self.numberStones)
-        self.numStones = Entry(makerFrame, textvariable=self.stonesNum, width=4, justify=CENTER)
+        self.numStones = Entry(makerFrame2, textvariable=self.stonesNum, width=4, justify=CENTER)
 
-        forestsLabel = Label(makerFrame, text="Forests")
+        forestsLabel = Label(makerFrame2, text="Forests")
         self.forestsNum = IntVar()
         self.forestsNum.set(self.numberForests)
-        self.numForests = Entry(makerFrame, textvariable=self.forestsNum, width=4, justify=CENTER)
+        self.numForests = Entry(makerFrame2, textvariable=self.forestsNum, width=4, justify=CENTER)
 
-        riversLabel = Label(makerFrame, text="Rivers")
+        riversLabel = Label(makerFrame2, text="Rivers")
         self.riversNum = IntVar()
         self.riversNum.set(self.numberRivers)
-        self.numRivers = Entry(makerFrame, textvariable=self.riversNum, width=4, justify=CENTER)
+        self.numRivers = Entry(makerFrame2, textvariable=self.riversNum, width=4, justify=CENTER)
 
-        pondsLabel = Label(makerFrame, text="Ponds")
+        pondsLabel = Label(makerFrame2, text="Ponds")
         self.pondsNum = IntVar()
         self.pondsNum.set(self.numberPonds)
-        self.numPonds = Entry(makerFrame, textvariable=self.pondsNum, width=4, justify=CENTER)
+        self.numPonds = Entry(makerFrame2, textvariable=self.pondsNum, width=4, justify=CENTER)
 
         self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
@@ -245,19 +245,19 @@ class ALifeGUI:
         sizeLabel1.grid(row=1, column=3)
         # sizeLabel2.grid(row=1, column=5)
         agentsLabel.grid(row=2, column=3)
-        stonesLabel.grid(row=3, column=3)
-        forestsLabel.grid(row=3,column=5)
-        riversLabel.grid(row=1,column=5)
-        pondsLabel.grid(row=2,column=5)
+        stonesLabel.grid(row=1, column=1)
+        forestsLabel.grid(row=2,column=1)
+        riversLabel.grid(row=3,column=1)
+        pondsLabel.grid(row=4,column=1)
 
         self.rowsEntry.grid(row=1, column=4)
         # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
-        self.numStones.grid(row=3, column=4)
-        self.numForests.grid(row=3,column=6)
-        self.numRivers.grid(row=1,column=6)
-        self.numPonds.grid(row=2,column=6)
+        self.numStones.grid(row=1, column=0)
+        self.numForests.grid(row=2,column=0)
+        self.numRivers.grid(row=3,column=0)
+        self.numPonds.grid(row=4,column=0)
 
 
     def _initGrid(self):
