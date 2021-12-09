@@ -70,7 +70,7 @@ class ALifeSimTest(object):
         self._placeTrees(self.numForests, random.randint(3,10))
 
         self._placeStones()
-        self._placeFood()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
