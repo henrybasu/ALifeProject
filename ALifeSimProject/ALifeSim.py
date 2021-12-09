@@ -65,12 +65,12 @@ class ALifeSimTest(object):
 
         # self._placeTreesOnHalf()
 
-        self._placeWaters()
-        self._placePits()
-        self._placeTrees(self.numForests, random.randint(3,10))
+        # self._placeWaters()
+        # self._placePits()
+        # self._placeTrees(self.numForests, random.randint(3,10))
 
-        self._placeStones()
-        self._placeFood()
+        # self._placeStones()
+        # self._placeFood()
         self._placeAgents()
 
     def getSize(self):
