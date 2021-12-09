@@ -33,8 +33,8 @@ class ALifeGUI:
         self.delayTime = 0.01
 
         #Loading in Images
-        self.ghostImage = PhotoImage(file='images/ghost.png')
-        self.turnipImage = PhotoImage(file='images/trnip.png')
+        self.ghostImage = PhotoImage(file='images/ghost16x16.png')
+        self.turnipImage = PhotoImage(file='images/turnip16x16.png')
         self.stoneImage = PhotoImage(file='images/stone.png')
         self.mushroomImage = PhotoImage(file='images/mushroom.png')
         self.treeImage = PhotoImage(file='images/tree.png')
@@ -1011,11 +1011,11 @@ class ALifeGUI:
             newW = int(480/(self.sim.gridSize))
             newH = int(480 / (self.sim.gridSize))
 
-            ghostImg = Image.open('images/ghost.png')
+            ghostImg = Image.open('images/ghost16x16.png')
             ghostImg = ghostImg.resize((newW, newH))
-            self.ghostImg = ImageTk.PhotoImage(ghostImg)
+            self.ghostImage = ImageTk.PhotoImage(ghostImg)
 
-            turnipImg = Image.open('images/trnip.png')
+            turnipImg = Image.open('images/turnip16x16.png')
             turnipImg = turnipImg.resize((newW, newH))
             self.turnipImage = ImageTk.PhotoImage(turnipImg)
 
