@@ -51,8 +51,8 @@ class ALifeGUI:
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("221017300011")
-        randomGeneticStrings.append("021003990011")
+        # randomGeneticStrings.append("221017300011")
+        # randomGeneticStrings.append("021003990011")
         # randomGeneticStrings.append("111002990011")
         # randomGeneticStrings.append("121106990011")
         # randomGeneticStrings.append("121008990011")
@@ -88,7 +88,7 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
-        # randomGeneticStrings = self.generateRandomGeneticStrings()
+        randomGeneticStrings = self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
