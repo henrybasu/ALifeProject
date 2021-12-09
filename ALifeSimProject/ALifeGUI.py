@@ -266,7 +266,7 @@ class ALifeGUI:
         self.canvas = None
         self.canvasSize = 500
         self.canvasPadding = 10
-        canvasFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="raise", bg="lemon chiffon")
+        canvasFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="raise", bg="gray")
         canvasFrame.grid(row=3, column=2, rowspan=3, padx=5, pady=5)
         self.canvas = Canvas(canvasFrame,
                              width=self.canvasSize + self.canvasPadding,
