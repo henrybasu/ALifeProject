@@ -432,7 +432,7 @@ class ALifeSimTest(object):
         #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
 
-        if self.time != 24:
+        if self.time != 48:
             self.time += 1
         else:
             self.time = 0
