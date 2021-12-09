@@ -28,6 +28,7 @@ class ALifeGUI:
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
+        self.initialGeneticString = "000000000000"
         self.numberStones = 0
         self.numberForests = 0
         self.numberPonds = 0
@@ -103,6 +104,14 @@ class ALifeGUI:
 
 
     def generateRandomGeneticStrings(self):
+        # g1number = self.g1num.get()
+        # try:
+        #     firstString = str(g1number)
+        # except:
+        #     self._postMessage("Must type in a genetic string")
+        #     firstString = "000000000000"
+        #     return
+        # randomGeneticStrings = [firstString]
         randomGeneticStrings = []
         for n in range(self.numberAgents):
             randomVision = str(random.randint(1, 2))
@@ -218,6 +227,13 @@ class ALifeGUI:
         self.agentNum.set(self.numberAgents)
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
+        geneticString1Label = Label(makerFrame, text="Genetic String 1")
+        self.g1num = StringVar()
+        sampleString = ""
+        #TODO: make this length of genetic string
+        self.g1num.set(self.initialGeneticString)
+        self.numg1 = Entry(makerFrame, textvariable=self.g1num, width=11, justify=CENTER)
+
         stonesLabel = Label(makerFrame2, text="Stones")
         self.stonesNum = IntVar()
         self.stonesNum.set(self.numberStones)
@@ -242,9 +258,12 @@ class ALifeGUI:
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
 
 
-        sizeLabel1.grid(row=1, column=3)
-        # sizeLabel2.grid(row=1, column=5)
-        agentsLabel.grid(row=2, column=3)
+        sizeLabel1.grid(row=1, column=2)
+        # sizeLabel2.grid(row=1, column=2)
+        agentsLabel.grid(row=2, column=2)
+        geneticString1Label.grid(row=3,column=2)
+
+
         stonesLabel.grid(row=1, column=1)
         forestsLabel.grid(row=2,column=1)
         riversLabel.grid(row=3,column=1)
@@ -253,6 +272,9 @@ class ALifeGUI:
         self.rowsEntry.grid(row=1, column=4)
         # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
+        self.numg1.grid(row=3,column=4)
+
+
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
         self.numStones.grid(row=1, column=0)
         self.numForests.grid(row=2,column=0)
