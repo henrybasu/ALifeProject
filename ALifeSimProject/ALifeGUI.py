@@ -137,7 +137,7 @@ class ALifeGUI:
         self._initGridBuildingTools()
 
         # Creates a box for time info
-        self._initTimeBox()
+        self._makeTimeBox()
 
         # Create the search frame
         self._initSimTools()
@@ -299,7 +299,7 @@ class ALifeGUI:
         self.currentSearcher = None
         self.currentNode = None
 
-    def _initTimeBox(self):
+    def _makeTimeBox(self):
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
         stepping or running it, and quitting from it.  You can also choose how many steps should happen
         for each click of the "step" button"""
@@ -309,14 +309,21 @@ class ALifeGUI:
         # timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
         #TODO: change this if we have extra time to load where the other images load
-        self.sunImage=PhotoImage(file='images/ghost.png')
+        self.sunImage=PhotoImage(file='images/sun.png')
+        self.moonImage = PhotoImage(file='images/bone.png')
         # print(self.ghostImage)
         # print(self.testing)
-
-        stepsLabel = tkinter.Label(timeBoxFrame, image=self.testing)
+        if self.sim.time > 12:
+            stepsLabel = tkinter.Label(timeBoxFrame, image=self.sunImage)
+        else:
+            stepsLabel = tkinter.Label(timeBoxFrame, image=self.moonImage)
         # stepsLabel = tkinter.Canvas(timeBoxFrame)
         # stepsLabel.create_image(0,0,image=self.ghostImage, anchor="nw")
         stepsLabel.grid(row=1, column=1)
+
+    # def updateTimeBox(self):
+    #     self.moonImage = PhotoImage(file='images/bone.png')
+    #     stepsLabel.image
 
 
     ### =================================================================
@@ -468,6 +475,7 @@ class ALifeGUI:
     def stepSimulation(self):
         """Runs one step of the simulation, then updates the grid with new colors and moving agents."""
         self.sim.step()
+        self._makeTimeBox()
         for row in range(self.gridDim):
             for col in range(self.gridDim):
         #         food = self.sim.foodAt(row, col)
