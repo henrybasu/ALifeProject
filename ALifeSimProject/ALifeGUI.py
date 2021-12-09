@@ -850,30 +850,59 @@ class ALifeGUI:
         #     greenColor = int((ratio * 245) + 10)
         #     cellColor = "#%02x%02x%02x" % (0, greenColor, 0)
 
-        night = "#b5b9bd"
-        dusk = "#c1c5c9"
-        sunrise = "#d0d4d9"
-        morning = "#e4e7eb"
-        noon = "#e6e7ed"
-        afternoon = "#d3d4db"
-        sunset = "#c2c3cc"
+        oneAM = "#747474"
+        twoAM = "#808080"
+        threeAM = "#8c8c8c"
+        fourAM = "#999999"
+        fiveAM = "#a5a5a5"
+        sixAM = "#b2b2b2"
+        sevenAM = "#bfbfbf"
+        eightAM = "#cccccc"
+        nineAM = "#dadada"
+        tenAM = "#e7e7e7"
+        elevenAM = "#f5f5f5"
+        noon = "#f5f5f5"
+        onePM = "#e7e7e7"
+        twoPM = "#dadada"
+        threePM = "#cccccc"
+        fourPM = "#bfbfbf"
+        fivePM = "#b2b2b2"
+        sixPM = "#a5a5a5"
+        sevenPM = "#999999"
+        eightPM = "#8c8c8c"
+        ninePM = "#808080"
+        tenPM = "#747474"
+        elevenPM = "#686868"
+        midnight = "#686868"
 
-        if self.sim.time >= 23 or self.sim.time <= 2:
-            cellColor = night
-        elif 3 <= self.sim.time <= 4 or 19 <= self.sim.time <= 22:
-            cellColor = dusk
-        elif 5 <= self.sim.time <= 7:
-            cellColor = sunrise
-        elif 8 <= self.sim.time <= 9:
-            cellColor = morning
-        elif 10 <= self.sim.time <= 14:
-            cellColor = noon
-        elif 15 <= self.sim.time <= 16:
-            cellColor = afternoon
-        elif 17 <= self.sim.time <= 18:
-            cellColor = sunset
-        else:
-            cellColor = noon
+        timeColors = []
+        timeColors.append(midnight)
+        timeColors.append(oneAM)
+        timeColors.append(twoAM)
+        timeColors.append(threeAM)
+        timeColors.append(fourAM)
+        timeColors.append(fiveAM)
+        timeColors.append(sixAM)
+        timeColors.append(sevenAM)
+        timeColors.append(eightAM)
+        timeColors.append(nineAM)
+        timeColors.append(tenAM)
+        timeColors.append(elevenAM)
+        timeColors.append(noon)
+        timeColors.append(onePM)
+        timeColors.append(twoPM)
+        timeColors.append(threePM)
+        timeColors.append(fourPM)
+        timeColors.append(fivePM)
+        timeColors.append(sixPM)
+        timeColors.append(sevenPM)
+        timeColors.append(eightPM)
+        timeColors.append(ninePM)
+        timeColors.append(tenPM)
+        timeColors.append(elevenPM)
+
+
+        cellColor = timeColors[self.sim.time-1]
 
         return cellColor
 
@@ -1100,6 +1129,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 1
-    s = ALifeGUI(7, numberOfAgents)
+    s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
