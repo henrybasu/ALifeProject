@@ -333,16 +333,67 @@ class ALifeGUI:
         # timeBoxTitle = Label(timeBoxFrame, text="Time box", font="Arial 16 bold")
         # timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
-        #TODO: change this if we have extra time to load where the other images load
-        self.sunImage=PhotoImage(file='images/sun.png')
-        self.moonImage = PhotoImage(file='images/moon.png')
+        #TODO: change where these images load - put them in the top w/ other images
+        self.sunNoonImage=PhotoImage(file='images/sunNoon.png')
+        self.sunOneImage = PhotoImage(file='images/sunOne.png')
+        self.sunTwoImage = PhotoImage(file='images/sunTwo.png')
+        self.sunThreeImage = PhotoImage(file='images/sunThree.png')
+        self.sunFourImage = PhotoImage(file='images/sunFour.png')
+        self.sunFiveImage = PhotoImage(file='images/sunFive.png')
+        self.sunSixImage = PhotoImage(file='images/sunSix.png')
+
+        self.moonSevenImage = PhotoImage(file='images/moon.png')
+        self.moonEightImage = PhotoImage(file='images/moon.png')
+        self.moonNineImage = PhotoImage(file='images/moon.png')
+        self.moonTenImage = PhotoImage(file='images/moon.png')
+        self.moonElevenImage = PhotoImage(file='images/moon.png')
+        self.moonMidnightImage = PhotoImage(file='images/moon.png')
+        self.moonOneImage = PhotoImage(file='images/moon.png')
+        self.moonTwoImage = PhotoImage(file='images/moon.png')
+        self.moonThreeImage = PhotoImage(file='images/moon.png')
+        self.moonFourImage = PhotoImage(file='images/moon.png')
+        self.moonFiveImage = PhotoImage(file='images/moon.png')
+
+        self.sunSixAMImage = PhotoImage(file='images/sunSixAM.png')
+        self.sunSevenImage = PhotoImage(file='images/sunSeven.png')
+        self.sunEightImage = PhotoImage(file='images/sunEight.png')
+        self.sunNineImage = PhotoImage(file='images/sunNine.png')
+        self.sunTenImage = PhotoImage(file='images/sunTen.png')
+        self.sunElevenImage = PhotoImage(file='images/sunEleven.png')
+
         # print(self.ghostImage)
         # print(self.testing)
         # print(self.sim.time)
-        if self.sim.time > 6 and self.sim.time < 18:
-            stepsLabel = tkinter.Label(timeBoxFrame, image=self.sunImage)
-        else:
-            stepsLabel = tkinter.Label(timeBoxFrame, image=self.moonImage)
+        timeImages = [
+            self.sunNoonImage,
+            self.sunOneImage,
+            self.sunTwoImage,
+            self.sunThreeImage,
+            self.sunFourImage,
+            self.sunFiveImage,
+            self.sunSixImage,
+
+            self.moonSevenImage,
+            self.moonEightImage,
+            self.moonNineImage,
+            self.moonTenImage,
+            self.moonElevenImage,
+            self.moonMidnightImage,
+            self.moonOneImage,
+            self.moonTwoImage,
+            self.moonThreeImage,
+            self.moonFourImage,
+            self.moonFiveImage,
+
+            self.sunSixAMImage,
+            self.sunSevenImage,
+            self.sunEightImage,
+            self.sunNineImage,
+            self.sunTenImage,
+            self.sunElevenImage
+        ]
+
+        stepsLabel = tkinter.Label(timeBoxFrame, image=timeImages[self.sim.time-1])
         # stepsLabel = tkinter.Canvas(timeBoxFrame)
         # stepsLabel.create_image(0,0,image=self.ghostImage, anchor="nw")
         stepsLabel.grid(row=1, column=1)
