@@ -24,11 +24,14 @@ class ALifeSimTest(object):
     MAX_FOOD = 1
     time = 12
     numStones = 10
+    numForest = 0
+    numPonds = 0
+    numRivers = 0
     numWaters = 0
     numTrees = 0
     numPits = 0
 
-    def __init__(self, gridSize, numAgents, numStones, geneticStrings):
+    def __init__(self, gridSize, numAgents, numStones, numForests, numRivers, numPonds, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
         of agents, who are randomly created and placed on the foodMap. Multiple agents per foodMap cell are allowed."""
         self.gridSize = gridSize
@@ -37,9 +40,9 @@ class ALifeSimTest(object):
         self.numStones = numStones
         self.numWaters = 0
         self.numTrees = 10
-        self.numRivers = 2
-        self.numPonds = 3
-        self.numForests = 10
+        self.numRivers = numRivers
+        self.numPonds = numPonds
+        self.numForests = numForests
         self.numPits = 5
 
 
@@ -66,7 +69,7 @@ class ALifeSimTest(object):
         # self._placeTreesOnHalf()
 
         self._placeWaters()
-        self._placePits()
+        # self._placePits()
         self._placeTrees(self.numForests, random.randint(3,10))
 
         self._placeStones()

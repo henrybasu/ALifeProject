@@ -29,6 +29,9 @@ class ALifeGUI:
         self.gridDim = gridDim
         self.numberAgents = numAgents
         self.numberStones = 0
+        self.numberForests = 0
+        self.numberPonds = 0
+        self.numberRivers = 0
         self.maxSteps = maxSteps
         self.currSteps = 0
         self.delayTime = 0.01
@@ -90,7 +93,7 @@ class ALifeGUI:
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
         print("--------------------------------------------------------------------------------------------")
-        self.sim = ALifeSim.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, randomGeneticStrings)
+        self.sim = ALifeSim.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, self.numberForests, self.numberRivers, self.numberPonds, randomGeneticStrings)
 
         # Variables to hold the results of a simulation
         self.minTime = None
@@ -217,19 +220,41 @@ class ALifeGUI:
         self.stonesNum.set(self.numberStones)
         self.numStones = Entry(makerFrame, textvariable=self.stonesNum, width=4, justify=CENTER)
 
+        forestsLabel = Label(makerFrame, text="Forests")
+        self.forestsNum = IntVar()
+        self.forestsNum.set(self.numberForests)
+        self.numForests = Entry(makerFrame, textvariable=self.forestsNum, width=4, justify=CENTER)
+
+        riversLabel = Label(makerFrame, text="Rivers")
+        self.riversNum = IntVar()
+        self.riversNum.set(self.numberRivers)
+        self.numRivers = Entry(makerFrame, textvariable=self.riversNum, width=4, justify=CENTER)
+
+        pondsLabel = Label(makerFrame, text="Ponds")
+        self.pondsNum = IntVar()
+        self.pondsNum.set(self.numberPonds)
+        self.numPonds = Entry(makerFrame, textvariable=self.pondsNum, width=4, justify=CENTER)
+
         self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
+
 
         sizeLabel1.grid(row=1, column=3)
         # sizeLabel2.grid(row=1, column=5)
         agentsLabel.grid(row=2, column=3)
         stonesLabel.grid(row=3, column=3)
+        forestsLabel.grid(row=3,column=5)
+        riversLabel.grid(row=1,column=5)
+        pondsLabel.grid(row=2,column=5)
 
         self.rowsEntry.grid(row=1, column=4)
         # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
-        self.numStones.grid(row=3, column = 4)
+        self.numStones.grid(row=3, column=4)
+        self.numForests.grid(row=3,column=6)
+        self.numRivers.grid(row=1,column=6)
+        self.numPonds.grid(row=2,column=6)
 
 
     def _initGrid(self):
@@ -348,15 +373,23 @@ class ALifeGUI:
         size = self.rowDimensionText.get()
         ageNum = self.agentNum.get()
         stoneNum = self.stonesNum.get()
+        # print(stoneNum)
+        forestsNum = self.forestsNum.get()
+        riversNum = self.riversNum.get()
+        pondsNum = self.pondsNum.get()
+        # print(forestsNum)
         try:
             self.gridDim = int(size)
             self.numberAgents = int(ageNum)
             self.numberStones = int(stoneNum)
+            self.numberForests = int(forestsNum)
+            self.numberRivers = int(riversNum)
+            self.numberPonds = int(pondsNum)
         except:
             self._postMessage("Dimension must be positive integer.")
             return
 
-        self.sim = ALifeSim.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, self.generateRandomGeneticStrings())
+        self.sim = ALifeSim.ALifeSimTest(self.gridDim, self.numberAgents, self.numberStones, self.numberForests, self.numberRivers, self.numberPonds, self.generateRandomGeneticStrings())
         self._buildTkinterGrid()
         self.currSteps = 0
         self.currStepsText.set(self.currSteps)
