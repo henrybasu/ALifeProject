@@ -37,8 +37,8 @@ class ALifeGUI:
         self.delayTime = 0.01
 
         #Loading in Images
-        self.ghostImage = PhotoImage(file='images/ghost16x16.png')
-        self.turnipImage = PhotoImage(file='images/turnip16x16.png')
+        self.ghostImage = PhotoImage(file='images/ghost48x48.png')
+        self.turnipImage = PhotoImage(file='images/turnip48x48.png')
         self.stoneImage = PhotoImage(file='images/stone.png')
         self.mushroomImage = PhotoImage(file='images/mushroom.png')
         self.treeImage = PhotoImage(file='images/tree.png')
@@ -1182,11 +1182,11 @@ class ALifeGUI:
             newW = int(480/(self.sim.gridSize))
             newH = int(480 / (self.sim.gridSize))
 
-            ghostImg = Image.open('images/ghost16x16.png')
+            ghostImg = Image.open('images/ghost48x48.png')
             ghostImg = ghostImg.resize((newW, newH))
             self.ghostImage = ImageTk.PhotoImage(ghostImg)
 
-            turnipImg = Image.open('images/turnip16x16.png')
+            turnipImg = Image.open('images/turnip48x48.png')
             turnipImg = turnipImg.resize((newW, newH))
             self.turnipImage = ImageTk.PhotoImage(turnipImg)
 
@@ -1231,10 +1231,10 @@ class ALifeGUI:
             self.fishLeftImage = ImageTk.PhotoImage(fishLeftImg)
 
         else:
-            ghostImg = Image.open('images/ghost16x16.png')
+            ghostImg = Image.open('images/ghost48x48.png')
             self.ghostImage = ImageTk.PhotoImage(ghostImg)
 
-            turnipImg = Image.open('images/turnip16x16.png')
+            turnipImg = Image.open('images/turnip48x48.png')
             self.turnipImage = ImageTk.PhotoImage(turnipImg)
 
             stoneImg = Image.open('images/stone.png')
