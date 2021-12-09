@@ -69,7 +69,7 @@ class ALifeGUI:
         000X000000000000 - Aggression [3]
         0000X00000000000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
         00000X0000000000 - Color [5]
-        0000000X00000000 - Energy [6:7]
+        000000XX00000000 - Energy [6:7]
         00000000X0000000 - Jump [8]
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
@@ -104,6 +104,7 @@ class ALifeGUI:
 
     def generateRandomGeneticStrings(self):
         randomGeneticStrings = []
+
         for n in range(self.numberAgents):
             randomVision = str(random.randint(1, 2))
             randomSmell = str(random.randint(0, 2))
@@ -371,19 +372,6 @@ class ALifeGUI:
         # print(self.testing)
         # print(self.sim.time)
         timeImages = [
-            self.sunNoonImage,
-            self.sunOneImage,
-            self.sunTwoImage,
-            self.sunThreeImage,
-            self.sunFourImage,
-            self.sunFiveImage,
-            self.sunSixImage,
-
-            self.moonSevenImage,
-            self.moonEightImage,
-            self.moonNineImage,
-            self.moonTenImage,
-            self.moonElevenImage,
             self.moonMidnightImage,
             self.moonOneImage,
             self.moonTwoImage,
@@ -396,7 +384,20 @@ class ALifeGUI:
             self.sunEightImage,
             self.sunNineImage,
             self.sunTenImage,
-            self.sunElevenImage
+            self.sunElevenImage,
+            self.sunNoonImage,
+            self.sunOneImage,
+            self.sunTwoImage,
+            self.sunThreeImage,
+            self.sunFourImage,
+            self.sunFiveImage,
+            self.sunSixImage,
+
+            self.moonSevenImage,
+            self.moonEightImage,
+            self.moonNineImage,
+            self.moonTenImage,
+            self.moonElevenImage
         ]
 
         stepsLabel = tkinter.Label(timeBoxFrame, image=timeImages[self.sim.time-1])
