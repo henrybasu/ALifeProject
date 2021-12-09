@@ -194,13 +194,16 @@ class ALifeGUI:
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents"""
         gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove")
-        gridSetupFrame.grid(row=2, column=1, padx=5, pady=5, sticky=N)
-        editTitle = Label(gridSetupFrame, text="Sim Config", font="Arial 16 bold", anchor=CENTER)
+        gridSetupFrame.grid(row=3, column=1, padx=5, pady=5, sticky=N)
+        editTitle = Label(gridSetupFrame, text="Grid Config", font="Arial 16 bold", anchor=CENTER)
         editTitle.grid(row=0, column=1, padx=5, pady=5)
 
         # Make a new subframe
         makerFrame = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
         makerFrame.grid(row=1, column=1, padx=5, pady=5)
+
+        makerFrame2 = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
+        makerFrame2.grid(row=1, column=2, padx=5, pady=5)
 
         sizeLabel1 = Label(makerFrame, text="Grid Dim")
         # sizeLabel2 = Label(makerFrame, text="x") #TODO: Reimplement this
@@ -215,25 +218,25 @@ class ALifeGUI:
         self.agentNum.set(self.numberAgents)
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
-        stonesLabel = Label(makerFrame, text="Stones")
+        stonesLabel = Label(makerFrame2, text="Stones")
         self.stonesNum = IntVar()
         self.stonesNum.set(self.numberStones)
-        self.numStones = Entry(makerFrame, textvariable=self.stonesNum, width=4, justify=CENTER)
+        self.numStones = Entry(makerFrame2, textvariable=self.stonesNum, width=4, justify=CENTER)
 
-        forestsLabel = Label(makerFrame, text="Forests")
+        forestsLabel = Label(makerFrame2, text="Forests")
         self.forestsNum = IntVar()
         self.forestsNum.set(self.numberForests)
-        self.numForests = Entry(makerFrame, textvariable=self.forestsNum, width=4, justify=CENTER)
+        self.numForests = Entry(makerFrame2, textvariable=self.forestsNum, width=4, justify=CENTER)
 
-        riversLabel = Label(makerFrame, text="Rivers")
+        riversLabel = Label(makerFrame2, text="Rivers")
         self.riversNum = IntVar()
         self.riversNum.set(self.numberRivers)
-        self.numRivers = Entry(makerFrame, textvariable=self.riversNum, width=4, justify=CENTER)
+        self.numRivers = Entry(makerFrame2, textvariable=self.riversNum, width=4, justify=CENTER)
 
-        pondsLabel = Label(makerFrame, text="Ponds")
+        pondsLabel = Label(makerFrame2, text="Ponds")
         self.pondsNum = IntVar()
         self.pondsNum.set(self.numberPonds)
-        self.numPonds = Entry(makerFrame, textvariable=self.pondsNum, width=4, justify=CENTER)
+        self.numPonds = Entry(makerFrame2, textvariable=self.pondsNum, width=4, justify=CENTER)
 
         self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
@@ -278,7 +281,7 @@ class ALifeGUI:
         stepping or running it, and quitting from it.  You can also choose how many steps should happen
         for each click of the "step" button"""
         simFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
-        simFrame.grid(row=3, column=1, padx=5, pady=5)
+        simFrame.grid(row=2, column=1, padx=5, pady=5)
         simTitle = Label(simFrame, text="Run config", font="Arial 16 bold")
         simTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
@@ -313,6 +316,9 @@ class ALifeGUI:
         self.runButton = Button(simFrame, text="Run simulation", command=self.runSimulation)
         self.runButton.grid(row=7, column=1, columnspan=2, pady=5)
 
+        self.run100Button = Button(simFrame, text="Run 100x", command=self.run100Simulations)
+        self.run100Button.grid(row=7, column=3, columnspan=2, pady=5)
+
 
     def _initSearchTools(self):
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
@@ -333,16 +339,67 @@ class ALifeGUI:
         # timeBoxTitle = Label(timeBoxFrame, text="Time box", font="Arial 16 bold")
         # timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
-        #TODO: change this if we have extra time to load where the other images load
-        self.sunImage=PhotoImage(file='images/sun.png')
-        self.moonImage = PhotoImage(file='images/moon.png')
+        #TODO: change where these images load - put them in the top w/ other images
+        self.sunNoonImage=PhotoImage(file='images/sunNoon.png')
+        self.sunOneImage = PhotoImage(file='images/sunOne.png')
+        self.sunTwoImage = PhotoImage(file='images/sunTwo.png')
+        self.sunThreeImage = PhotoImage(file='images/sunThree.png')
+        self.sunFourImage = PhotoImage(file='images/sunFour.png')
+        self.sunFiveImage = PhotoImage(file='images/sunFive.png')
+        self.sunSixImage = PhotoImage(file='images/sunSix.png')
+
+        self.moonSevenImage = PhotoImage(file='images/moon.png')
+        self.moonEightImage = PhotoImage(file='images/moon.png')
+        self.moonNineImage = PhotoImage(file='images/moon.png')
+        self.moonTenImage = PhotoImage(file='images/moon.png')
+        self.moonElevenImage = PhotoImage(file='images/moon.png')
+        self.moonMidnightImage = PhotoImage(file='images/moon.png')
+        self.moonOneImage = PhotoImage(file='images/moon.png')
+        self.moonTwoImage = PhotoImage(file='images/moon.png')
+        self.moonThreeImage = PhotoImage(file='images/moon.png')
+        self.moonFourImage = PhotoImage(file='images/moon.png')
+        self.moonFiveImage = PhotoImage(file='images/moon.png')
+
+        self.sunSixAMImage = PhotoImage(file='images/sunSixAM.png')
+        self.sunSevenImage = PhotoImage(file='images/sunSeven.png')
+        self.sunEightImage = PhotoImage(file='images/sunEight.png')
+        self.sunNineImage = PhotoImage(file='images/sunNine.png')
+        self.sunTenImage = PhotoImage(file='images/sunTen.png')
+        self.sunElevenImage = PhotoImage(file='images/sunEleven.png')
+
         # print(self.ghostImage)
         # print(self.testing)
         # print(self.sim.time)
-        if self.sim.time > 6 and self.sim.time < 18:
-            stepsLabel = tkinter.Label(timeBoxFrame, image=self.sunImage)
-        else:
-            stepsLabel = tkinter.Label(timeBoxFrame, image=self.moonImage)
+        timeImages = [
+            self.sunNoonImage,
+            self.sunOneImage,
+            self.sunTwoImage,
+            self.sunThreeImage,
+            self.sunFourImage,
+            self.sunFiveImage,
+            self.sunSixImage,
+
+            self.moonSevenImage,
+            self.moonEightImage,
+            self.moonNineImage,
+            self.moonTenImage,
+            self.moonElevenImage,
+            self.moonMidnightImage,
+            self.moonOneImage,
+            self.moonTwoImage,
+            self.moonThreeImage,
+            self.moonFourImage,
+            self.moonFiveImage,
+
+            self.sunSixAMImage,
+            self.sunSevenImage,
+            self.sunEightImage,
+            self.sunNineImage,
+            self.sunTenImage,
+            self.sunElevenImage
+        ]
+
+        stepsLabel = tkinter.Label(timeBoxFrame, image=timeImages[self.sim.time-1])
         # stepsLabel = tkinter.Canvas(timeBoxFrame)
         # stepsLabel.create_image(0,0,image=self.ghostImage, anchor="nw")
         stepsLabel.grid(row=1, column=1)
@@ -505,6 +562,25 @@ class ALifeGUI:
         self.root.update()
         time.sleep(.5)
 
+    def run100Simulations(self):
+        """Runs the simulation 100 times (for testing purposes)."""
+        for i in range(100):
+            self.maxSteps=int(self.maxStepsText.get())
+            self.delayTime = float(self.delayText.get())
+            while self.currSteps <= self.maxSteps:
+                result = self.stepSimulation()
+                self.root.update()
+                time.sleep(self.delayTime)
+                if not result:
+                    break
+            # self.reportSimResult()
+            self.root.update()
+            time.sleep(.5)
+            if (i==100):
+                break
+            else:
+                self.resetGridWorld()
+        #TODO: How to report 100 sim results?
 
     def stepSimulation(self):
         """Runs one step of the simulation, then updates the grid with new colors and moving agents."""
