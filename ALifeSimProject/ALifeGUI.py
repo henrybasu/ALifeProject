@@ -928,6 +928,7 @@ class ALifeGUI:
                 grasses = self.sim.grassAt(row,col)
                 sands = self.sim.sandAt(row, col)
                 snows = self.sim.snowAt(row, col)
+                mushrooms = self.sim.mushroomAt(row,col)
                 # print(agents)
                 # print(self.sim.foodAt(row,col))
                 food = self.sim.foodAt(row,col)
@@ -980,6 +981,13 @@ class ALifeGUI:
                     snId = self.canvas.create_image(coords, image=self.snowImage)
                     self.agentIdToPose[snId] = sn.getPose()
                     sn.setVisId(snId)
+
+                for mu in mushrooms:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    muId = self.canvas.create_image(coords, image=self.mushroomImage)
+                    self.agentIdToPose[muId] = mu.getPose()
+                    mu.setVisId(muId)
 
                 for tr in trees:
                     self.canvas.update()

@@ -14,6 +14,7 @@ from Pit import *
 from Sand import *
 from Snow import *
 from Grass import *
+from Mushroom import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -36,6 +37,7 @@ class ALifeSimTest(object):
     numSands = 0
     numSnows = 0
     numGrass = 0
+    numMushrooms = 0
 
     def __init__(self, gridSize, numAgents, numStones, numForests, numRivers, numPonds, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
@@ -50,6 +52,7 @@ class ALifeSimTest(object):
         self.numPonds = numPonds
         self.numForests = numForests
         self.numPits = 5
+        self.numMushrooms = 5
         self.numSands = (self.gridSize*self.gridSize) // 10
         self.numSnows = (self.gridSize*self.gridSize) // 10
         self.numGrass = (self.gridSize*self.gridSize) // 5
@@ -68,6 +71,7 @@ class ALifeSimTest(object):
         self.grassDict = {}
         self.sandDict = {}
         self.snowDict = {}
+        self.mushroomList = []
         self.waterList = []
         self.treeList = []
         self.agentList = []
@@ -93,6 +97,7 @@ class ALifeSimTest(object):
         # items objects
         self._placeWaters()
         # self._placePits()
+        self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
         # self._placeFood()
@@ -123,6 +128,10 @@ class ALifeSimTest(object):
     def getPits(self):
         """Returns the list of agents"""
         return self.pitList[:]
+
+    def getMushrooms(self):
+        """Returns the list of agents"""
+        return self.mushroomList[:]
 
     def getGrass(self):
         """Returns the list of agents"""
@@ -167,6 +176,15 @@ class ALifeSimTest(object):
             if type(ob) is not Pit:
                 pitsAtList.remove(ob)
         return pitsAtList
+
+    def mushroomAt(self, row, col):
+        """Given a row and column, returns a list of the mushrooms at that location."""
+        objectsHereList = self.globalMap[row, col].copy()
+        mushroomsAtList = objectsHereList.copy()
+        for ob in objectsHereList:
+            if type(ob) is not Mushroom:
+                mushroomsAtList.remove(ob)
+        return mushroomsAtList
 
     def grassAt(self, row, col):
         """Given a row and column, returns a list of the pits at that location."""
@@ -278,6 +296,18 @@ class ALifeSimTest(object):
             nextPit = Pit(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
             self.pitList.append(nextPit)
             self.globalMap[randRow, randCol].append(nextPit)
+
+    def _placeMushrooms(self):
+        for i in range(self.numMushrooms):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextMushroom = Mushroom(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
+            self.mushroomList.append(nextMushroom)
+            self.globalMap[randRow, randCol].append(nextMushroom)
 
     def _placeGrass(self):
         for i in range(self.numGrass):
