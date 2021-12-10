@@ -935,6 +935,11 @@ class ALifeGUI:
                 sands = self.sim.sandAt(row, col)
                 snows = self.sim.snowAt(row, col)
                 mushrooms = self.sim.mushroomAt(row,col)
+                # apples = self.sim.appleAt(row, col)
+                # fires = self.sim.fireAt(row, col)
+                # bones = self.sim.boneAt(row, col)
+                # shrubs = self.sim.shrubAt(row, col)
+
                 # print(agents)
                 # print(self.sim.foodAt(row,col))
                 food = self.sim.foodAt(row,col)
@@ -995,6 +1000,27 @@ class ALifeGUI:
                     self.agentIdToPose[muId] = mu.getPose()
                     mu.setVisId(muId)
 
+                # for ap in apples:
+                #     self.canvas.update()
+                #     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                #     apId = self.canvas.create_image(coords, image=self.appleImage)
+                #     self.agentIdToPose[apId] = ap.getPose()
+                #     ap.setVisId(apId)
+
+                # for bn in bones:
+                #     self.canvas.update()
+                #     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                #     bnId = self.canvas.create_image(coords, image=self.boneImage)
+                #     self.agentIdToPose[bnId] = bn.getPose()
+                #     bn.setVisId(bnId)
+
+                # for fi in fires:
+                #     self.canvas.update()
+                #     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                #     fiId = self.canvas.create_image(coords, image=self.fireImage)
+                #     self.agentIdToPose[fiId] = fi.getPose()
+                #     fi.setVisId(fiId)
+
                 for tr in trees:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
@@ -1006,6 +1032,19 @@ class ALifeGUI:
                         trId = self.canvas.create_image(coords, image=self.treeFruitImage)
                         self.agentIdToPose[trId] = tr.getPose()
                         tr.setVisId(trId)
+
+                # for sh in shrubs:
+                #     self.canvas.update()
+                #     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                #     if sh.getHasFood() == '0':
+                #         shId = self.canvas.create_image(coords, image=self.shrubImage)
+                #         self.agentIdToPose[shId] = sh.getPose()
+                #         sh.setVisId(shId)
+                #     elif sh.getHasFood() == '1':
+                #         shId = self.canvas.create_image(coords, image=self.shrubFruitImage)
+                #         self.agentIdToPose[shId] = sh.getPose()
+                #         sh.setVisId(shId)
+
                 for ag in agents:
                     self.canvas.update()
                     offsetCoords = self._determineAgentCoords(ag)
