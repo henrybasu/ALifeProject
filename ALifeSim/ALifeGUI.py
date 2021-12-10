@@ -38,7 +38,12 @@ class ALifeGUI:
         self.delayTime = 0.01
 
         #Loading in Images
+        self.fishUpImage = PhotoImage(file='images/agents/fishUp.png')
+        self.fishDownImage = PhotoImage(file='images/agents/fishDown.png')
+        self.fishRightImage = PhotoImage(file='images/agents/fishRight.png')
+        self.fishLeftImage = PhotoImage(file='images/agents/fishLeft.png')
         self.ghostImage = PhotoImage(file='images/agents/ghost48x48.png')
+
         self.turnipImage = PhotoImage(file='images/items/turnip48x48.png')
         self.stoneImage = PhotoImage(file='images/items/stone.png')
         self.mushroomImage = PhotoImage(file='images/items/mushroom.png')
@@ -49,10 +54,11 @@ class ALifeGUI:
         self.grassImage = PhotoImage(file='images/items/grass.png')
         self.sandImage = PhotoImage(file='images/items/sand.png')
         self.snowImage = PhotoImage(file='images/items/snow.png')
-        self.fishUpImage = PhotoImage(file='images/agents/fishUp.png')
-        self.fishDownImage = PhotoImage(file='images/agents/fishDown.png')
-        self.fishRightImage = PhotoImage(file='images/agents/fishRight.png')
-        self.fishLeftImage = PhotoImage(file='images/agents/fishLeft.png')
+        self.appleImage = PhotoImage(file='images/items/apple.png')
+        self.boneImage = PhotoImage(file='images/items/bone.png')
+        self.fireImage = PhotoImage(file='images/items/fire.png')
+        self.shrubImage = PhotoImage(file='images/items/shrub.png')
+        self.shrubFruitImage = PhotoImage(file='images/items/shrub_fruit.png')
 
         # randomGeneticStrings = []
         # randomGeneticStrings.append("221017300011")
@@ -1321,6 +1327,26 @@ class ALifeGUI:
             fishLeftImg = Image.open('images/agents/fishLeft.png')
             fishLeftImg = fishLeftImg.resize((newW, newH))
             self.fishLeftImage = ImageTk.PhotoImage(fishLeftImg)
+
+            appleImg = Image.open('images/items/apple.png')
+            appleImg = appleImg.resize((newW, newH))
+            self.appleImage = ImageTk.PhotoImage(appleImg)
+
+            boneImg = Image.open('images/items/bone.png')
+            boneImg = boneImg.resize((newW, newH))
+            self.boneImage = ImageTk.PhotoImage(boneImg)
+
+            fireImg = Image.open('images/items/fire.png')
+            fireImg = fireImg.resize((newW, newH))
+            self.fireImage = ImageTk.PhotoImage(fireImg)
+
+            shrubImg = Image.open('images/items/shrub.png')
+            shrubImg = shrubImg.resize((newW, newH))
+            self.shrubImage = ImageTk.PhotoImage(shrubImg)
+
+            shrubFruitImg = Image.open('images/items/shrub_fruit.png')
+            shrubFruitImg = shrubFruitImg.resize((newW, newH))
+            self.shrubFruitImage = ImageTk.PhotoImage(shrubFruitImg)
 
         else:
             ghostImg = Image.open('images/agents/ghost48x48.png')
