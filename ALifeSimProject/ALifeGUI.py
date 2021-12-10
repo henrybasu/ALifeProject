@@ -116,6 +116,13 @@ class ALifeGUI:
             randomGeneticStrings.append(secondString)
         except:
             print("Choosing randomly for genetic string #2")
+
+        #IF user inputs x, choose randomly
+        if len(randomGeneticStrings) == 2:
+            if randomGeneticStrings[0] == "x" and randomGeneticStrings[1] == "x":
+                print("choosing all genetic strings randomly")
+                randomGeneticStrings = []
+
         for n in range(self.numberAgents - len(randomGeneticStrings)):
             randomVision = str(random.randint(1, 2))
             randomSmell = str(random.randint(0, 2))
