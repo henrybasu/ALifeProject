@@ -104,7 +104,7 @@ class ALifeGUI:
 
 
     def generateRandomGeneticStrings(self):
-        # g1number = self.g1num.get()
+        g1number = self.g1num
         # try:
         #     firstString = str(g1number)
         # except:
@@ -229,10 +229,10 @@ class ALifeGUI:
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
         geneticString1Label = Label(makerFrame, text="Genetic String 1")
-        self.g1num = StringVar()
-        sampleString = ""
+        # self.g1num = StringVar()
+        print(self.g1num)
         #TODO: make this length of genetic string
-        self.g1num.set(self.initialGeneticString)
+        # self.g1num.set(self.initialGeneticString)
         self.numg1 = Entry(makerFrame, textvariable=self.g1num, width=11, justify=CENTER)
 
         stonesLabel = Label(makerFrame2, text="Stones")
