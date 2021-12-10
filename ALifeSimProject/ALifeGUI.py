@@ -118,6 +118,7 @@ class ALifeGUI:
             print("Choosing randomly for genetic string #2")
 
         #IF user inputs x, choose randomly
+        #TODO: what if user inputs something else that is not 12 digits?
         if len(randomGeneticStrings) == 2:
             if randomGeneticStrings[0] == "x" and randomGeneticStrings[1] == "x":
                 print("choosing all genetic strings randomly")
@@ -222,9 +223,12 @@ class ALifeGUI:
         makerFrame.grid(row=1, column=1, padx=5, pady=5)
 
         makerFrame2 = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
-        makerFrame2.grid(row=1, column=2, padx=5, pady=5)
+        makerFrame2.grid(row=2, column=1, padx=5, pady=5)
 
-        sizeLabel1 = Label(makerFrame, text="Grid Dim")
+        makerFrame3 = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
+        makerFrame3.grid(row=3, column=1, padx=5, pady=5)
+
+        sizeLabel1 = Label(makerFrame, text="Grid Dimension")
         # sizeLabel2 = Label(makerFrame, text="x") #TODO: Reimplement this
         self.rowDimensionText = IntVar()
         self.rowDimensionText.set(str(self.gridDim))
@@ -232,71 +236,72 @@ class ALifeGUI:
         self.colDimensionText.set(str(self.gridDim))
         self.rowsEntry = Entry(makerFrame, textvariable=self.rowDimensionText, width=4, justify=CENTER)
         # self.colsEntry = Entry(makerFrame, textvariable=self.colDimensionText, width=4, justify=CENTER)
-        agentsLabel = Label(makerFrame, text="Agents")
+        agentsLabel = Label(makerFrame2, text="# of Agents")
         self.agentNum = IntVar()
         self.agentNum.set(self.numberAgents)
-        self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
+        self.numAgents = Entry(makerFrame2, textvariable=self.agentNum, width=4, justify=CENTER)
 
-        geneticString1Label = Label(makerFrame, text="Genetic String 1")
+        geneticString1Label = Label(makerFrame2, text="Genetic String 1")
         self.g1num = StringVar()
         sampleString = ""
         #TODO: make this length of genetic string
         self.g1num.set("221017300011")
-        self.numg1 = Entry(makerFrame, textvariable=self.g1num, width=11, justify=CENTER)
+        self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=11, justify=CENTER)
 
-        geneticString2Label = Label(makerFrame, text="Genetic String 2")
+        geneticString2Label = Label(makerFrame2, text="Genetic String 2")
         self.g2num = StringVar()
         self.g2num.set("221017300011")
-        self.numg2 = Entry(makerFrame, textvariable=self.g2num, width=11, justify=CENTER)
+        self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=11, justify=CENTER)
 
-        stonesLabel = Label(makerFrame2, text="Stones")
+        stonesLabel = Label(makerFrame, text="Stones")
         self.stonesNum = IntVar()
         self.stonesNum.set(self.numberStones)
-        self.numStones = Entry(makerFrame2, textvariable=self.stonesNum, width=4, justify=CENTER)
+        self.numStones = Entry(makerFrame, textvariable=self.stonesNum, width=4, justify=CENTER)
 
-        forestsLabel = Label(makerFrame2, text="Forests")
+        forestsLabel = Label(makerFrame, text="Forests")
         self.forestsNum = IntVar()
         self.forestsNum.set(self.numberForests)
-        self.numForests = Entry(makerFrame2, textvariable=self.forestsNum, width=4, justify=CENTER)
+        self.numForests = Entry(makerFrame, textvariable=self.forestsNum, width=4, justify=CENTER)
 
-        riversLabel = Label(makerFrame2, text="Rivers")
+        riversLabel = Label(makerFrame, text="Rivers")
         self.riversNum = IntVar()
         self.riversNum.set(self.numberRivers)
-        self.numRivers = Entry(makerFrame2, textvariable=self.riversNum, width=4, justify=CENTER)
+        self.numRivers = Entry(makerFrame, textvariable=self.riversNum, width=4, justify=CENTER)
 
-        pondsLabel = Label(makerFrame2, text="Ponds")
+        pondsLabel = Label(makerFrame, text="Ponds")
         self.pondsNum = IntVar()
         self.pondsNum.set(self.numberPonds)
-        self.numPonds = Entry(makerFrame2, textvariable=self.pondsNum, width=4, justify=CENTER)
+        self.numPonds = Entry(makerFrame, textvariable=self.pondsNum, width=4, justify=CENTER)
 
-        self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
-        self.gridButton.grid(row=8, column=1, columnspan=2, pady=5)
+        # self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
+        self.gridButton = Button(makerFrame3, text="New Simulation", command=self.resetGridWorld)
+        self.gridButton.grid(row=3, column=2, columnspan=2, pady=5)
 
 
-        sizeLabel1.grid(row=1, column=2)
+        sizeLabel1.grid(row=1, column=1)
         # sizeLabel2.grid(row=1, column=2)
         agentsLabel.grid(row=2, column=2)
         geneticString1Label.grid(row=3,column=2)
         geneticString2Label.grid(row=4,column=2)
 
 
-        stonesLabel.grid(row=1, column=1)
-        forestsLabel.grid(row=2,column=1)
-        riversLabel.grid(row=3,column=1)
-        pondsLabel.grid(row=4,column=1)
+        stonesLabel.grid(row=2, column=1)
+        forestsLabel.grid(row=3,column=1)
+        riversLabel.grid(row=4, column=1)
+        pondsLabel.grid(row=5,column=1)
 
-        self.rowsEntry.grid(row=1, column=4)
+        self.rowsEntry.grid(row=1, column=2)
         # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.numg1.grid(row=3,column=4)
         self.numg2.grid(row=4,column=4)
 
 
-        self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
-        self.numStones.grid(row=1, column=0)
-        self.numForests.grid(row=2,column=0)
-        self.numRivers.grid(row=3,column=0)
-        self.numPonds.grid(row=4,column=0)
+        self.gridButton.grid(row=3, column=3, columnspan=1, pady=5)
+        self.numStones.grid(row=2, column=2)
+        self.numForests.grid(row=3,column=2)
+        self.numRivers.grid(row=4,column=2)
+        self.numPonds.grid(row=5,column=2)
 
 
     def _initGrid(self):
@@ -339,8 +344,8 @@ class ALifeGUI:
         delayLabel.grid(row=2, column=1)
         self.delayEntry.grid(row=2, column=2)
 
-        gapLabel = Label(simFrame, text="", width=20, bg="light gray")
-        gapLabel.grid(row=3, column=1, columnspan=3, padx=5, pady=5)
+        # gapLabel = Label(simFrame, text="", width=20, bg="light gray")
+        # gapLabel.grid(row=3, column=1, columnspan=3, padx=5, pady=5)
 
         self.currStepsText = IntVar()
         self.currStepsText.set(self.currSteps)
@@ -374,7 +379,7 @@ class ALifeGUI:
         stepping or running it, and quitting from it.  You can also choose how many steps should happen
         for each click of the "step" button"""
         timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
-        timeBoxFrame.grid(row=4, column=1, padx=5, pady=5)
+        timeBoxFrame.grid(row=4, column=1, padx=5, pady=5, sticky=N)
         # timeBoxTitle = Label(timeBoxFrame, text="Time box", font="Arial 16 bold")
         # timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
