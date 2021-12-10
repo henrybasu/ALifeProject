@@ -5,12 +5,12 @@ from Tree import Tree
 from Stone import Stone
 from Water import Water
 from Food import Food
-from Pit import  Pit
+from Pit import Pit
 
 
 class Agent(Object):
-    """An agent object in the ALife simulation. An agent has a geneticString that governs its behavior, given by
-    a string, and it has an amount of energy and a location on the agentMap (given when created and then updated)."""
+    """An agent object in the ALife simulation. An agent has a geneticString that governs its attributes and behavior,
+    and it has a location on the globalMap (given when created and then updated)."""
 
     def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "0000000000", stepSpawned=0):
         """
@@ -25,8 +25,6 @@ class Agent(Object):
         self.colorAbbrevs = ['non', 'blk', 'red', 'org', 'yel', 'blu', 'grn', 'pur', 'brn', 'pnk', 'gry']
         self.row, self.col, self.heading = initPose
         self.geneticString = geneticString
-        # self.whichScenarios = dict()
-        # self.stepSpawned = stepSpawned
         # self.visObjectId = None
         self.isDead = False
         self.readyToBreed = 10
@@ -44,7 +42,6 @@ class Agent(Object):
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
         00000000000X0000 - Scavenge [11]
-        
         """
 
         self.visionRange = int(self.geneticString[0])
@@ -55,7 +52,6 @@ class Agent(Object):
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
         self.energy = int(self.geneticString[6:8])
-        # self.energy = self.color #TODO: remove this line
         self.jumpVal = int(self.geneticString[8])
         self.swimVal = int(self.geneticString[9])
         self.flyVal = int(self.geneticString[10])
@@ -81,15 +77,19 @@ class Agent(Object):
         return self.energy
 
     def getAggression(self):
+        """Returns 0 if the agent is docile, 1 if it is aggressive"""
         return self.Aggression
 
     def getVisionRange(self):
+        """Returns the vision range attribute."""
         return self.visionRange
 
     def getSmellRadius(self):
+        """Returns the smell radius attribute."""
         return self.smellRadius
 
     def getGeneticString(self):
+        """Returns the agent's genetic string."""
         return self.geneticString
 
     def getPose(self):
@@ -97,6 +97,7 @@ class Agent(Object):
         return self.row, self.col, self.heading
 
     def getReadyToBreed(self):
+        """Returns the number of steps until the agent is ready to breed."""
         return self.readyToBreed
 
     def updatePose(self, newRow, newCol, newHeading):
@@ -116,35 +117,28 @@ class Agent(Object):
         return True
 
     def changeIsDead(self, deadVal):
+        """Changes the agent's isDead status."""
         self.isDead = deadVal
 
     def getJump(self):
+        """Returns 0 if the agent cannot jump, 1 if it can."""
         return self.jumpVal
 
     def getSwim(self):
+        """Returns 0 if the agent cannot swim, 1 if it can."""
         return self.swimVal
 
     def changeReadyToBreed(self, breedVal):
+        """Reduces an agents steps until ready to breed by an input value."""
         self.readyToBreed = self.readyToBreed - breedVal
 
     def setReadyToBreed(self, breedVal):
+        """Sets agents steps until ready to breed."""
         self.readyToBreed = breedVal
-
-    def respond(self, foodHere, foodAhead, creatureHere, creatureAhead):
-        """
-        This performs the action the rules would require, given how much food is here and food ahead, and
-        the internal energy level
-        :param foodHere: 0, 1, or 2, where 0 = no food, 1 = some food, 2 = plentiful food
-        :param foodAhead: same as foodHere, but for cell ahead of agent
-        :return: None
-        """
-        eLevel = self._assessEnergy()
-        behavIndex = (3 ** 2) * foodHere + 3 * foodAhead + eLevel
-        return self.chooseAction(behavIndex)
-
 
     def _assessEnergy(self):
         """Converts energy level into 0 for low, 1 for medium, and 2 for high amounts of energy."""
+        #TODO: do we still need this function?
         if self.energy < 20:
             return 0
         elif self.energy < 60:
@@ -152,8 +146,8 @@ class Agent(Object):
         else:
             return 2
 
-
     def isAwake(self, sleepValue, time):
+        """Returns a string that tells whether the agent is awake or asleep, based on its sleep pattern."""
         if sleepValue == 0 and 6 <= time <= 18:
             return "awake"
         elif sleepValue == 1 and (time < 6 or time > 18):
@@ -163,9 +157,9 @@ class Agent(Object):
 
 
     def _computeAhead(self, gridSize):
+        """Determines the cell that is one space ahead of current cell, given the heading."""
         row, col, heading = self.getPose()
         moveSpeed = self.moveSpeed
-        """Determine the cell that is one space ahead of current cell, given the heading."""
         if heading == 'n':   # agent is pointing north, row value decreases
             newR = (row - moveSpeed) % gridSize
             return newR, col
@@ -180,6 +174,8 @@ class Agent(Object):
             return row, newC
 
     def _areCreaturesInVision(self, sim):
+        """Returns the first object in the agents line of sight."""
+        #TODO: do we still need this function?
         ownY, ownX, heading = self.getPose()
         visionList = []
         visionRange = self.visionRange
@@ -249,6 +245,8 @@ class Agent(Object):
         return 0
 
     def smellRadius1(self, sim):
+        """Returns a list of agents in the 4 squares around the agent."""
+        #TODO: do we still need this function?
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
 
@@ -265,6 +263,8 @@ class Agent(Object):
         return cellsSmelled
 
     def smellRadius2(self, sim):
+        """Returns a list of agents in the 12 squares around the agent."""
+        # TODO: do we still need this function?
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
 
@@ -301,10 +301,12 @@ class Agent(Object):
         return cellsSmelled
 
     def areCreaturesInSmellRadius(self, sim):
+        """Returns where relative to the agent another creature is, determined by the agent's smell."""
+        # TODO: do we still need this function?
         ownY, ownX, heading = self.getPose()
         smellRadius = self.geneticString[1]
 
-        # actions for if the agent has a smell radius of 1
+        # Locations for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
             cellsSmelled = self.smellRadius1(sim)
 
@@ -463,7 +465,7 @@ class Agent(Object):
             return "none"
 
     def _leftTurn(self):
-        """return the new heading for a left turn"""
+        """Returns the new heading after a left turn."""
         r,c,heading = self.getPose()
         if heading == 'n':
             return 'w'
@@ -475,7 +477,7 @@ class Agent(Object):
             return 'n'
 
     def _rightTurn(self):
-        """return the new heading for a right turn"""
+        """Returns the new heading after a right turn."""
         r, c, heading = self.getPose()
         if heading == 'n':
             return 'e'
@@ -487,7 +489,7 @@ class Agent(Object):
             return 'n'
 
     def _turnAround(self):
-        """return the new heading for turning around"""
+        """Returns the new heading after turning around."""
         r, c, heading = self.getPose()
         if heading == 'n':
             return 's'
@@ -501,6 +503,7 @@ class Agent(Object):
             return 'BROKEN'
 
     def attackCreature(self, sim, row, col):
+        """Kills an agent at a given location if it is an enemy."""
         for j in range(len(sim.agentsAt(row, col))):
             if int(sim.agentsAt(row, col)[j].getColor()) != self.getColor():
                 deadCreature = sim.agentsAt(row, col)[j]
@@ -508,13 +511,14 @@ class Agent(Object):
                 deadCreature.isDead = True
 
     def removeSelfFromList(self, list):
+        """Takes in a list and removes this agent from the list."""
         newList = list.copy()
         if self in newList:
             newList.remove(self)
         return newList
 
-
     def checkHere(self, sim, listOfPossibleActions):
+        """Returns a list of possible actions after checking what objects are on the same square as the agent."""
         ownX, ownY, ownH = self.getPose()
 
         # Might not need this -------- VVV
@@ -579,10 +583,10 @@ class Agent(Object):
         return listOfPossibleActions
 
     def checkVision(self, sim, listOfPossibleActions):
+        """Returns a list of possible actions after checking what objects the agent can see."""
         ownY, ownX, heading = self.getPose()
         visionList = []
         visionRange = self.visionRange
-
 
         # if the heading is north
         if heading == "n":
@@ -737,23 +741,8 @@ class Agent(Object):
         print("possible actions: ", listOfPossibleActions)
         return listOfPossibleActions
 
-
-
-        # TODO: add logic for what the agent does based on the first thing in vision list
-
-
-                # for ob in sim._listOfObjectsHere((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self):
-                #     if type(ob) is Tree:
-                #         visionList.append(0)
-                #         break
-                #     else:
-                #         visionList.append(sim._assessCreature((ownY - (int(self.geneticString[0]) - i)) % sim.gridSize, ownX, self))
-                # # if visionList[i] != 0:
-                # #     return 1
-                # if len(visionList) == 0:
-                #     return 0
-
     def reorderListBasedOnHeading(self, list):
+        """Takes in a list (length 4) and reorders it to [above,below,right,left] based on the agent's current heading."""
         heading = self.heading
         if heading == 'n':
             return list
@@ -771,6 +760,9 @@ class Agent(Object):
         return list
 
     def reorderListBasedOnHeadingLength8(self, list):
+        """Takes in a list (length 8) and reorders it to
+            [2above,2below,2right,2left,aboveLeft,aboveRight,belowLeft,belowRight]
+        based on the agent's current heading."""
         heading = self.heading
         if heading == 'n':
             return list
@@ -788,6 +780,7 @@ class Agent(Object):
         return list
 
     def checkSmell(self,sim, listOfPossibleActions):
+        """Returns a list of possible actions after checking what objects the agent can smell."""
         ownY, ownX, heading = self.getPose()
         cellsSmelled = []
 
@@ -1195,6 +1188,8 @@ class Agent(Object):
 
 
     def determineAction(self, sim, time):
+        """Starts with an initial list of actions, decides which ones are still viable options after checking here,
+        checking vision, and checking smell, and chooses a random action from the remaining viable choices."""
         listOfPossibleActions = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
 
         if self.isAwake(self.sleepValue, time) == "awake":
@@ -1239,272 +1234,8 @@ class Agent(Object):
         else:
             print("ERROR WITH SLEEP VALUE")
 
-    # TEST
-    # def determineAction(self, sim, agent, time):
-    #     agentR, agentC, agentH = self.getPose()
-    #     # checks to see if there is a creature where the agent currently is
-    #     isCreatureHere = sim._assessCreatureHere(agentR, agentC)
-    #     # checks to see if there is a creature in the agent's vision
-    #     isCreatureAhead = self._areCreaturesInVision(sim)
-    #
-    #     if sim._assessObjectsHere == 4:
-    #         isCreatureAhead=[]
-    #     print("Can I see a creature: ", isCreatureAhead)
-    #
-    #     # checks to see if there is food where the agent currently is
-    #     isFoodHere = sim.foodAt(agentR, agentC)
-    #     # checks to see if there is a creature in the agent's smell radius
-    #     cellsSmelled = self.detectSmellRadius(sim)
-    #     detectedRocks = self.detectRocks(sim)
-    #     detectedWater = self.detectWater(sim)
-    #
-    #     listOfRandomActionsPossible = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-    #     listOfRandomActionsPossible = self.filterActionsByWater(listOfRandomActionsPossible, detectedWater)
-    #     listOfRandomActionsPossible = self.filterActionsByRocks(listOfRandomActionsPossible,detectedRocks)
-    #     if self.isAwake(agent.sleepValue, time) == "awake":
-    #         if agent.Aggression == 0:
-    #             # print(self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible))
-    #             return self.determineActionDocile(agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible)
-    #         elif agent.Aggression == 1:
-    #             # print(self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible))
-    #             return self.determineActionAggressive(agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible)
-    #         else:
-    #             print("SHOULD NOT GET HERE")
-    #
-    #     elif self.isAwake(agent.sleepValue, time) == "sleeping":
-    #         return "none"
-    #
-    #
-    # def determineActionDocile(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, isFoodHere, detectedRocks, listOfRandomActionsPossible):
-    #     # print("Creatures around: " + str(creaturesAround))
-    #     # if the agent is on the same square as a friend
-    #     # print("list of actions possible docile:", listOfRandomActionsPossible)
-    #     if len(listOfRandomActionsPossible) == 0:
-    #         return "turnAround"
-    #
-    #     # print(listOfRandomActionsPossible)
-    #
-    #     if isCreatureHere == 2:
-    #         if agent.getReadyToBreed() == 0:
-    #             return "breed"
-    #         else:
-    #             return random.choice(listOfRandomActionsPossible)
-    #
-    #     elif len(isFoodHere) > 0:
-    #         return "eat"
-    #
-    #     # if the agent sees an enemy on a square ahead
-    #     elif isCreatureAhead == 1:
-    #         if 'forward' in listOfRandomActionsPossible:
-    #             if len(listOfRandomActionsPossible) != 1:
-    #                 listOfRandomActionsPossible.remove('forward')
-    #         return random.choice(listOfRandomActionsPossible)
-    #
-    #     # if the agent sees a friend ahead
-    #     elif isCreatureAhead == 2:
-    #         # if they are ready to breed, go forward
-    #         if agent.getReadyToBreed() == 0:
-    #             return "forward"
-    #         # if they aren't, go a anywhere
-    #         else:
-    #             return random.choice(listOfRandomActionsPossible)
-    #
-    #     # if it can't see any creatures, and can't smell any creatures: go anywhere
-    #     elif isCreatureAhead == 0 and cellsSmelled == "none":
-    #         # for i in range(2):
-    #         #     listOfRandomActionsPossible.append('forward')
-    #         return random.choice(listOfRandomActionsPossible)
-    #
-    #     # if it can't see any creatures, and but it can smell creatures:
-    #     elif isCreatureAhead == 0 and cellsSmelled != "none":
-    #         # print("MADE IT HERE - can't see anything, can smell something")
-    #         if cellsSmelled[1] == 1:
-    #             if cellsSmelled[0] == "above":
-    #                 if 'forward' in listOfRandomActionsPossible:
-    #                     if len(listOfRandomActionsPossible) != 1:
-    #                         listOfRandomActionsPossible.remove('forward')
-    #                 return random.choice(listOfRandomActionsPossible)
-    #
-    #             elif cellsSmelled[0] == "left":
-    #                 if 'left' in listOfRandomActionsPossible:
-    #                     if len(listOfRandomActionsPossible) != 1:
-    #                         listOfRandomActionsPossible.remove('left')
-    #                 if detectedRocks[0] == -1:
-    #                     return random.choice(listOfRandomActionsPossible)
-    #                 else:
-    #                     if 'forward' in listOfRandomActionsPossible:
-    #                         listOfRandomActionsPossible.append('forward')
-    #                     return random.choice(listOfRandomActionsPossible)
-    #
-    #             elif cellsSmelled[0] == "right":
-    #                 if 'right' in listOfRandomActionsPossible:
-    #                     if len(listOfRandomActionsPossible) != 1:
-    #                         listOfRandomActionsPossible.remove('right')
-    #                 if detectedRocks[0] == -1:
-    #                     return random.choice(listOfRandomActionsPossible)
-    #                 else:
-    #                     if 'forward' in listOfRandomActionsPossible:
-    #                         listOfRandomActionsPossible.append('forward')
-    #                     return random.choice(listOfRandomActionsPossible)
-    #
-    #             elif cellsSmelled[0] == "below":
-    #                 if 'turnAround' in listOfRandomActionsPossible:
-    #                     if len(listOfRandomActionsPossible) != 1:
-    #                         listOfRandomActionsPossible.remove('turnAround')
-    #                 if detectedRocks[0] == -1:
-    #                     return random.choice(listOfRandomActionsPossible)
-    #                 else:
-    #                     if 'forward' in listOfRandomActionsPossible:
-    #                         listOfRandomActionsPossible.append('forward')
-    #                     return random.choice(listOfRandomActionsPossible)
-    #
-    #         elif (cellsSmelled[1] == 2 and agent.getReadyToBreed()) or cellsSmelled[1] == 3:
-    #             if cellsSmelled[0] == "above":
-    #                 if 'forward' in listOfRandomActionsPossible:
-    #                     return "forward"
-    #                 else:
-    #                     return random.choice(listOfRandomActionsPossible)
-    #             elif cellsSmelled[0] == "left":
-    #                 if 'left' in listOfRandomActionsPossible:
-    #                     return "left"
-    #                 else:
-    #                     return random.choice(listOfRandomActionsPossible)
-    #             elif cellsSmelled[0] == "right":
-    #                 if 'right' in listOfRandomActionsPossible:
-    #                     return "right"
-    #                 else:
-    #                     return random.choice(listOfRandomActionsPossible)
-    #             elif cellsSmelled[0] == "below":
-    #                 if 'turnAround' in listOfRandomActionsPossible:
-    #                     return "turnAround"
-    #                 else:
-    #                     return random.choice(listOfRandomActionsPossible)
-    #         else:
-    #             # if 'forward' in listOfRandomActionsPossible:
-    #             #     for i in range(2):
-    #             #         listOfRandomActionsPossible.append('forward')
-    #             return random.choice(listOfRandomActionsPossible)
-    #
-    #     else:
-    #         print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-    #         return 'forward'
-    #
-    # def determineActionAggressive(self, agent, isCreatureHere, isCreatureAhead, cellsSmelled, detectedRocks, listOfRandomActionsPossible):
-    #     # print("list of actions possible aggressive:",listOfRandomActionsPossible)
-    #
-    #     if len(listOfRandomActionsPossible) == 0:
-    #         return "turnAround"
-    #
-    #     creaturesAround = cellsSmelled
-    #
-    #     if isCreatureHere == 1:
-    #         return "attack"
-    #
-    #     # if the agent is on the same square as a friend
-    #     elif isCreatureHere == 2:
-    #         if agent.getReadyToBreed() == 0:
-    #             return "breed"
-    #         else:
-    #             return random.choice(listOfRandomActionsPossible)
-    #
-    #     elif isCreatureAhead == 1:
-    #         return "forward"
-    #
-    #     # if it can't see any creatures, and can't smell any creatures: go anywhere, prioritizing forward moves
-    #     elif isCreatureAhead == 0 and creaturesAround == "none":
-    #         for i in range(2):
-    #             listOfRandomActionsPossible.append('forward')
-    #         return random.choice(listOfRandomActionsPossible)
-    #
-    #     # if it can't see any creatures, and but it can smell any creatures:
-    #     elif isCreatureAhead == 0 and creaturesAround != "none":
-    #         if creaturesAround[1] == 1:
-    #             if creaturesAround[0] == "above":
-    #                 return 'forward'
-    #             elif creaturesAround[0] == "left":
-    #                 return 'left'
-    #             elif creaturesAround[0] == "right":
-    #                 return 'right'
-    #             elif creaturesAround[0] == "below":
-    #                 return 'turnAround'
-    #         elif creaturesAround[1] == 2 and agent.getReadyToBreed() == 0:
-    #             if creaturesAround[0] == "above":
-    #                 return "forward"
-    #             elif creaturesAround[0] == "left":
-    #                 return "left"
-    #             elif creaturesAround[0] == "right":
-    #                 return "right"
-    #             elif creaturesAround[0] == "below":
-    #                 return "turnAround"
-    #         elif creaturesAround[1] == -1:
-    #             return random.choice(listOfRandomActionsPossible)
-    #
-    #         else:
-    #             return random.choice(listOfRandomActionsPossible)
-    #
-    #     else:
-    #         print("action chosen: NONE(SHOULD NEVER GET HERE) --- choosing 'forward' as action")
-    #         return 'forward'
-
-    def filterActionsByWater(self, listOfRandomActionsPossible, detectedWater):
-        newListOfRandomActionsPossible = listOfRandomActionsPossible.copy()
-        if self.getSwim() == 0:
-            if detectedWater[0] == -2:
-                while True:
-                    if 'forward' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('forward') #Removes ALL instances of 'forward'
-                    else:
-                        break
-            if detectedWater[1] == -2:
-                while True:
-                    if 'turnAround' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('turnAround')  # Removes ALL instances of 'turnAround'
-                    else:
-                        break
-            if detectedWater[2] == -2:
-                while True:
-                    if 'right' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('right')  # Removes ALL instances of 'right'
-                    else:
-                        break
-            if detectedWater[3] == -2:
-                while True:
-                    if 'left' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('left')  # Removes ALL instances of 'left'
-                    else:
-                        break
-        return newListOfRandomActionsPossible
-
-    def filterActionsByRocks(self, listOfRandomActionsPossible, detectedRocks):
-        newListOfRandomActionsPossible = listOfRandomActionsPossible.copy()
-        if self.getJump() == 0:
-            if detectedRocks[0] == -1:
-                while True:
-                    if 'forward' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('forward') #Removes ALL instances of 'forward'
-                    else:
-                        break
-            if detectedRocks[1] == -1:
-                while True:
-                    if 'turnAround' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('turnAround')  # Removes ALL instances of 'turnAround'
-                    else:
-                        break
-            if detectedRocks[2] == -1:
-                while True:
-                    if 'right' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('right')  # Removes ALL instances of 'right'
-                    else:
-                        break
-            if detectedRocks[3] == -1:
-                while True:
-                    if 'left' in newListOfRandomActionsPossible:
-                        newListOfRandomActionsPossible.remove('left')  # Removes ALL instances of 'left'
-                    else:
-                        break
-        return newListOfRandomActionsPossible
-
     def _printVision(self, sim):
+        """Prints what the agent can see."""
         ownY, ownX, heading = self.getPose()
         visionList = []
 
@@ -1548,9 +1279,7 @@ class Agent(Object):
                         print(visionList[i])
                     else:
                         print(visionList[i], end="")
-
         print("\n")
-
 
     def smellRadiusGlobal1(self, sim):
         ownY, ownX, heading = self.getPose()
@@ -1599,7 +1328,6 @@ class Agent(Object):
         cellsSmelled.append(cellAboveRight)
         cellsSmelled.append(cellBelowLeft)
         cellsSmelled.append(cellBelowRight)
-
         # print("Cells Smelled: ", cellsSmelled)
 
         return cellsSmelled
@@ -1772,56 +1500,10 @@ class Agent(Object):
         else:
             return "none"
 
-    def detectRocks(self, sim):
-        detectedRocks = self.smellRadiusGlobal1(sim)
-        # print("Dectected Rocks: ", detectedRocks)
-        order = []
-
-        ownY, ownX, heading = self.getPose()
-
-        if heading == "n":
-            return detectedRocks
-        elif heading == "s":
-            order = [1, 0, 2, 3]
-        elif heading == "e":
-            order = [2, 3, 1, 0]
-        elif heading == "w":
-            order = [3, 2, 0, 1]
-        else:
-            print("HEADING INVALID: RETURNING NORTH")
-            return detectedRocks
-
-        detectedRocks = [detectedRocks[i] for i in order]
-
-        return detectedRocks
-
-    def detectWater(self, sim):
-        detectedWater = self.smellRadiusGlobal1(sim)
-
-        ownY, ownX, heading = self.getPose()
-
-        if heading == "n":
-            return detectedWater
-        elif heading == "s":
-            order = [1, 0, 2, 3]
-        elif heading == "e":
-            order = [2, 3, 1, 0]
-        elif heading == "w":
-            order = [3, 2, 0, 1]
-        else:
-            print("HEADING INVALID: RETURNING NORTH")
-            return detectedWater
-
-        detectedWater = [detectedWater[i] for i in order]
-
-        return detectedWater
-
-
     def _printSmell(self, sim, type):
+        """Prints what the agent can smell."""
         smellRadius = self.geneticString[1]
         ownY, ownX, heading = self.getPose()
-
-
 
         if heading == "n":
             direction = "^"
@@ -1864,6 +1546,7 @@ class Agent(Object):
             print("NO SMELL")
 
     def combineStrings(self, creatureString, foodString, sim):
+        #TODO: do we still need this function?
         finalString = []
         for i in range(len(creatureString)):
             if foodString[i] != 0 & creatureString[i] != 0:
@@ -1877,124 +1560,13 @@ class Agent(Object):
                 finalString.append(creatureString[i])
             else:
                 finalString.append(0)
-
-        # print("final String: " + str(finalString))
         return finalString
 
     def getTypeAbbreviation(self):
-        # return "a"
+        """Returns the abbreviation for an agent object, "a"."""
         return self.colorAbbrevs[self.color]
 
-
     def __str__(self):
+        """Information about the agent to print."""
         formStr = "Agent: col={5}  pos=({0:>3d}, {1:>3d}, {2:^3s})   energ={3:^6d}     genStr={4}"
         return formStr.format(self.row, self.col, self.heading, self.energy, self.geneticString, self.colorNames[self.color])
-
-
-
-
-
-    # def smellRadiusFood1(self, sim):
-    #     ownY, ownX, heading = self.getPose()
-    #     cellsSmelled = []
-    #
-    #     cellAbove = sim._assessFood((ownY - 1) % sim.gridSize, ownX)
-    #     cellBelow = sim._assessFood((ownY + 1) % sim.gridSize, ownX)
-    #     cellRight = sim._assessFood(ownY, (ownX + 1) % sim.gridSize)
-    #     cellLeft = sim._assessFood(ownY, (ownX - 1) % sim.gridSize)
-    #
-    #     cellsSmelled.append(cellAbove)
-    #     cellsSmelled.append(cellBelow)
-    #     cellsSmelled.append(cellRight)
-    #     cellsSmelled.append(cellLeft)
-    #
-    #     return cellsSmelled
-    #
-    # def smellRadiusFood2(self, sim):
-    #     ownY, ownX, heading = self.getPose()
-    #     cellsSmelled = []
-    #
-    #     cellAbove = sim._assessFood((ownY - 1) % sim.gridSize, ownX)
-    #     cellBelow = sim._assessFood((ownY + 1) % sim.gridSize, ownX)
-    #     cellRight = sim._assessFood(ownY, (ownX + 1) % sim.gridSize)
-    #     cellLeft = sim._assessFood(ownY, (ownX - 1) % sim.gridSize)
-    #
-    #     cellTwoAbove = sim._assessFood((ownY - 2) % sim.gridSize, ownX)
-    #     cellTwoBelow = sim._assessFood((ownY + 2) % sim.gridSize, ownX)
-    #     cellTwoRight = sim._assessFood(ownY, (ownX + 2) % sim.gridSize)
-    #     cellTwoLeft = sim._assessFood(ownY, (ownX - 2) % sim.gridSize)
-    #
-    #     cellAboveLeft = sim._assessFood((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize)
-    #     cellAboveRight = sim._assessFood((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize)
-    #     cellBelowRight = sim._assessFood((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize)
-    #     cellBelowLeft = sim._assessFood((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize)
-    #
-    #     cellsSmelled.append(cellAbove)
-    #     cellsSmelled.append(cellBelow)
-    #     cellsSmelled.append(cellRight)
-    #     cellsSmelled.append(cellLeft)
-    #
-    #     cellsSmelled.append(cellTwoAbove)
-    #     cellsSmelled.append(cellTwoBelow)
-    #     cellsSmelled.append(cellTwoRight)
-    #     cellsSmelled.append(cellTwoLeft)
-    #
-    #     cellsSmelled.append(cellAboveLeft)
-    #     cellsSmelled.append(cellAboveRight)
-    #     cellsSmelled.append(cellBelowLeft)
-    #     cellsSmelled.append(cellBelowRight)
-    #
-    #     return cellsSmelled
-
-
-    # def smellRadiusCreature1(self, sim):
-    #     ownY, ownX, heading = self.getPose()
-    #     cellsSmelled = []
-    #
-    #     cellAbove = sim._assessCreature((ownY - 1) % sim.gridSize, ownX, self)
-    #     cellBelow = sim._assessCreature((ownY + 1) % sim.gridSize, ownX, self)
-    #     cellRight = sim._assessCreature(ownY, (ownX + 1) % sim.gridSize, self)
-    #     cellLeft = sim._assessCreature(ownY, (ownX - 1) % sim.gridSize, self)
-    #
-    #     cellsSmelled.append(cellAbove)
-    #     cellsSmelled.append(cellBelow)
-    #     cellsSmelled.append(cellRight)
-    #     cellsSmelled.append(cellLeft)
-    #
-    #     return cellsSmelled
-    #
-    # def smellRadiusCreature2(self, sim):
-    #     ownY, ownX, heading = self.getPose()
-    #     cellsSmelled = []
-    #
-    #     cellAbove = sim._assessCreature((ownY - 1) % sim.gridSize, ownX, self)
-    #     cellBelow = sim._assessCreature((ownY + 1) % sim.gridSize, ownX, self)
-    #     cellRight = sim._assessCreature(ownY, (ownX + 1) % sim.gridSize, self)
-    #     cellLeft = sim._assessCreature(ownY, (ownX - 1) % sim.gridSize, self)
-    #
-    #     cellTwoAbove = sim._assessCreature((ownY - 2) % sim.gridSize, ownX, self)
-    #     cellTwoBelow = sim._assessCreature((ownY + 2) % sim.gridSize, ownX, self)
-    #     cellTwoRight = sim._assessCreature(ownY, (ownX + 2) % sim.gridSize, self)
-    #     cellTwoLeft = sim._assessCreature(ownY, (ownX - 2) % sim.gridSize, self)
-    #
-    #     cellAboveLeft = sim._assessCreature((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
-    #     cellAboveRight = sim._assessCreature((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-    #     cellBelowRight = sim._assessCreature((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-    #     cellBelowLeft = sim._assessCreature((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
-    #
-    #     cellsSmelled.append(cellAbove)
-    #     cellsSmelled.append(cellBelow)
-    #     cellsSmelled.append(cellRight)
-    #     cellsSmelled.append(cellLeft)
-    #
-    #     cellsSmelled.append(cellTwoAbove)
-    #     cellsSmelled.append(cellTwoBelow)
-    #     cellsSmelled.append(cellTwoRight)
-    #     cellsSmelled.append(cellTwoLeft)
-    #
-    #     cellsSmelled.append(cellAboveLeft)
-    #     cellsSmelled.append(cellAboveRight)
-    #     cellsSmelled.append(cellBelowLeft)
-    #     cellsSmelled.append(cellBelowRight)
-    #
-    #     return cellsSmelled
