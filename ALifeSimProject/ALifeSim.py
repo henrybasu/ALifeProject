@@ -50,10 +50,9 @@ class ALifeSimTest(object):
         self.numPonds = numPonds
         self.numForests = numForests
         self.numPits = 5
-        self.numSands = 5
-        self.numSnows = 5
-        self.numGrass = 5
-
+        self.numSands = (self.gridSize*self.gridSize) // 10
+        self.numSnows = (self.gridSize*self.gridSize) // 10
+        self.numGrass = (self.gridSize*self.gridSize) // 5
 
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
@@ -246,9 +245,9 @@ class ALifeSimTest(object):
                     break
 
             if self.initialGeneticStrings is None or len(self.initialGeneticStrings) <= i:
-                nextAgent = Agent(initPose = agentPose)
+                nextAgent = Agent(initPose = agentPose,stepSpawned=self.stepNum)
             else:
-                nextAgent = Agent(geneticString=self.initialGeneticStrings[i], initPose = agentPose)
+                nextAgent = Agent(geneticString=self.initialGeneticStrings[i], initPose = agentPose,stepSpawned=self.stepNum)
 
             if self.initialGeneticStrings is None:
                 pass
@@ -264,7 +263,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextStone = Stone(initPose=(randRow, randCol), geneticString="0")
+            nextStone = Stone(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
             self.stoneList.append(nextStone)
             self.globalMap[randRow, randCol].append(nextStone)
 
@@ -276,7 +275,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextPit = Pit(initPose=(randRow, randCol), geneticString="0")
+            nextPit = Pit(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
             self.pitList.append(nextPit)
             self.globalMap[randRow, randCol].append(nextPit)
 
@@ -288,7 +287,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextGrass = Grass(initPose=(randRow, randCol), geneticString="0")
+            nextGrass = Grass(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
             self.grassDict[randRow,randCol].append(nextGrass)
             # self.globalMap[randRow, randCol].append(nextGrass)
 
@@ -300,7 +299,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextSand = Sand(initPose=(randRow, randCol), geneticString="0")
+            nextSand = Sand(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
             self.sandDict[randRow,randCol].append(nextSand)
             # self.globalMap[randRow, randCol].append(nextSand)
 
@@ -312,7 +311,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextSnow = Snow(initPose=(randRow, randCol), geneticString="0")
+            nextSnow = Snow(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
             self.snowDict[randRow,randCol].append(nextSnow)
             # self.globalMap[randRow, randCol].append(nextSnow)
 
@@ -331,7 +330,7 @@ class ALifeSimTest(object):
                     isWaterHere = random.choice([1, 1])
                     if isWaterHere == 1:
                         if len(self.objectsAt(rowLoc + row, colLoc + col)) == 0:
-                            nextWater = Water(initPose=(rowLoc + row, colLoc + col), geneticString="0")
+                            nextWater = Water(initPose=(rowLoc + row, colLoc + col), geneticString="0", stepSpawned=self.stepNum)
                             self.waterList.append(nextWater)
                             self.globalMap[rowLoc + row, colLoc + col].append(nextWater)
 
@@ -350,13 +349,13 @@ class ALifeSimTest(object):
 
                 if randomOrientation == 0:
                     if len(self.objectsAt(i, place)) == 0:
-                        nextWater = Water(initPose=(i, place), geneticString="0")
+                        nextWater = Water(initPose=(i, place), geneticString="0", stepSpawned=self.stepNum)
                         self.waterList.append(nextWater)
                         self.globalMap[i, place].append(nextWater)
 
                 elif randomOrientation == 1:
                     if len(self.objectsAt(place, i)) == 0:
-                        nextWater = Water(initPose=(place, i), geneticString="0")
+                        nextWater = Water(initPose=(place, i), geneticString="0", stepSpawned=self.stepNum)
                         self.waterList.append(nextWater)
                         self.globalMap[place, i].append(nextWater)
 
@@ -411,9 +410,7 @@ class ALifeSimTest(object):
                                     self.treeList.append(nextTree)
                                     self.globalMap[rowLoc + i, colLoc + j].append(nextTree)
 
-
         # print("\n".join("".join(map(str, i)) for i in tiles))
-
 
         # for i in range(numForrests):
         #     rowLoc = random.randint(0, self.gridSize - forrestSize)
@@ -441,7 +438,6 @@ class ALifeSimTest(object):
         #     self.treeList.append(nextTree)
         #     self.globalMap[randRow, randCol].append(nextTree)
 
-
     def _addFoodClump(self):
         """Adds a clump of food at a random location."""
         (randRow, randCol) = self._genRandomLoc()
@@ -451,10 +447,9 @@ class ALifeSimTest(object):
             else:
                 break
 
-        nextFood = Food(initPose=(randRow, randCol))
+        nextFood = Food(initPose=(randRow, randCol),geneticString="0",stepSpawned=self.stepNum)
         self.foodList.append(nextFood)
         self.globalMap[randRow, randCol].append(nextFood)
-
 
     def _genRandomPose(self):
         """Generates a random location on the foodMap with equal probability."""
@@ -463,13 +458,11 @@ class ALifeSimTest(object):
         heading = random.choice(['n', 'e', 'w', 's'])
         return (row, col, heading)
 
-
     def _genRandomLoc(self):
         """Generates a random location on the foodMap with equal probability."""
         row = random.randrange(self.gridSize)
         col = random.randrange(self.gridSize)
         return (row, col)
-
 
     def printGrid(self):
         """Prints the foodMap, giving each square 3 places"""
@@ -498,7 +491,6 @@ class ALifeSimTest(object):
                 strings[i] = agentStr.format(h, en)
         return strings
 
-
     def printAgents(self):
         """Prints the current location, heading, energy, step spawned, and step died of each agent."""
         #TODO: Add steps created
@@ -510,7 +502,6 @@ class ALifeSimTest(object):
         print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepDied")
         for agent,stepDied in self.deadAgents:
             print(agent, "       ", "x", "         ", stepDied)
-
 
     def step(self):
         """Update one step of the simulation. This means growing food, and then updating each agent
