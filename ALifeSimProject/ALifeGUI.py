@@ -28,7 +28,6 @@ class ALifeGUI:
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.numberAgents = numAgents
-        self.initialGeneticString = "000000000000"
         self.numberStones = 0
         self.numberForests = 0
         self.numberPonds = 0
@@ -51,7 +50,7 @@ class ALifeGUI:
         self.fishRightImage = PhotoImage(file='images/fishRight.png')
         self.fishLeftImage = PhotoImage(file='images/fishLeft.png')
 
-        randomGeneticStrings = []
+        # randomGeneticStrings = []
         # randomGeneticStrings.append("221017300011")
         # randomGeneticStrings.append("021003990011")
         # randomGeneticStrings.append("111002990011")
@@ -75,7 +74,6 @@ class ALifeGUI:
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
         00000000000X0000 - Scavenge [11]
-
         """
         # for n in range(self.numberAgents):
         #     randomVision = str(random.randint(0, 5))
@@ -104,16 +102,16 @@ class ALifeGUI:
 
 
     def generateRandomGeneticStrings(self):
-        # g1number = self.g1num.get()
-        # try:
-        #     firstString = str(g1number)
-        # except:
-        #     self._postMessage("Must type in a genetic string")
-        #     firstString = "000000000000"
-        #     return
-        # randomGeneticStrings = [firstString]
-        randomGeneticStrings = []
-        for n in range(self.numberAgents):
+        try:
+            g1number = self.g1num.get()
+            firstString = str(g1number)
+        except:
+            # self._postMessage("Must type in a genetic string")
+            firstString = "000002000000"
+            #For the initial simulation, this string will be used. For "new simulation"s, the string typed will be used.
+        randomGeneticStrings = [firstString]
+        # randomGeneticStrings = []
+        for n in range(self.numberAgents - len(randomGeneticStrings)):
             randomVision = str(random.randint(1, 2))
             randomSmell = str(random.randint(0, 2))
             randomMovement = str(random.randint(1, 1))
@@ -228,10 +226,12 @@ class ALifeGUI:
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
         geneticString1Label = Label(makerFrame, text="Genetic String 1")
+        # self.g1num = IntVar()
         self.g1num = StringVar()
         sampleString = ""
         #TODO: make this length of genetic string
-        self.g1num.set(self.initialGeneticString)
+        self.g1num.set("221017300011")
+        # self.g1num.set(self.initialGeneticString)
         self.numg1 = Entry(makerFrame, textvariable=self.g1num, width=11, justify=CENTER)
 
         stonesLabel = Label(makerFrame2, text="Stones")
