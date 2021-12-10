@@ -5,18 +5,18 @@ class Mushroom(Object):
 
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
         """
-        Sets up an agent with a location, energy, geneticString, and step created
-        :param initPose: tuple giving stone's initial location
-        :param geneticString: string giving the stone's color
-        :param stepSpawned: integer giving the simulation step the stone was created in
+        Sets up mushroom with a location, geneticString, and step created
+        :param initPose: tuple giving mushroom's initial location
+        :param geneticString: string giving information about the mushroom
+        :param stepSpawned: integer giving the simulation step the mushroom was created in
         """
         super().__init__()
         self.geneticString = geneticString
         self.row,self.col = initPose
         self.stepSpawned = stepSpawned
-        # self.color = int(self.geneticString[0])
 
     def getTypeAbbreviation(self):
+        """Returns the abbreviation for a mushroom object, "m"."""
         return "m"
 
 

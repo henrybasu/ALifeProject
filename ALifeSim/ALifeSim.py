@@ -574,7 +574,6 @@ class ALifeSimTest(object):
         # print(self.globalMap)
         # print("self.globalMap:",self.globalMap)
 
-
     def _updateTrees(self):
         """Keeps track of when a tree should bloom, and makes them bloom when needed."""
         i = 0

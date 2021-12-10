@@ -15,9 +15,9 @@ class Agent(Object):
     def __init__(self, initPose = (0, 0, 'n'), initEnergy = 40, geneticString = "0000000000", stepSpawned=0):
         """
         Sets up an agent with a location, energy, geneticString, and step created
-        :param initPose:   tuple giving agent's initial location
+        :param initPose:   tuple giving agent's initial location and heading
         :param initEnergy: integer initial energy
-        :param geneticString: string to determine agent's behavior
+        :param geneticString: string to determine agent's attributes and behavior
         :param stepSpawned: integer giving the simulation step the agent was created in
         """
         super().__init__()

@@ -5,18 +5,18 @@ class Snow(Object):
 
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
         """
-        Sets up an agent with a location, energy, geneticString, and step created
-        :param initPose: tuple giving stone's initial location
-        :param geneticString: string giving the stone's color
-        :param stepSpawned: integer giving the simulation step the stone was created in
+        Sets up snow with a location, geneticString, and step created
+        :param initPose: tuple giving snow's initial location
+        :param geneticString: string giving information about the snow
+        :param stepSpawned: integer giving the simulation step the snow was created in
         """
         super().__init__()
         self.geneticString = geneticString
-        self.color = int(self.geneticString[0])
         self.row, self.col = initPose
         self.stepSpawned = stepSpawned
 
     def getTypeAbbreviation(self):
-        return "snow"
+        """Returns the abbreviation for a snow object, "sn"."""
+        return "sn"
 
 
