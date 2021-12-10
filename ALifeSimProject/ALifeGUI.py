@@ -103,21 +103,19 @@ class ALifeGUI:
 
 
     def generateRandomGeneticStrings(self):
+        randomGeneticStrings = []
         try:
             g1number = self.g1num.get()
             firstString = str(g1number)
+            randomGeneticStrings.append(firstString)
         except:
-            # self._postMessage("Must type in a genetic string")
-            firstString = "000002000000"
-            #For the initial simulation, this string will be used. For "new simulation"s, the string typed will be used.
+            print("Choosing randomly for genetic string #1")
         try:
             g2number = self.g2num.get()
             secondString = str(g2number)
+            randomGeneticStrings.append(secondString)
         except:
-            # self._postMessage("Must type in a genetic string")
-            secondString = "000002000000"
-        randomGeneticStrings = [firstString,secondString]
-        # randomGeneticStrings = []
+            print("Choosing randomly for genetic string #2")
         for n in range(self.numberAgents - len(randomGeneticStrings)):
             randomVision = str(random.randint(1, 2))
             randomSmell = str(random.randint(0, 2))
