@@ -46,6 +46,9 @@ class ALifeGUI:
         self.treeFruitImage = PhotoImage(file='images/tree_fruit.png')
         self.waveImage = PhotoImage(file='images/wave.png')
         self.pitImage = PhotoImage(file='images/pit.png')
+        self.grassImage = PhotoImage(file='images/grass.png')
+        self.sandImage = PhotoImage(file='images/sand.png')
+        self.snowImage = PhotoImage(file='images/snow.png')
         self.fishUpImage = PhotoImage(file='images/fishUp.png')
         self.fishDownImage = PhotoImage(file='images/fishDown.png')
         self.fishRightImage = PhotoImage(file='images/fishRight.png')
@@ -922,6 +925,9 @@ class ALifeGUI:
                 waters = self.sim.waterAt(row,col)
                 pits = self.sim.pitAt(row,col)
                 trees = self.sim.treeAt(row,col)
+                grasses = self.sim.grassAt(row,col)
+                sands = self.sim.sandAt(row, col)
+                snows = self.sim.snowAt(row, col)
                 # print(agents)
                 # print(self.sim.foodAt(row,col))
                 food = self.sim.foodAt(row,col)
@@ -953,6 +959,28 @@ class ALifeGUI:
                     ptId = self.canvas.create_image(coords, image=self.pitImage)
                     self.agentIdToPose[ptId] = pt.getPose()
                     pt.setVisId(ptId)
+
+                for gr in grasses:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    grId = self.canvas.create_image(coords, image=self.grassImage)
+                    self.agentIdToPose[grId] = gr.getPose()
+                    gr.setVisId(grId)
+
+                for sa in sands:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    saId = self.canvas.create_image(coords, image=self.sandImage)
+                    self.agentIdToPose[saId] = sa.getPose()
+                    sa.setVisId(saId)
+
+                for sn in snows:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    snId = self.canvas.create_image(coords, image=self.snowImage)
+                    self.agentIdToPose[snId] = sn.getPose()
+                    sn.setVisId(snId)
+
                 for tr in trees:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
@@ -1258,6 +1286,18 @@ class ALifeGUI:
             pitImg = pitImg.resize((newW, newH))
             self.pitImage = ImageTk.PhotoImage(pitImg)
 
+            grassImg = Image.open('images/grass.png')
+            grassImg = grassImg.resize((newW, newH))
+            self.grassImage = ImageTk.PhotoImage(grassImg)
+
+            sandImg = Image.open('images/sand.png')
+            sandImg = sandImg.resize((newW, newH))
+            self.sandImage = ImageTk.PhotoImage(sandImg)
+
+            snowImg = Image.open('images/snow.png')
+            snowImg = snowImg.resize((newW, newH))
+            self.snowImage = ImageTk.PhotoImage(snowImg)
+
             fishUpImg = Image.open('images/fishUp.png')
             fishUpImg = fishUpImg.resize((newW, newH))
             self.fishUpImage = ImageTk.PhotoImage(fishUpImg)
@@ -1298,6 +1338,15 @@ class ALifeGUI:
 
             pitImg = Image.open('images/pit.png')
             self.pitImage = ImageTk.PhotoImage(pitImg)
+
+            grassImg = Image.open('images/grass.png')
+            self.grassImage = ImageTk.PhotoImage(grassImg)
+
+            sandImg = Image.open('images/sand.png')
+            self.sandImage = ImageTk.PhotoImage(sandImg)
+
+            snowImg = Image.open('images/snow.png')
+            self.snowImage = ImageTk.PhotoImage(snowImg)
 
             fishUpImg = Image.open('images/fishUp.png')
             self.fishUpImage = ImageTk.PhotoImage(fishUpImg)
@@ -1352,6 +1401,6 @@ class ALifeGUI:
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
-    s = ALifeGUI(7, numberOfAgents)
+    s = ALifeGUI(15, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

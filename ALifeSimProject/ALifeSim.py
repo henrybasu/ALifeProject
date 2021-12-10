@@ -11,6 +11,9 @@ from Food import *
 from Water import *
 from Tree import *
 from Pit import *
+from Sand import *
+from Snow import *
+from Grass import *
 
 class ALifeSimTest(object):
     """A simple simulated foodMap world, similar to NetLogo, with agents that each perform their own
@@ -30,6 +33,9 @@ class ALifeSimTest(object):
     numWaters = 0
     numTrees = 0
     numPits = 0
+    numSands = 0
+    numSnows = 0
+    numGrass = 0
 
     def __init__(self, gridSize, numAgents, numStones, numForests, numRivers, numPonds, geneticStrings):
         """Takes in the side length of the foodMap, and makes the foodMap representation, and also the number
@@ -44,6 +50,9 @@ class ALifeSimTest(object):
         self.numPonds = numPonds
         self.numForests = numForests
         self.numPits = 5
+        self.numSands = 5
+        self.numSnows = 5
+        self.numGrass = 5
 
 
         self.initialGeneticStrings = geneticStrings
@@ -57,6 +66,9 @@ class ALifeSimTest(object):
         self.foodList = []
         self.stoneList = []
         self.pitList = []
+        self.grassDict = {}
+        self.sandDict = {}
+        self.snowDict = {}
         self.waterList = []
         self.treeList = []
         self.agentList = []
@@ -66,10 +78,19 @@ class ALifeSimTest(object):
         self.stepNum = 0
         self.verbose = False
 
+        for row in range(self.gridSize):
+            for col in range(self.gridSize):
+                self.grassDict[row,col] = []
+                self.sandDict[row,col] = []
+                self.snowDict[row,col] = []
+
         # self._placeTreesOnHalf()
 
         self._placeWaters()
         # self._placePits()
+        self._placeGrass()
+        self._placeSand()
+        self._placeSnow()
         self._placeTrees(self.numForests, random.randint(3,10))
 
         self._placeStones()
@@ -99,6 +120,18 @@ class ALifeSimTest(object):
     def getPits(self):
         """Returns the list of agents"""
         return self.pitList[:]
+
+    def getGrass(self):
+        """Returns the list of agents"""
+        return self.grassDict[:]
+
+    def getSands(self):
+        """Returns the list of agents"""
+        return self.sandDict[:]
+
+    def getSnows(self):
+        """Returns the list of agents"""
+        return self.snowDict[:]
 
     def getWaters(self):
         return self.waterList[:]
@@ -131,6 +164,18 @@ class ALifeSimTest(object):
             if type(ob) is not Pit:
                 pitsAtList.remove(ob)
         return pitsAtList
+
+    def grassAt(self, row, col):
+        """Given a row and column, returns a list of the pits at that location."""
+        return self.grassDict[row,col]
+
+    def sandAt(self, row, col):
+        """Given a row and column, returns a list of the pits at that location."""
+        return self.sandDict[row,col]
+
+    def snowAt(self, row, col):
+        """Given a row and column, returns a list of the pits at that location."""
+        return self.snowDict[row,col]
 
     def waterAt(self,row,col):
         objectsHereList = self.globalMap[row, col].copy()
@@ -230,6 +275,42 @@ class ALifeSimTest(object):
             nextPit = Pit(initPose=(randRow, randCol), geneticString="0")
             self.pitList.append(nextPit)
             self.globalMap[randRow, randCol].append(nextPit)
+
+    def _placeGrass(self):
+        for i in range(self.numGrass):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextGrass = Grass(initPose=(randRow, randCol), geneticString="0")
+            self.grassDict[randRow,randCol].append(nextGrass)
+            # self.globalMap[randRow, randCol].append(nextGrass)
+
+    def _placeSand(self):
+        for i in range(self.numSands):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextSand = Sand(initPose=(randRow, randCol), geneticString="0")
+            self.sandDict[randRow,randCol].append(nextSand)
+            # self.globalMap[randRow, randCol].append(nextSand)
+
+    def _placeSnow(self):
+        for i in range(self.numSnows):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextSnow = Snow(initPose=(randRow, randCol), geneticString="0")
+            self.snowDict[randRow,randCol].append(nextSnow)
+            # self.globalMap[randRow, randCol].append(nextSnow)
 
     def _placeWaters(self):
         self._placePonds(self.numPonds)
