@@ -1,4 +1,3 @@
-
 import random
 import tkinter
 import math
@@ -91,9 +90,8 @@ class ALifeSimTest(object):
         self._placeSand()
         self._placeSnow()
 
-        # self._placeTreesOnHalf()
-
         # inanimate objects
+        # self._placeTreesOnHalf()
         self._placeWaters()
         # self._placePits()
         self._placeMushrooms()
@@ -887,6 +885,5 @@ class ALifeSimTest(object):
             newBabyGeneticString+=str(babyGeneticStringAsList[j])
         print(newBabyGeneticString)
         return newBabyGeneticString
-
 
 

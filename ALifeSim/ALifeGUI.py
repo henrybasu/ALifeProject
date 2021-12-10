@@ -2,7 +2,7 @@
 File: ALifeGUI.py
 
 This file contains code, including a Tkinter class, that implements the
-GUI for this problem.  This must be run in Python 3!
+GUI for this simulation.  This must be run in Python 3!
  ==================================================================="""
 
 #
@@ -21,7 +21,6 @@ from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearche
 
 class ALifeGUI:
     """Set up and manage all the variables for the GUI interface."""
-
     def __init__(self, gridDim, numAgents=10, maxSteps=100):
         """Given the dimension of the grid, and the number of agents set up a new Tk object of the right size"""
         self.root = Tk()
@@ -110,8 +109,9 @@ class ALifeGUI:
         self.avgTime = None
         self.agentsLiving = 0
 
-
     def generateRandomGeneticStrings(self):
+        """Returns a list of genetic strings to assign to agents, using the user's input strings as the first ones."""
+        #TODO: what if user types an invalid string?
         randomGeneticStrings = []
         try:
             g1number = self.g1num.get()
@@ -180,15 +180,12 @@ class ALifeGUI:
         # Create the search alg frame
         self._initSearchTools()
 
-        # Create the maze grid
+        # Create the simulation grid
         self._initGrid()
-
-
 
     def goProgram(self):
         """This starts the whole GUI going"""
         self.root.mainloop()
-
 
     # =================================================================
     # Widget-creating helper functions
@@ -207,8 +204,6 @@ class ALifeGUI:
                            anchor=CENTER, padx=5, pady=5)
         titleLabel.grid(row=1, column=1)
 
-
-
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
         about how much work was done"""
@@ -218,7 +213,6 @@ class ALifeGUI:
         self.messageVar.set("")
         message = Label(messageFrame, textvariable=self.messageVar, width=50, height=10, wraplength = 300)
         message.grid(row=1, column=1)
-
 
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents"""
@@ -286,13 +280,11 @@ class ALifeGUI:
         self.gridButton = Button(makerFrame3, text="New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=3, column=2, columnspan=2, pady=5)
 
-
         sizeLabel1.grid(row=1, column=1)
         # sizeLabel2.grid(row=1, column=2)
         agentsLabel.grid(row=2, column=2)
         geneticString1Label.grid(row=3,column=2)
         geneticString2Label.grid(row=4,column=2)
-
 
         stonesLabel.grid(row=2, column=1)
         forestsLabel.grid(row=3,column=1)
@@ -305,13 +297,11 @@ class ALifeGUI:
         self.numg1.grid(row=3,column=4)
         self.numg2.grid(row=4,column=4)
 
-
         self.gridButton.grid(row=3, column=3, columnspan=1, pady=5)
         self.numStones.grid(row=2, column=2)
         self.numForests.grid(row=3,column=2)
         self.numRivers.grid(row=4,column=2)
         self.numPonds.grid(row=5,column=2)
-
 
     def _initGrid(self):
         """sets up the grid with current assigned dimensions, and number of agents
@@ -328,11 +318,10 @@ class ALifeGUI:
 
         self._buildTkinterGrid()
 
-
     def _initSimTools(self):
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
-        stepping or running it, and quitting from it.  You can also choose how many steps should happen
-        for each click of the "step" button"""
+        stepping or running it, running it 100 times, and quitting from it.
+        You can also choose how many steps should happen for each click of the "step" button."""
         simFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
         simFrame.grid(row=2, column=1, padx=5, pady=5)
         simTitle = Label(simFrame, text="Run config", font="Arial 16 bold")
@@ -372,11 +361,9 @@ class ALifeGUI:
         self.run100Button = Button(simFrame, text="Run 100x", command=self.run100Simulations)
         self.run100Button.grid(row=7, column=3, columnspan=2, pady=5)
 
-
     def _initSearchTools(self):
-        """Sets up the search frame, with buttons for selecting which search, for starting a search,
-        stepping or running it, and quitting from it.  You can also choose how many steps should happen
-        for each click of the "step" button"""
+        """Sets up the searcher for optimal string."""
+        #TODO: Use this?
         self.searchType = StringVar()
         self.searchType.set("hillClimb")
         self.currentSearch = None
@@ -384,9 +371,7 @@ class ALifeGUI:
         self.currentNode = None
 
     def _makeTimeBox(self):
-        """Sets up the search frame, with buttons for selecting which search, for starting a search,
-        stepping or running it, and quitting from it.  You can also choose how many steps should happen
-        for each click of the "step" button"""
+        """Sets up a box with an image to display the simulation's current time."""
         timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
         timeBoxFrame.grid(row=4, column=1, padx=5, pady=5, sticky=N)
         # timeBoxTitle = Label(timeBoxFrame, text="Time box", font="Arial 16 bold")
@@ -461,17 +446,14 @@ class ALifeGUI:
     #     self.moonImage = PhotoImage(file='images/bone.png')
     #     stepsLabel.image
 
-
     ### =================================================================
     ### The following are callbacks for buttons
-
     def quit(self):
         """Callback for the quit button: destroy everything"""
         self.root.destroy()
 
     # ----------------------------------------------------------------
     # Button callbacks for Edit buttons
-
     def resetGridWorld(self, ruleString=None):
         """This is both a callback for the New Grid button, but also called from other
         places where the ruleString is set to a non-None value"""
@@ -507,12 +489,10 @@ class ALifeGUI:
 
     # ----------------------------------------------------------------
     # Button callbacks for Search buttons
-
     def resetSearch(self):
         """This is a callback for the Set Up Search button. It resets the simulation based on the current
         values, and sets up the algorithm to be called, it initializes the search.
-        It disables the grid editing and turns off the edit mode, and turns on the search mode"""
-
+        It disables the grid editing and turns off the edit mode, and turns on the search model."""
         self._clearMessage()
 
         self.resetGridWorld()
@@ -524,7 +504,6 @@ class ALifeGUI:
         self._disableChanges()
         self._enableSearch()
 
-
     def evalRulestring(self, ruleString):
         """Evaluates a given rule string by using it to create agents and running a simulation with those agents."""
         self.resetGridWorld(ruleString)
@@ -532,24 +511,21 @@ class ALifeGUI:
         self.runSimulation()
         return self.avgTime
 
-
     def runSearch(self):
         """This callback for the Run Search button keeps running steps of the search until the search is done
-        or a problem crops up.  """
+        or a problem crops up."""
         keepLooping = True
         while keepLooping:
             keepLooping = self._handleOneStep()
 
-
     def stepSearch(self):
         """This repeats the current stepCount number of steps of the search, stopping after that.
-        Otherwise, this is very similar to the previous function"""
+        Otherwise, this is very similar to the previous function."""
         keepLooping = self._handleOneStep()
-
 
     def _handleOneStep(self):
         """This helper helps both the run search and step search callbacks, by handling the
-        different outcomes for one step of the search.  """
+        different outcomes for one step of the search."""
         status = self.currentSearcher.step()
         count = self.currentSearcher.getCount()
         nextState = self.currentSearcher.getCurrState()
@@ -573,7 +549,6 @@ class ALifeGUI:
 
         return keepGoing
 
-
     def wrapUpSearch(self, nextState, nextValue):
         """This produces the ending statistics, finds and marks the final path, and then closes
         down the search so it will not continue"""
@@ -588,9 +563,8 @@ class ALifeGUI:
         # self.currentNode = None
         #
 
-
     def quitSearch(self):
-        """A callback for clearing away the search and returning to edit mode"""
+        """A callback for clearing away the search and returning to edit mode."""
         self._disableSearch()
         self._enableChanges()
         self.currentSearch = None
@@ -599,8 +573,6 @@ class ALifeGUI:
 
     ### =================================================================
     ### Helper functions for running simulation
-
-
     def runSimulation(self):
         """Runs the simulation until either all agents die or we reach the max number of steps."""
         self.maxSteps=int(self.maxStepsText.get())
@@ -617,6 +589,7 @@ class ALifeGUI:
 
     def run100Simulations(self):
         """Runs the simulation 100 times (for testing purposes)."""
+        #TODO: How to report 100 sim results?
         for i in range(100):
             self.maxSteps=int(self.maxStepsText.get())
             self.delayTime = float(self.delayText.get())
@@ -633,10 +606,10 @@ class ALifeGUI:
                 break
             else:
                 self.resetGridWorld()
-        #TODO: How to report 100 sim results?
 
     def stepSimulation(self):
-        """Runs one step of the simulation, then updates the grid with new colors and moving agents."""
+        """Runs one step of the simulation,
+        then updates the GUI with new colors, object positions, and object states."""
         self.sim.step()
         self._makeTimeBox()
         for row in range(self.gridDim):
@@ -647,7 +620,6 @@ class ALifeGUI:
         #             (x1, y1, x2, y2) = self._posToCoords(row, col)
         #             turnipImage = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.TurnipImage)
         #             self.canvas.lift(turnipImage)
-        #
                 cellColor = self._determinePatchColor()
                 patchId = self.posToPatchId[row, col]
                 self.canvas.itemconfig(patchId, fill=cellColor, outline=cellColor)
@@ -750,7 +722,6 @@ class ALifeGUI:
             id = agent.getVisId()
             self.canvas.itemconfig(id, fill=agColor)
 
-
             # (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
             (newRow, newCol, newHead) = agent.getPose()
             (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
@@ -796,9 +767,10 @@ class ALifeGUI:
         self.currStepsText.set(self.currSteps)
         return True
 
-
     def reportSimResult(self):
         """Reports statistics on how the simulation came out."""
+        #TODO: All this function does is call assessFinalResult, so do we still need this function?
+
         # total = 0
         # count = 0
         # self.minTime = 10 * self.maxSteps
@@ -834,6 +806,7 @@ class ALifeGUI:
 
 
     def assessFinalResult(self):
+        """Reports statistics on how the simulation came out."""
         deadAgents = self.sim.getDeadAgents()
         liveAgents = self.sim.getAgents()
         deadAgentGenetricStrings = []
@@ -860,7 +833,6 @@ class ALifeGUI:
             ListOfColor.append(int(deadAgentGenetricStrings[j][5]))
             ListOfJump.append(int(deadAgentGenetricStrings[j][8]))
 
-
         print("ListOfVisions: ", ListOfVisions)
         print("ListOfSmell: ", ListOfSmell)
         print("ListOfMovement: ", ListOfMovement)
@@ -868,7 +840,6 @@ class ALifeGUI:
         print("ListOfSleepType: ", ListOfSleepType)
         print("ListOfColor: ", ListOfColor)
         print("ListOfJump: ", ListOfJump)
-
 
         WorstVisionTrait = self.most_common(ListOfVisions)
         WorstSmellTrait = self.most_common(ListOfSmell)
@@ -889,19 +860,14 @@ class ALifeGUI:
         self._addMessage("WorstJumpTrait: " + str(WorstJumpTrait))
 
 
-
-
-
-
     ### =================================================================
     ### Private helper functions
-
     def most_common(self, list):
+        """Takes in a list and returns the value that appears most frequently."""
         if len(list) != 0:
             return max(set(list), key=list.count)
         else:
             return []
-
 
     def _buildTkinterGrid(self):
         """This sets up the display of the grid, based on the simulation object.
@@ -1074,7 +1040,7 @@ class ALifeGUI:
                     # ag.setVisId(agId)
 
     def _determineObjectCoords(self, object):
-        """gives offset coordinates based on the direction the agent is
+        """Gives offset coordinates based on the direction the object is
         pointing."""
         oneSixth = self.cellSize / 6
         fiveSixths = 5 * oneSixth
@@ -1083,9 +1049,8 @@ class ALifeGUI:
         threeQ = 3 * quarter
         return [oneSixth,oneSixth,oneSixth,oneSixth]
 
-
     def _determineAgentCoords(self, agent):
-        """gives offset coordinates based on the direction the agent is
+        """Gives offset coordinates based on the direction the agent is
         pointing."""
         (agr, agc, heading) = agent.getPose()
         oneSixth = self.cellSize / 6
@@ -1105,18 +1070,8 @@ class ALifeGUI:
         else:
             print("Bad heading for agent", heading)
 
-
     def _determinePatchColor(self):
-        # if foodAt == 0:
-        #     cellColor = "white"
-        # else:
-        #     diff = maxFood - foodAt
-        #     if diff < 0:
-        #         diff = 0
-        #     ratio = diff / maxFood
-        #     greenColor = int((ratio * 245) + 10)
-        #     cellColor = "#%02x%02x%02x" % (0, greenColor, 0)
-
+        """Determines the color of the grid based on the simulation's time attribute."""
         oneAM = "#747474"
         twoAM = "#808080"
         threeAM = "#8c8c8c"
@@ -1168,12 +1123,14 @@ class ALifeGUI:
         timeColors.append(tenPM)
         timeColors.append(elevenPM)
 
-
         cellColor = timeColors[self.sim.time-1]
 
         return cellColor
 
     def _determineAgentColor(self, energy):
+        """Determines the color of an agent based on its energy."""
+        #TODO: Can we delete this function?
+
         if energy <= 0:
             color = 'black'
         else:
@@ -1184,8 +1141,8 @@ class ALifeGUI:
             color = "#%02x%02x%02x" % (redColor, 0, 0)
         return color
 
-
     def _setAgentColor(self, color):
+        """Sets an agent's color based on its numeric color attribute."""
         if color == 1:
             return 'black'
         elif color == 2:
@@ -1207,15 +1164,13 @@ class ALifeGUI:
         elif color == 0:
             return 'gray'
 
-
     def _UpdateAgentColor(self, color, energy):
+        """Returns an agent's color based on its energy and color attribute."""
         # if energy <= 0:
         #     color = 'black'
         # else:
         color = self._setAgentColor(color)
-
         return color
-
 
     def _disableChanges(self):
         """Turn off access to the edit operations, by setting each of the GUI elements to DISABLED"""
@@ -1228,7 +1183,6 @@ class ALifeGUI:
         self.delayEntry.config(state=DISABLED)
         self.stepButton.config(state=DISABLED)
         self.runButton.config(state=DISABLED)
-
 
     def _enableChanges(self):
         """Turn on access to the edit operations, by setting each GUI element to NORMAL"""
@@ -1255,7 +1209,7 @@ class ALifeGUI:
         self.quitSearch.config(state=NORMAL)
 
     def _removeGridItems(self):
-        """A helper that removes all the grid cell objects from the maze, prior to creating new
+        """A helper that removes all the grid cell objects from the simulation, prior to creating new
         ones when the simulation is reset."""
         for row in range(self.gridDim):
             for col in range(self.gridDim):
@@ -1271,8 +1225,6 @@ class ALifeGUI:
 
     # -------------------------------------------------
     # Utility functions
-
-
     def _postMessage(self, messageText):
         """Posts a message in the message box"""
         self.messageVar.set(messageText)
@@ -1284,11 +1236,11 @@ class ALifeGUI:
         print()
 
     def _addMessage(self, messageText):
+        """Adds a message to the results frame. """
         oldMessage = self.messageVar.get()
         newMessage = oldMessage + '\n' + messageText
         self.messageVar.set(newMessage)
         # print(newMessage)
-
 
     def _setCellColor(self, cellId, color):
         """Sets the grid cell with cellId, and at row and column position, to have the
@@ -1296,13 +1248,13 @@ class ALifeGUI:
         matrix that mirrors the displayed colors"""
         self.canvas.itemconfig(cellId, fill = color)
 
-
     def _setOutlineColor(self, cellId, color):
         """Sets the outline of the grid cell with cellID, and at row and column position, to
         have the right color."""
         self.canvas.itemconfig(cellId, outline=color)
 
     def resizeAllImages(self):
+        """Scales all sprites based on the size of the grid. Uses original 48x48 sizes for any grid with size < 10."""
         if self.sim.gridSize > 10:
             newW = int(480/(self.sim.gridSize))
             newH = int(480 / (self.sim.gridSize))
@@ -1433,7 +1385,6 @@ class ALifeGUI:
             fishLeftImg = Image.open('images/agents/fishLeft.png')
             self.fishLeftImage = ImageTk.PhotoImage(fishLeftImg)
 
-
     def _posToId(self, row, col):
         """Given row and column indices, it looks up and returns the GUI id of the cell at that location"""
         return self.posToPatchId[row, col]
@@ -1441,7 +1392,6 @@ class ALifeGUI:
     def _idToPos(self, currId):
         """Given the id of a cell, it looks up and returns the row and column position of that cell"""
         return self.patchIdToPos[currId]
-
 
     def _posToCoords(self, row, col):
         """Given a row and column position, this converts that into a position on the frame"""
@@ -1469,8 +1419,7 @@ class ALifeGUI:
 
         return int(row), int(col)
 
-
-# The lines below cause the maze to run when this file is double-clicked or sent to a launcher, or loaded
+# The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
     numberOfAgents = 2
