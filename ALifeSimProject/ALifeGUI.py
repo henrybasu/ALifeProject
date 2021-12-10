@@ -27,6 +27,7 @@ class ALifeGUI:
         self.root = Tk()
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
+        self.userInputtedGeneticStrings = []
         self.numberAgents = numAgents
         self.numberStones = 0
         self.numberForests = 0
@@ -109,7 +110,13 @@ class ALifeGUI:
             # self._postMessage("Must type in a genetic string")
             firstString = "000002000000"
             #For the initial simulation, this string will be used. For "new simulation"s, the string typed will be used.
-        randomGeneticStrings = [firstString]
+        try:
+            g2number = self.g2num.get()
+            secondString = str(g2number)
+        except:
+            # self._postMessage("Must type in a genetic string")
+            secondString = "000002000000"
+        randomGeneticStrings = [firstString,secondString]
         # randomGeneticStrings = []
         for n in range(self.numberAgents - len(randomGeneticStrings)):
             randomVision = str(random.randint(1, 2))
@@ -226,13 +233,16 @@ class ALifeGUI:
         self.numAgents = Entry(makerFrame, textvariable=self.agentNum, width=4, justify=CENTER)
 
         geneticString1Label = Label(makerFrame, text="Genetic String 1")
-        # self.g1num = IntVar()
         self.g1num = StringVar()
         sampleString = ""
         #TODO: make this length of genetic string
         self.g1num.set("221017300011")
-        # self.g1num.set(self.initialGeneticString)
         self.numg1 = Entry(makerFrame, textvariable=self.g1num, width=11, justify=CENTER)
+
+        geneticString2Label = Label(makerFrame, text="Genetic String 2")
+        self.g2num = StringVar()
+        self.g2num.set("221017300011")
+        self.numg2 = Entry(makerFrame, textvariable=self.g2num, width=11, justify=CENTER)
 
         stonesLabel = Label(makerFrame2, text="Stones")
         self.stonesNum = IntVar()
@@ -262,6 +272,7 @@ class ALifeGUI:
         # sizeLabel2.grid(row=1, column=2)
         agentsLabel.grid(row=2, column=2)
         geneticString1Label.grid(row=3,column=2)
+        geneticString2Label.grid(row=4,column=2)
 
 
         stonesLabel.grid(row=1, column=1)
@@ -273,6 +284,7 @@ class ALifeGUI:
         # self.colsEntry.grid(row=1, column=6)
         self.numAgents.grid(row=2, column=4)
         self.numg1.grid(row=3,column=4)
+        self.numg2.grid(row=4,column=4)
 
 
         self.gridButton.grid(row=3, column=3, columnspan=2, pady=5)
