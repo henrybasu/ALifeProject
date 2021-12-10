@@ -84,17 +84,21 @@ class ALifeSimTest(object):
                 self.sandDict[row,col] = []
                 self.snowDict[row,col] = []
 
-        # self._placeTreesOnHalf()
-
-        self._placeWaters()
-        # self._placePits()
+        # objects w/ no effect
         self._placeGrass()
         self._placeSand()
         self._placeSnow()
-        self._placeTrees(self.numForests, random.randint(3,10))
 
+        # self._placeTreesOnHalf()
+
+        # items objects
+        self._placeWaters()
+        # self._placePits()
+        self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
         # self._placeFood()
+
+        # agent objects
         self._placeAgents()
 
     def getSize(self):
