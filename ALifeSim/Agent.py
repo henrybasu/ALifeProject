@@ -1305,16 +1305,16 @@ class Agent(Object):
                 if self.getEnergy() < 25:
                     if self.canFly and len(self.removeSelfFromList(sim.treeAt(self.getPose()[0], self.getPose()[1]))) > 0:
                         print("I AM ROOSTING")
-                        return ['roost']
+                        return 'roost'
                     else:
-                        return ['rest']
+                        return 'rest'
 
             action = random.choice(listOfPossibleActions)
             print("Action: ", action)
             return action
 
         elif self.isAwake(self.sleepValue, time) == "sleeping":
-            return ['rest']
+            return 'rest'
             action = random.choice(listOfPossibleActions)
             print("Action: ", action)
             return action
