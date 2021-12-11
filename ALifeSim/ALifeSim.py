@@ -738,13 +738,18 @@ class ALifeSimTest(object):
 
                 elif action == 'eat':
                     self.eatItem(agent, agentR, agentC)
-                    isOkay = agent.changeEnergy(50)
+                    isOkay = agent.changeEnergy(0)
 
                 elif action == 'eatBerries':
                     isOkay = agent.changeEnergy(2)
 
                 elif action == 'pause':
-                    isOkay = agent.changeEnergy(0)
+                    agent.updatePose(agentR, agentC, agent._leftTurn())
+                    time.sleep(0.1)
+                    agent.updatePose(agentR, agentC, agent._rightTurn())
+                    time.sleep(0.1)
+                    agent.updatePose(agentR, agentC, agent._turnAround())
+                    isOkay = agent.changeEnergy(-5)
 
                 elif action == 'roost':
                     isOkay = agent.changeEnergy(10)
@@ -912,6 +917,7 @@ class ALifeSimTest(object):
         """Removes a food object from a location on the global map."""
         foodAtCell = self.foodAt(row, col)
         if len(foodAtCell) > 0:
+            agent.changeEnergy(50)
             self.eatenFood.append(foodAtCell)
             for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
@@ -919,6 +925,7 @@ class ALifeSimTest(object):
             for i in range(len(self.foodList)):
                 if foodAtCell == self.foodList[i]:
                     self.foodList.pop(i)
+
         mushroomsAtCell = self.mushroomAt(row, col)
         if len(mushroomsAtCell) > 0:
             mushroomTypeEaten = mushroomsAtCell[0].getTypeOfMushroom()
@@ -926,6 +933,10 @@ class ALifeSimTest(object):
             agent.setMushroomInfluence(mushroomTypeEaten)
             agent.setStepsUntilNoMushroomInfluence(10)
             print("MUSHROOM TYPE EATEN:", mushroomTypeEaten)
+            if (mushroomTypeEaten == 4):
+                agent.changeEnergy(-10)
+            else:
+                agent.changeEnergy(50)
             if (mushroomTypeEaten == 1):
                 # print("SICK")
                 agent.isSick = True
