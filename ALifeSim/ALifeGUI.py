@@ -60,8 +60,8 @@ class ALifeGUI:
         self.shrubFruitImage = PhotoImage(file='images/items/shrub_fruit.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("21100249000009")
-        randomGeneticStrings.append("11100449000005")
+        randomGeneticStrings.append("21100249000010")
+        randomGeneticStrings.append("11100449000009")
         randomGeneticStrings.append("11100449000005")
         randomGeneticStrings.append("11100449000005")
         randomGeneticStrings.append("11100449000005")
@@ -666,12 +666,30 @@ class ALifeGUI:
         #     self.agentIdToPose[id] = object.getPose()
         # (x1, y1, x2, y2) = self._posToCoords(treeRow, treeCol)
         for tr in self.sim.getTrees():
-            # finds dead agent tkinter object id
-            id = tr.getVisId()
-
             (newRow, newCol) = tr.getPose()
             # print("New coords:",newRow,newCol)
             (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+
+            # print("TREE IN GUI")
+            if tr.getVisId() is None:
+                if tr.getHasFood() == "0":
+                    # print("NO FOOD")
+                    trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeImage)
+                    self.agentIdToPose[trId] = tr.getPose()
+                    tr.setVisId(trId)
+                    self.canvas.lift(trId)
+                    tr.setJustChangedBloom(False)
+                elif tr.getHasFood() == "1":
+                    # print("FOOD")
+                    trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeFruitImage)
+                    self.agentIdToPose[trId] = tr.getPose()
+                    tr.setVisId(trId)
+                    self.canvas.lift(trId)
+                    tr.setJustChangedBloom(False)
+
+            # finds tree tkinter object id
+            id = tr.getVisId()
+            print(id)
 
             # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
             # self.canvas.create_image(x1, y1, image=self.ghostImage)
@@ -1472,7 +1490,7 @@ class ALifeGUI:
 # The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
-    s = ALifeGUI(5, numberOfAgents)
+    numberOfAgents = 2
+    s = ALifeGUI(4, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

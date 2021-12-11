@@ -72,6 +72,15 @@ class Agent(Object):
         self.mushroomInfluence = 0
         self.stepsUntilNoMushroomInfluence = 0
 
+        self.objectConsumed = 0
+        """
+        0 - Nothing
+        1 - Food
+        2 - Tree Berry
+        3 - Mushroom
+        4 - Agent
+        """
+
         if self.swimVal == 1:
             self.canSwim = True
         if self.jumpVal == 1:
@@ -122,6 +131,9 @@ class Agent(Object):
 
     def getMushroomInfluence(self):
         return self.mushroomInfluence
+
+    def getObjectConsumed(self):
+        return self.objectConsumed
 
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
@@ -178,6 +190,9 @@ class Agent(Object):
 
     def setStepsUntilHealthy(self, newVal):
         self.stepsUntilHealthy = newVal
+
+    def setObjectConsumed(self, newObject):
+        self.objectConsumed = newObject
 
     def getStepsUntilHealthy(self):
         return self.stepsUntilHealthy
@@ -558,6 +573,7 @@ class Agent(Object):
         """Kills an agent at a given location if it is an enemy."""
         for j in range(len(sim.agentsAt(row, col))):
             if int(sim.agentsAt(row, col)[j].getColor()) != self.getColor():
+                self.setObjectConsumed(4)
                 deadCreature = sim.agentsAt(row, col)[j]
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
@@ -1646,6 +1662,26 @@ class Agent(Object):
             else:
                 finalString.append(0)
         return finalString
+
+    def dropObject(self, sim):
+        r,c,h = self.getPose()
+        if self.objectConsumed == 0:
+            print("DROPPING OBJECT STONE")
+            nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
+            sim.treeList.append(nextTree)
+            sim.globalMap[r, c].append(nextTree)
+        elif self.objectConsumed == 1:
+            print("DROPPING OBJECT")
+            pass
+        elif self.objectConsumed == 2:
+            print("DROPPING OBJECT")
+            pass
+        elif self.objectConsumed == 3:
+            print("DROPPING OBJECT")
+            pass
+        elif self.objectConsumed == 4:
+            print("DROPPING OBJECT")
+            pass
 
     def getTypeAbbreviation(self):
         """Returns the abbreviation for an agent object, "a"."""

@@ -97,7 +97,7 @@ class ALifeSimTest(object):
         # inanimate objects
         # self._placeTreesOnHalf()
         # self._placePits()
-        self._placeMushrooms()
+        # self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
         # self._placeFood()
@@ -741,6 +741,7 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(0)
 
                 elif action == 'eatBerries':
+                    agent.setObjectConsumed(2)
                     isOkay = agent.changeEnergy(2)
 
                 elif action == 'pause':
@@ -808,6 +809,8 @@ class ALifeSimTest(object):
                     agent.changeReadyToBreed(1)
 
                 print("~~~~~~~~~ Energy After Step ~~~~~~~~~")
+                print("OBJECT CONSUMED:",agent.getObjectConsumed())
+                print("GlobalMap:",self.globalMap)
                 print("   ", self.agentList[i].getEnergy())
                 print("----------------------------------------------------------------------------")
 
@@ -840,6 +843,7 @@ class ALifeSimTest(object):
 
             if not isOkay:
                 self.deadAgents.append((agent, self.stepNum-agent.stepSpawned))
+                agent.dropObject(self)
                 self.agentList.pop(i)
                 if agent in self.globalMap[agentR,agentC]:
                     self.globalMap[agentR, agentC].remove(agent)
@@ -918,6 +922,7 @@ class ALifeSimTest(object):
         foodAtCell = self.foodAt(row, col)
         if len(foodAtCell) > 0:
             agent.changeEnergy(50)
+            agent.setObjectConsumed(1)
             self.eatenFood.append(foodAtCell)
             for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
@@ -928,6 +933,7 @@ class ALifeSimTest(object):
 
         mushroomsAtCell = self.mushroomAt(row, col)
         if len(mushroomsAtCell) > 0:
+            agent.setObjectConsumed(3)
             mushroomTypeEaten = mushroomsAtCell[0].getTypeOfMushroom()
             self.eatenMushrooms.append(mushroomsAtCell)
             agent.setMushroomInfluence(mushroomTypeEaten)
