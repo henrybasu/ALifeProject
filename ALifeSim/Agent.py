@@ -69,6 +69,9 @@ class Agent(Object):
         self.isSick = False
         self.stepsUntilHealthy = 0
 
+        self.mushroomInfluence = 0
+        self.stepsUntilNoMushroomInfluence = 0
+
         if self.swimVal == 1:
             self.canSwim = True
         if self.jumpVal == 1:
@@ -116,6 +119,9 @@ class Agent(Object):
 
     def getIsSick(self):
         return self.isSick
+
+    def getMushroomInfluence(self):
+        return self.mushroomInfluence
 
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
@@ -167,11 +173,20 @@ class Agent(Object):
         """Sets agents steps until ready to breed."""
         self.readyToBreed = breedVal
 
+    def setMushroomInfluence(self, newVal):
+        self.mushroomInfluence = newVal
+
     def setStepsUntilHealthy(self, newVal):
         self.stepsUntilHealthy = newVal
 
     def getStepsUntilHealthy(self):
         return self.stepsUntilHealthy
+
+    def setStepsUntilNoMushroomInfluence(self, newVal):
+        self.stepsUntilNoMushroomInfluence = newVal
+
+    def getStepsUntilNoMushroomInfluence(self):
+        return self.stepsUntilNoMushroomInfluence
 
     def _assessEnergy(self):
         """Converts energy level into 0 for low, 1 for medium, and 2 for high amounts of energy."""
@@ -1246,6 +1261,18 @@ class Agent(Object):
         """Starts with an initial list of actions, decides which ones are still viable options after checking here,
         checking vision, and checking smell, and chooses a random action from the remaining viable choices."""
         listOfPossibleActions = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
+
+        print("Mushroom influence", self.mushroomInfluence)
+
+        if self.mushroomInfluence == 1:
+            pass
+        elif self.mushroomInfluence == 2:
+            return 'pause'
+        elif self.mushroomInfluence == 3:
+            #random movement
+            return listOfPossibleActions
+        elif self.mushroomInfluence == 4:
+            self.changeEnergy(-5)
 
         if self.isAwake(self.sleepValue, time) == "awake":
 

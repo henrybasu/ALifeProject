@@ -14,7 +14,7 @@ class Mushroom(Object):
         self.geneticString = geneticString
         self.row,self.col = initPose
         self.stepSpawned = stepSpawned
-        self.typeOfMushroom = self.geneticString[0]
+        self.typeOfMushroom = int(self.geneticString[0])
         """
         Types of Mushroom:
         0 - Is the same as food

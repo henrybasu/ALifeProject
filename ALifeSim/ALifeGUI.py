@@ -60,7 +60,7 @@ class ALifeGUI:
         self.shrubFruitImage = PhotoImage(file='images/items/shrub_fruit.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("11100449000011")
+        randomGeneticStrings.append("21100249000009")
         randomGeneticStrings.append("11100449000005")
         randomGeneticStrings.append("11100449000005")
         randomGeneticStrings.append("11100449000005")
@@ -263,7 +263,7 @@ class ALifeGUI:
         self.g1num = StringVar()
         sampleString = ""
         #TODO: make this length of genetic string
-        self.g1num.set("02100949000000")
+        self.g1num.set("21100949000009")
         widthOfGeneticStringInput = len(self.g1num.get())-1
         self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=widthOfGeneticStringInput, justify=CENTER)
 

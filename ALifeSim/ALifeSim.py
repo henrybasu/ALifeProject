@@ -309,7 +309,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextMushroom = Mushroom(initPose=(randRow, randCol), geneticString=random.choice(["0","1","2","3","4"]), stepSpawned=self.stepNum)
+            nextMushroom = Mushroom(initPose=(randRow, randCol), geneticString=random.choice(["0","1","1","1","1","1","1","1","1","2","3","4"]), stepSpawned=self.stepNum)
             self.mushroomList.append(nextMushroom)
             self.globalMap[randRow, randCol].append(nextMushroom)
 
@@ -690,6 +690,13 @@ class ALifeSimTest(object):
                 agent.isSick = False
                 agent.setStepsUntilHealthy(0)
 
+            print("Steps until no mushroom influence: ", agent.getStepsUntilNoMushroomInfluence())
+            if agent.getStepsUntilNoMushroomInfluence() > 0:
+                agent.setStepsUntilNoMushroomInfluence(agent.getStepsUntilNoMushroomInfluence() - 1)
+            if agent.getStepsUntilNoMushroomInfluence() <= 0:
+                agent.mushroomInfluence = 0
+                agent.setStepsUntilNoMushroomInfluence(0)
+
             # print()
             # print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
             # self.printGrid()
@@ -728,11 +735,14 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(-1)
 
                 elif action == 'eat':
-                    self.eatItem(agentR, agentC)
+                    self.eatItem(agent, agentR, agentC)
                     isOkay = agent.changeEnergy(50)
 
                 elif action == 'eatBerries':
                     isOkay = agent.changeEnergy(2)
+
+                elif action == 'pause':
+                    isOkay = agent.changeEnergy(0)
 
                 elif action == 'roost':
                     isOkay = agent.changeEnergy(10)
@@ -894,7 +904,7 @@ class ALifeSimTest(object):
         listOfObjects = self.globalMap[row, col].copy()
         return listOfObjects
 
-    def eatItem(self, row, col):
+    def eatItem(self, agent, row, col):
         """Removes a food object from a location on the global map."""
         foodAtCell = self.foodAt(row, col)
         if len(foodAtCell) > 0:
@@ -907,7 +917,15 @@ class ALifeSimTest(object):
                     self.foodList.pop(i)
         mushroomsAtCell = self.mushroomAt(row, col)
         if len(mushroomsAtCell) > 0:
+            mushroomTypeEaten = mushroomsAtCell[0].getTypeOfMushroom()
             self.eatenMushrooms.append(mushroomsAtCell)
+            agent.setMushroomInfluence(mushroomTypeEaten)
+            agent.setStepsUntilNoMushroomInfluence(10)
+            print("MUSHROOM TYPE EATEN:", mushroomTypeEaten)
+            if (mushroomTypeEaten == 1):
+                # print("SICK")
+                agent.isSick = True
+                agent.setStepsUntilHealthy(20)
             for ob in self.globalMap[row, col]:
                 if type(ob) is Mushroom:
                     self.globalMap[row, col].remove(ob)
