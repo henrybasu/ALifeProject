@@ -42,6 +42,8 @@ class Agent(Object):
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
         00000000000X0000 - Scavenge [11]
+        000000000000X000 - Has a sickness [12]
+        0000000000000X00 - Disease Resistance [13]
         """
 
         self.visionRange = int(self.geneticString[0])
@@ -56,11 +58,16 @@ class Agent(Object):
         self.swimVal = int(self.geneticString[9])
         self.flyVal = int(self.geneticString[10])
         self.scavengeVal = int(self.geneticString[11])
+        self.sickVal = int(self.geneticString[12])
+        self.resistanceVal = int(self.geneticString[13])
 
         self.canSwim = False
         self.canJump = False
         self.canFly = False
         self.canScavenge = False
+
+        self.isSick = False
+        self.stepsUntilHealthy = 0
 
         if self.swimVal == 1:
             self.canSwim = True
@@ -70,6 +77,12 @@ class Agent(Object):
             self.canFly = True
         if self.scavengeVal == 1:
             self.canScavenge = True
+        if self.sickVal == 1:
+            self.isSick = True
+            sicknessLength = random.randint(5, 30)
+            self.setStepsUntilHealthy(sicknessLength)
+            print("Sickness length: ", sicknessLength)
+
         # self.score = 0
 
     def getEnergy(self):
@@ -111,6 +124,9 @@ class Agent(Object):
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
         or below: the agent "dies" in that case."""
+        if self.isSick:
+            if changeVal < 0:
+                changeVal = changeVal * 2
         self.energy += changeVal
         if self.energy <= 0:
             return False
@@ -135,6 +151,12 @@ class Agent(Object):
     def setReadyToBreed(self, breedVal):
         """Sets agents steps until ready to breed."""
         self.readyToBreed = breedVal
+
+    def setStepsUntilHealthy(self, newVal):
+        self.stepsUntilHealthy = newVal
+
+    def getStepsUntilHealthy(self):
+        return self.stepsUntilHealthy
 
     def _assessEnergy(self):
         """Converts energy level into 0 for low, 1 for medium, and 2 for high amounts of energy."""

@@ -83,6 +83,8 @@ class ALifeGUI:
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
         00000000000X0000 - Scavenge [11]
+        000000000000X000 - Has a sickness [12]
+        0000000000000X00 - Disease Resistance [13]
         """
         # for n in range(self.numberAgents):
         #     randomVision = str(random.randint(0, 5))
@@ -145,6 +147,9 @@ class ALifeGUI:
             randomSwim = str(random.choice([0, 0, 0, 1]))
             randomFly = str(random.choice([0, 0, 0, 1]))
             randomScavenge = str(random.choice([0, 0, 0, 1]))
+            randomSickness = str(random.choice([0, 0, 0, 0, 0, 0, 0, 0, 0, 1]))
+            randomResistance = str(random.randint(0, 9))
+
             randomGeneticString = randomVision + \
                                   randomSmell + \
                                   randomMovement + \
@@ -155,7 +160,9 @@ class ALifeGUI:
                                   randomJump + \
                                   randomSwim + \
                                   randomFly + \
-                                  randomScavenge
+                                  randomScavenge + \
+                                  randomSickness + \
+                                  randomResistance
             randomGeneticStrings.append(randomGeneticString)
             print("randomGeneticString: ", randomGeneticString)
         return randomGeneticStrings
@@ -248,12 +255,12 @@ class ALifeGUI:
         self.g1num = StringVar()
         sampleString = ""
         #TODO: make this length of genetic string
-        self.g1num.set("221017300011")
+        self.g1num.set("22100990001111")
         self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=11, justify=CENTER)
 
         geneticString2Label = Label(makerFrame2, text="Genetic String 2")
         self.g2num = StringVar()
-        self.g2num.set("221017300011")
+        self.g2num.set("22100730001111")
         self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=11, justify=CENTER)
 
         stonesLabel = Label(makerFrame, text="Stones")
@@ -1422,7 +1429,7 @@ class ALifeGUI:
 # The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
-    s = ALifeGUI(15, numberOfAgents)
+    numberOfAgents = 1
+    s = ALifeGUI(3, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

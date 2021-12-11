@@ -89,14 +89,14 @@ class ALifeSimTest(object):
         self._placeWaters()
 
         # objects w/ no effect
-        self._placeGrass()
-        self._placeSand()
-        self._placeSnow()
+        # self._placeGrass()
+        # self._placeSand()
+        # self._placeSnow()
 
         # inanimate objects
         # self._placeTreesOnHalf()
         # self._placePits()
-        self._placeMushrooms()
+        # self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
         # self._placeFood()
@@ -613,10 +613,10 @@ class ALifeSimTest(object):
         #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
 
-        if self.time != 24:
-            self.time += 1
-        else:
-            self.time = 0
+        # if self.time != 24:
+        #     self.time += 1
+        # else:
+        #     self.time = 0
 
         self._updateTrees()
         self._updateAgents()
@@ -670,13 +670,21 @@ class ALifeSimTest(object):
         while i < len(self.agentList):
 
             if self.verbose:
-                print("")
-                print("")
                 print("*************** AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ***************")
 
             agent = self.agentList[i]
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = agent._computeAhead(self.gridSize)
+
+            print("Steps until healthy: ", agent.getStepsUntilHealthy())
+
+            if agent.getStepsUntilHealthy() > 0:
+                agent.isSick = True
+                agent.setStepsUntilHealthy(agent.getStepsUntilHealthy() - agent.resistanceVal)
+            if agent.getStepsUntilHealthy() <= 0:
+                agent.isSick = False
+                agent.setStepsUntilHealthy(0)
+
             # print()
             # print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
             # self.printGrid()
@@ -725,7 +733,7 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(10)
 
                 elif action == 'rest':
-                    isOkay = agent.changeEnergy(5)
+                    isOkay = agent.changeEnergy(2)
 
                 elif action == 'attack':
                     self.agentList[i].attackCreature(self, agentR, agentC)
