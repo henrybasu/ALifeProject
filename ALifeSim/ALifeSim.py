@@ -14,6 +14,8 @@ from Sand import *
 from Snow import *
 from Grass import *
 from Mushroom import *
+from Spores import *
+from Seeds import *
 
 class ALifeSimTest(object):
     """An artificial life predator/prey simulation, similar to NetLogo, with agents that each perform their own
@@ -36,6 +38,8 @@ class ALifeSimTest(object):
     numSnows = 0
     numGrass = 0
     numMushrooms = 0
+    numSpores = 0
+    numSeeds = 0
 
     def __init__(self, gridSize, numAgents, numStones, numForests, numRivers, numPonds, geneticStrings):
         """Takes in the side length of the grid, as well as what objects to place in the simulation.
@@ -51,6 +55,8 @@ class ALifeSimTest(object):
         self.numForests = numForests
         self.numPits = 5
         self.numMushrooms = 5
+        self.numSpores = 5
+        self.numSeeds = 0
         #TODO: make this a user input?
         self.numSands = (self.gridSize * self.gridSize) // 100
         self.numSnows = (self.gridSize * self.gridSize) // 100
@@ -67,6 +73,8 @@ class ALifeSimTest(object):
         self.foodList = []
         self.stoneList = []
         self.pitList = []
+        self.sporesList = []
+        self.seedsList = []
         self.grassDict = {}
         self.sandDict = {}
         self.snowDict = {}
@@ -100,6 +108,7 @@ class ALifeSimTest(object):
         # self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
+        self._placeSpores()
         # self._placeFood()
 
         # agent objects
@@ -128,6 +137,14 @@ class ALifeSimTest(object):
     def getPits(self):
         """Returns the list of pit objects"""
         return self.pitList[:]
+
+    def getSpores(self):
+        """Returns the list of pit objects"""
+        return self.sporesList[:]
+
+    def getSeeds(self):
+        """Returns the list of pit objects"""
+        return self.seedsList[:]
 
     def getMushrooms(self):
         """Returns the list of mushroom objects"""
@@ -182,6 +199,24 @@ class ALifeSimTest(object):
             if type(ob) is not Pit:
                 pitsAtList.remove(ob)
         return pitsAtList
+
+    def sporesAt(self, row, col):
+        """Given a row and column, returns a list of the pits at that location."""
+        objectsHereList = self.globalMap[row, col].copy()
+        sporesAtList = objectsHereList.copy()
+        for ob in objectsHereList:
+            if type(ob) is not Spores:
+                sporesAtList.remove(ob)
+        return sporesAtList
+
+    def seedsAt(self, row, col):
+        """Given a row and column, returns a list of the pits at that location."""
+        objectsHereList = self.globalMap[row, col].copy()
+        seedsAtList = objectsHereList.copy()
+        for ob in objectsHereList:
+            if type(ob) is not Seeds:
+                seedsAtList.remove(ob)
+        return seedsAtList
 
     def mushroomAt(self, row, col):
         """Given a row and column, returns a list of the mushrooms at that location."""
@@ -299,6 +334,32 @@ class ALifeSimTest(object):
             nextPit = Pit(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
             self.pitList.append(nextPit)
             self.globalMap[randRow, randCol].append(nextPit)
+
+    def _placeSpores(self):
+        """Places pit objects randomly, avoiding locations where the globalMap already contains something"""
+        for i in range(self.numSpores):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextSpores = Spores(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
+            self.sporesList.append(nextSpores)
+            self.globalMap[randRow, randCol].append(nextSpores)
+
+    def _placeSeeds(self):
+        """Places pit objects randomly, avoiding locations where the globalMap already contains something"""
+        for i in range(self.numSeeds):
+            (randRow, randCol) = self._genRandomLoc()
+            while True:
+                if len(self.globalMap[randRow, randCol]) != 0:
+                    (randRow, randCol) = self._genRandomLoc()
+                else:
+                    break
+            nextSeeds = Seeds(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
+            self.seedsList.append(nextSeeds)
+            self.globalMap[randRow, randCol].append(nextSeeds)
 
     def _placeMushrooms(self):
         """Places mushroom objects randomly, avoiding locations where the globalMap already contains something"""
@@ -910,6 +971,10 @@ class ALifeSimTest(object):
                 return agent.removeSelfFromList(self.mushroomAt(row, col))[0]
             elif len(agent.removeSelfFromList(self.pitAt(row, col))) > 0:
                 return agent.removeSelfFromList(self.pitAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.sporesAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.sporesAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.seedsAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.seedsAt(row, col))[0]
         return None
 
     def _listOfObjectsHere(self, row, col, agent):

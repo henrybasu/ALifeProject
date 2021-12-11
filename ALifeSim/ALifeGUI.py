@@ -58,6 +58,8 @@ class ALifeGUI:
         self.fireImage = PhotoImage(file='images/items/fire.png')
         self.shrubImage = PhotoImage(file='images/items/shrub.png')
         self.shrubFruitImage = PhotoImage(file='images/items/shrub_fruit.png')
+        self.sporesImage = PhotoImage(file='images/items/spores.png')
+        self.seedsImage = PhotoImage(file='images/items/seeds.png')
 
         randomGeneticStrings = []
         randomGeneticStrings.append("21100249000010")
@@ -944,6 +946,8 @@ class ALifeGUI:
                 stones = self.sim.stonesAt(row,col)
                 waters = self.sim.waterAt(row,col)
                 pits = self.sim.pitAt(row,col)
+                spores = self.sim.sporesAt(row,col)
+                seeds = self.sim.seedsAt(row,col)
                 trees = self.sim.treeAt(row,col)
                 grasses = self.sim.grassAt(row,col)
                 sands = self.sim.sandAt(row, col)
@@ -985,6 +989,20 @@ class ALifeGUI:
                     ptId = self.canvas.create_image(coords, image=self.pitImage)
                     self.agentIdToPose[ptId] = pt.getPose()
                     pt.setVisId(ptId)
+
+                for sp in spores:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    spId = self.canvas.create_image(coords, image=self.sporesImage)
+                    self.agentIdToPose[spId] = sp.getPose()
+                    sp.setVisId(spId)
+
+                for se in seeds:
+                    self.canvas.update()
+                    coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+                    seId = self.canvas.create_image(coords, image=self.seedsImage)
+                    self.agentIdToPose[seId] = se.getPose()
+                    se.setVisId(seId)
 
                 for gr in grasses:
                     self.canvas.update()

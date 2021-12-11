@@ -1666,21 +1666,21 @@ class Agent(Object):
     def dropObject(self, sim):
         r,c,h = self.getPose()
         if self.objectConsumed == 0:
-            print("DROPPING OBJECT STONE")
+            print("DROPPING OBJECT NONE")
             nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
             sim.treeList.append(nextTree)
             sim.globalMap[r, c].append(nextTree)
         elif self.objectConsumed == 1:
-            print("DROPPING OBJECT")
+            print("DROPPING OBJECT FOOD SEEDS")
             pass
         elif self.objectConsumed == 2:
-            print("DROPPING OBJECT")
+            print("DROPPING OBJECT BERRY SEEDS")
             pass
         elif self.objectConsumed == 3:
-            print("DROPPING OBJECT")
+            print("DROPPING OBJECT MUSHROOM SPORES")
             pass
         elif self.objectConsumed == 4:
-            print("DROPPING OBJECT")
+            print("DROPPING OBJECT FROM EATEN AGENT")
             pass
 
     def getTypeAbbreviation(self):
