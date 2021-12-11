@@ -1,22 +1,22 @@
 from Object import Object
 
-class Water(Object):
+class Stone(Object):
     """A stone object in the ALife simulation."""
 
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
         """
-        Sets up an agent with a location, energy, geneticString, and step created
+        Sets up stone with a location, geneticString, and step created
         :param initPose: tuple giving stone's initial location
-        :param geneticString: string giving the stone's color
+        :param geneticString: string giving information about the stone
         :param stepSpawned: integer giving the simulation step the stone was created in
         """
         super().__init__()
         self.geneticString = geneticString
-        self.color = 5
         self.row, self.col = initPose
         self.stepSpawned = stepSpawned
 
     def getTypeAbbreviation(self):
-        return "w"
+        """Returns the abbreviation for a stone object, "st"."""
+        return "st"
 
 
