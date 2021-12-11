@@ -117,23 +117,31 @@ class ALifeGUI:
         randomGeneticStrings = []
         try:
             g1number = self.g1num.get()
-            firstString = str(g1number)
-            randomGeneticStrings.append(firstString)
+            if len(g1number) == 14 and g1number.isdecimal():
+                firstString = str(g1number)
+                randomGeneticStrings.append(firstString)
+                # print("1stgeneticstring", firstString)
+            else:
+                print("Choosing randomly for genetic string #1")
         except:
             print("Choosing randomly for genetic string #1")
         try:
             g2number = self.g2num.get()
-            secondString = str(g2number)
-            randomGeneticStrings.append(secondString)
+            if len(g2number) == 14 and g2number.isdecimal():
+                secondString = str(g2number)
+                randomGeneticStrings.append(secondString)
+                # print("2ndgeneticstring", secondString)
+            else:
+                print("Choosing randomly for genetic string #2")
         except:
             print("Choosing randomly for genetic string #2")
 
         #IF user inputs x, choose randomly
         #TODO: what if user inputs something else that is not 12 digits?
-        if len(randomGeneticStrings) == 2:
-            if randomGeneticStrings[0] == "x" and randomGeneticStrings[1] == "x":
-                print("choosing all genetic strings randomly")
-                randomGeneticStrings = []
+        # if len(randomGeneticStrings) == 2:
+        #     if randomGeneticStrings[0] == "x" and randomGeneticStrings[1] == "x":
+        #         print("choosing all genetic strings randomly")
+        #         randomGeneticStrings = []
 
         for n in range(self.numberAgents - len(randomGeneticStrings)):
             randomVision = str(random.randint(1, 2))
