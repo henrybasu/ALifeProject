@@ -117,23 +117,31 @@ class ALifeGUI:
         randomGeneticStrings = []
         try:
             g1number = self.g1num.get()
-            firstString = str(g1number)
-            randomGeneticStrings.append(firstString)
+            if len(g1number) == 14 and g1number.isdecimal():
+                firstString = str(g1number)
+                randomGeneticStrings.append(firstString)
+                # print("1stgeneticstring", firstString)
+            else:
+                print("Choosing randomly for genetic string #1")
         except:
             print("Choosing randomly for genetic string #1")
         try:
             g2number = self.g2num.get()
-            secondString = str(g2number)
-            randomGeneticStrings.append(secondString)
+            if len(g2number) == 14 and g2number.isdecimal():
+                secondString = str(g2number)
+                randomGeneticStrings.append(secondString)
+                # print("2ndgeneticstring", secondString)
+            else:
+                print("Choosing randomly for genetic string #2")
         except:
             print("Choosing randomly for genetic string #2")
 
         #IF user inputs x, choose randomly
         #TODO: what if user inputs something else that is not 12 digits?
-        if len(randomGeneticStrings) == 2:
-            if randomGeneticStrings[0] == "x" and randomGeneticStrings[1] == "x":
-                print("choosing all genetic strings randomly")
-                randomGeneticStrings = []
+        # if len(randomGeneticStrings) == 2:
+        #     if randomGeneticStrings[0] == "x" and randomGeneticStrings[1] == "x":
+        #         print("choosing all genetic strings randomly")
+        #         randomGeneticStrings = []
 
         for n in range(self.numberAgents - len(randomGeneticStrings)):
             randomVision = str(random.randint(1, 2))
@@ -256,12 +264,13 @@ class ALifeGUI:
         sampleString = ""
         #TODO: make this length of genetic string
         self.g1num.set("22100990001111")
-        self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=13, justify=CENTER)
+        widthOfGeneticStringInput = len(self.g1num.get())-1
+        self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=widthOfGeneticStringInput, justify=CENTER)
 
         geneticString2Label = Label(makerFrame2, text="Genetic String 2")
         self.g2num = StringVar()
         self.g2num.set("22100730001111")
-        self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=13, justify=CENTER)
+        self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=widthOfGeneticStringInput, justify=CENTER)
 
         stonesLabel = Label(makerFrame, text="Stones")
         self.stonesNum = IntVar()
@@ -711,6 +720,14 @@ class ALifeGUI:
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
 
+            newColor = self.tintColor(agent)
+            # print("NEWCOLOR", newColor)
+
+            if agent.isSick:
+                agOutlineType = (3, 5)
+            else:
+                agOutlineType = (1, 1)
+
             if agent.getVisId() is None:
                 offsetCoords = self._determineAgentCoords(agent)
 
@@ -721,16 +738,16 @@ class ALifeGUI:
 
                 coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
                 if self.sim.gridSize >= 10:
-                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, dash=agOutlineType, fill=newColor, width=(20/self.sim.gridSize))
                 else:
-                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor,width=(2))
+                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, dash=agOutlineType, fill=newColor,width=(2))
                 self.agentIdToPose[agId] = agent.getPose()
                 agent.setVisId(agId)
 
                 # print("BABY ID: " + str(agent.getVisId()))
 
             id = agent.getVisId()
-            self.canvas.itemconfig(id, fill=agColor)
+            self.canvas.itemconfig(id, fill=newColor, dash=agOutlineType)
 
             # (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
             (newRow, newCol, newHead) = agent.getPose()
@@ -1029,11 +1046,22 @@ class ALifeGUI:
                         agOutlineColor = "red"
                     else:
                         agOutlineColor = "blue"
-                    coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                    if self.sim.gridSize >= 10:
-                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+
+                    if ag.isSick:
+                        agOutlineType = (3,5)
                     else:
-                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(2))
+                        agOutlineType= (1,1)
+
+                    coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+
+                    # print(agColor)
+                    newColor = self.tintColor(ag)
+                    # print(newColor)
+
+                    if self.sim.gridSize >= 10:
+                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, dash=agOutlineType, fill=newColor, width=(20/self.sim.gridSize))
+                    else:
+                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, dash=agOutlineType, fill=newColor,width=(2))
                     self.agentIdToPose[agId] = ag.getPose()
                     ag.setVisId(agId)
 
@@ -1176,6 +1204,12 @@ class ALifeGUI:
             return 'pink'
         elif color == 0:
             return 'gray'
+
+    def tintColor(self, agent):
+        # if agent.isSick:
+        #     return 'white'
+        # else:
+        return agent.colorNumberToText(agent.getColor())
 
     def _UpdateAgentColor(self, color, energy):
         """Returns an agent's color based on its energy and color attribute."""
