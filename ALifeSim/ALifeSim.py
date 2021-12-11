@@ -97,7 +97,7 @@ class ALifeSimTest(object):
         # inanimate objects
         # self._placeTreesOnHalf()
         # self._placePits()
-        # self._placeMushrooms()
+        self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
         # self._placeFood()
@@ -624,6 +624,7 @@ class ALifeSimTest(object):
         #     self.time = 0
 
         self._updateTrees()
+        self._updateMushrooms()
         self._updateAgents()
 
         # for i in range(len(self.agentList)):
@@ -661,6 +662,19 @@ class ALifeSimTest(object):
                 tree.setHasFood("1")
                 # TODO: WHy can't we call this from the tree V ???
                 tree.setStepsUntilBloom(random.randint(10,40))
+
+            i = i + 1
+
+    def _updateMushrooms(self):
+        """Keeps track of when a tree should bloom, and makes them bloom when needed."""
+        i = 0
+        while i < len(self.mushroomList):
+            currentMushroom = self.mushroomList[i]
+            r, c = currentMushroom.getPose()
+            if currentMushroom.getStepsUntilGrowth() > 0:
+                currentMushroom.setStepsUntilGrowth(currentMushroom.getStepsUntilGrowth() - 1)
+            if currentMushroom.getStepsUntilGrowth() == 0:
+                currentMushroom.setDroppingType(1)
 
             i = i + 1
 

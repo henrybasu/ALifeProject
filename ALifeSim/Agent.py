@@ -72,7 +72,7 @@ class Agent(Object):
         self.mushroomInfluence = 0
         self.stepsUntilNoMushroomInfluence = 0
 
-        self.objectConsumed = 3
+        self.objectConsumed = 0
         """
         0 - Nothing
         1 - Food
@@ -1677,9 +1677,9 @@ class Agent(Object):
             print("DROPPING OBJECT BERRY SEEDS")
             pass
         elif self.objectConsumed == 3:
-            # nextSpores = Spores(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
-            # sim.sporesList.append(nextSpores)
-            # sim.globalMap[r, c].append(nextSpores)
+            nextMushroom = Mushroom(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
+            sim.mushroomList.append(nextMushroom)
+            sim.globalMap[r, c].append(nextMushroom)
             print("DROPPING OBJECT MUSHROOM SPORES")
             pass
         elif self.objectConsumed == 4:

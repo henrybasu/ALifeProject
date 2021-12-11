@@ -63,7 +63,7 @@ class ALifeGUI:
 
         randomGeneticStrings = []
         randomGeneticStrings.append("21100249000010")
-        randomGeneticStrings.append("11100449000009")
+        randomGeneticStrings.append("11000449000009")
         randomGeneticStrings.append("11100449000005")
         randomGeneticStrings.append("11100449000005")
         randomGeneticStrings.append("11100449000005")
@@ -733,6 +733,53 @@ class ALifeGUI:
             #     self.agentIdToPose[trId] = tr.getPose()
             #     tr.setVisId(trId)
 
+        for mu in self.sim.getMushrooms():
+            (newRow, newCol) = mu.getPose()
+            # print("New coords:",newRow,newCol)
+            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+
+            if mu.getVisId() is None:
+                mu.setDroppingType(0)
+                if mu.getDroppingType() == 0:
+                    muId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.sporesImage)
+                    self.agentIdToPose[muId] = mu.getPose()
+                    mu.setVisId(muId)
+                    self.canvas.lift(muId)
+                    mu.setJustChanged(False)
+                elif mu.getDroppingType() == 1:
+                    muId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.mushroomImage)
+                    self.agentIdToPose[muId] = mu.getPose()
+                    mu.setVisId(muId)
+                    self.canvas.lift(muId)
+                    mu.setJustChanged(False)
+
+            # finds tree tkinter object id
+            id = mu.getVisId()
+            print(id)
+
+            # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
+            # self.canvas.create_image(x1, y1, image=self.ghostImage)
+            # ghostGuy = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.ghostImage)
+            # tr.setVisId(ghostGuy)
+            # self.canvas.lift(ghostGuy)
+
+            if mu.getDroppingType() == 0 and mu.justChanged == True:
+                # deletes the object
+                self.canvas.delete(id)
+                muId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.sporesImage)
+                self.agentIdToPose[muId] = mu.getPose()
+                mu.setVisId(muId)
+                self.canvas.lift(muId)
+                mu.setJustChanged(False)
+            elif mu.getDroppingType() == 1 and mu.justChanged == True:
+                # deletes the object
+                self.canvas.delete(id)
+                muId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.mushroomImage)
+                self.agentIdToPose[muId] = mu.getPose()
+                mu.setVisId(muId)
+                self.canvas.lift(muId)
+                mu.setJustChanged(False)
+
         for agent in self.sim.getAgents():
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
@@ -1012,9 +1059,14 @@ class ALifeGUI:
                 for mu in mushrooms:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    muId = self.canvas.create_image(coords, image=self.mushroomImage)
-                    self.agentIdToPose[muId] = mu.getPose()
-                    mu.setVisId(muId)
+                    if mu.getDroppingType() == 0:
+                        muId = self.canvas.create_image(coords, image=self.sporesImage)
+                        self.agentIdToPose[muId] = mu.getPose()
+                        mu.setVisId(muId)
+                    elif mu.getDroppingType() == 1:
+                        muId = self.canvas.create_image(coords, image=self.mushroomImage)
+                        self.agentIdToPose[muId] = mu.getPose()
+                        mu.setVisId(muId)
 
                 # for ap in apples:
                 #     self.canvas.update()

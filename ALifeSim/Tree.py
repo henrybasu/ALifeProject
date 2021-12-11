@@ -13,12 +13,13 @@ class Tree(Object):
         """
         super().__init__()
         self.geneticString = geneticString
-        self.hasFood = geneticString[0]
         self.row,self.col = initPose
         self.stepSpawned = stepSpawned
+
+        self.hasFood = geneticString[0]
         self.justChanged = False
-        # self.stepsUntilBloom = random.randint(5,40)
-        self.stepsUntilBloom = 500
+        self.stepsUntilBloom = random.randint(5,40)
+        # self.stepsUntilBloom = 500
         
     def getHasFood(self):
         """Returns 0 if the tree currently has no food, 1 if the tree currently has food."""
