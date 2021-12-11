@@ -14,9 +14,17 @@ class Mushroom(Object):
         self.geneticString = geneticString
         self.row,self.col = initPose
         self.stepSpawned = stepSpawned
+        self.typeOfMushroom = self.geneticString[0]
 
     def getTypeAbbreviation(self):
         """Returns the abbreviation for a mushroom object, "m"."""
         return "m"
+
+    def getTypeOfMushroom(self):
+        return self.typeOfMushroom
+
+    def setTypeOfMushroom(self, newVal):
+        self.typeOfMushroom = newVal
+
 
 
