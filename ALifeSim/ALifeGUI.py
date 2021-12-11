@@ -264,12 +264,13 @@ class ALifeGUI:
         sampleString = ""
         #TODO: make this length of genetic string
         self.g1num.set("22100990001111")
-        self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=13, justify=CENTER)
+        widthOfGeneticStringInput = len(self.g1num.get())-1
+        self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=widthOfGeneticStringInput, justify=CENTER)
 
         geneticString2Label = Label(makerFrame2, text="Genetic String 2")
         self.g2num = StringVar()
         self.g2num.set("22100730001111")
-        self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=13, justify=CENTER)
+        self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=widthOfGeneticStringInput, justify=CENTER)
 
         stonesLabel = Label(makerFrame, text="Stones")
         self.stonesNum = IntVar()
