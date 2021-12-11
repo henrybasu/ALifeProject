@@ -720,6 +720,9 @@ class ALifeGUI:
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
 
+            newColor = self.tintColor(agent)
+            print("NEWCOLOR", newColor)
+
             if agent.getVisId() is None:
                 offsetCoords = self._determineAgentCoords(agent)
 
@@ -730,16 +733,16 @@ class ALifeGUI:
 
                 coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
                 if self.sim.gridSize >= 10:
-                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=newColor, width=(20/self.sim.gridSize))
                 else:
-                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor,width=(2))
+                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=newColor,width=(2))
                 self.agentIdToPose[agId] = agent.getPose()
                 agent.setVisId(agId)
 
                 # print("BABY ID: " + str(agent.getVisId()))
 
             id = agent.getVisId()
-            self.canvas.itemconfig(id, fill=agColor)
+            self.canvas.itemconfig(id, fill=newColor)
 
             # (oldRow, oldCol, oldHead) = self.agentIdToPose[id]
             (newRow, newCol, newHead) = agent.getPose()
@@ -1039,10 +1042,15 @@ class ALifeGUI:
                     else:
                         agOutlineColor = "blue"
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
+
+                    # print(agColor)
+                    newColor = self.tintColor(ag)
+                    # print(newColor)
+
                     if self.sim.gridSize >= 10:
-                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=newColor, width=(20/self.sim.gridSize))
                     else:
-                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor,width=(2))
+                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=newColor,width=(2))
                     self.agentIdToPose[agId] = ag.getPose()
                     ag.setVisId(agId)
 
@@ -1185,6 +1193,12 @@ class ALifeGUI:
             return 'pink'
         elif color == 0:
             return 'gray'
+
+    def tintColor(self, agent):
+        if agent.isSick:
+            return 'purple'
+        else:
+            return agent.colorNumberToText(agent.getColor())
 
     def _UpdateAgentColor(self, color, energy):
         """Returns an agent's color based on its energy and color attribute."""
