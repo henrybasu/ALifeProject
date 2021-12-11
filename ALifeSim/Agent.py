@@ -1264,15 +1264,13 @@ class Agent(Object):
         print("isSick: ", self.isSick)
         print("Mushroom influence: ", self.mushroomInfluence)
 
-        if self.mushroomInfluence == 1:
-            pass
-        elif self.mushroomInfluence == 2:
+        if self.mushroomInfluence == 2:
             return 'pause'
         elif self.mushroomInfluence == 3:
             #random movement
             return listOfPossibleActions
-        elif self.mushroomInfluence == 4:
-            self.changeEnergy(-5)
+        # elif self.mushroomInfluence == 4:
+        #     self.changeEnergy(-5)
 
         if self.isAwake(self.sleepValue, time) == "awake":
 
