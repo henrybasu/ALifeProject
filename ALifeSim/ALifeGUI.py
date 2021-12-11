@@ -409,19 +409,6 @@ class ALifeGUI:
         # print(self.testing)
         # print(self.sim.time)
         timeImages = [
-            self.sunNoonImage,
-            self.sunOneImage,
-            self.sunTwoImage,
-            self.sunThreeImage,
-            self.sunFourImage,
-            self.sunFiveImage,
-            self.sunSixImage,
-
-            self.moonSevenImage,
-            self.moonEightImage,
-            self.moonNineImage,
-            self.moonTenImage,
-            self.moonElevenImage,
             self.moonMidnightImage,
             self.moonOneImage,
             self.moonTwoImage,
@@ -434,7 +421,20 @@ class ALifeGUI:
             self.sunEightImage,
             self.sunNineImage,
             self.sunTenImage,
-            self.sunElevenImage
+            self.sunElevenImage,
+            self.sunNoonImage,
+            self.sunOneImage,
+            self.sunTwoImage,
+            self.sunThreeImage,
+            self.sunFourImage,
+            self.sunFiveImage,
+            self.sunSixImage,
+
+            self.moonSevenImage,
+            self.moonEightImage,
+            self.moonNineImage,
+            self.moonTenImage,
+            self.moonElevenImage
         ]
 
         stepsLabel = tkinter.Label(timeBoxFrame, image=timeImages[self.sim.time-1])
