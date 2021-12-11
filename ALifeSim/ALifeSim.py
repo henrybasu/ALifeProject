@@ -626,13 +626,14 @@ class ALifeSimTest(object):
         self._updateTrees()
         self._updateAgents()
 
-        print("--------------------------------------------------------------------------------------------")
+        # for i in range(len(self.agentList)):
+            # print("\n\n")
+            # print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+            # print("~~~~~~~~~ Energy After Step ~~~~~~~~~")
+            # print("   ", self.agentList[i].getEnergy())
+            # print("--------------------------------------")
 
-        for i in range(len(self.agentList)):
-            print("\n\n")
-            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
-            print("~ Energy ~")
-            print("   ", self.agentList[i].getEnergy())
+        print("--------------------------------------------------------------------------------------------")
         #     print(self.agentList)
         #     print(self.getDeadAgents())
         #     print("~ Vision ~")
@@ -681,6 +682,7 @@ class ALifeSimTest(object):
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = agent._computeAhead(self.gridSize)
 
+            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
             print("Steps until healthy: ", agent.getStepsUntilHealthy())
 
             if agent.getStepsUntilHealthy() > 0:
@@ -770,8 +772,6 @@ class ALifeSimTest(object):
                     self.globalMap[rAhead, cAhead].append(agent)
                     # print("globalMap after removing AND adding:")
                     # self.printGrid()
-                    print('-----------')
-
                     # print("globalMap after removing AND adding:",self.globalMap)
                     agentR, agentC = rAhead, cAhead
                     isOkay = agent.changeEnergy(-1)
@@ -801,6 +801,10 @@ class ALifeSimTest(object):
 
                 if agent.getReadyToBreed() != 0:
                     agent.changeReadyToBreed(1)
+
+                print("~~~~~~~~~ Energy After Step ~~~~~~~~~")
+                print("   ", self.agentList[i].getEnergy())
+                print("----------------------------------------------------------------------------")
 
             # for j in range(len(self.agentList)-1):
             #     print("AGENT 1 ID: ", self.agentList[j].getVisId)

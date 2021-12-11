@@ -577,7 +577,7 @@ class Agent(Object):
         objectHere = sim._listOfObjectsHere(ownX, ownY, self)
         # list of objects without the current agent
         objectHere = self.removeSelfFromList(objectHere)
-        print(objectHere)
+        print("Here List:", objectHere)
         # Might not need this -------- ^^^^
 
         if not self.canSwim:
@@ -1261,8 +1261,8 @@ class Agent(Object):
         """Starts with an initial list of actions, decides which ones are still viable options after checking here,
         checking vision, and checking smell, and chooses a random action from the remaining viable choices."""
         listOfPossibleActions = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-
-        print("Mushroom influence", self.mushroomInfluence)
+        print("isSick: ", self.isSick)
+        print("Mushroom influence: ", self.mushroomInfluence)
 
         if self.mushroomInfluence == 1:
             pass
