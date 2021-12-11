@@ -113,6 +113,9 @@ class Agent(Object):
         """Returns the number of steps until the agent is ready to breed."""
         return self.readyToBreed
 
+    def getIsSick(self):
+        return self.isSick
+
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
         # print("before updating pos",self)
@@ -570,6 +573,9 @@ class Agent(Object):
 
         # if standing on agent
         if len(self.removeSelfFromList(sim.agentsAt(ownX, ownY))) > 0:
+            if self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getIsSick() is True:
+                self.isSick = True
+                self.setStepsUntilHealthy(random.randint(5, 30))
             # the agent is a friend
             if self.getColor() == self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getColor():
                 print("Time to breed")
