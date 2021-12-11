@@ -1033,7 +1033,7 @@ class ALifeGUI:
                     if self.sim.gridSize >= 10:
                         agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
                     else:
-                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor,width=(2))
+                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(2))
                     self.agentIdToPose[agId] = ag.getPose()
                     ag.setVisId(agId)
 
