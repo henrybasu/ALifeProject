@@ -277,7 +277,7 @@ class ALifeGUI:
         self.numPonds = Entry(makerFrame, textvariable=self.pondsNum, width=4, justify=CENTER)
 
         # self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
-        self.gridButton = Button(makerFrame3, text="New Simulation", command=self.resetGridWorld)
+        self.gridButton = Button(makerFrame3, text="Generate New Simulation", command=self.resetGridWorld)
         self.gridButton.grid(row=3, column=2, columnspan=2, pady=5)
 
         sizeLabel1.grid(row=1, column=1)
@@ -324,8 +324,8 @@ class ALifeGUI:
         You can also choose how many steps should happen for each click of the "step" button."""
         simFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
         simFrame.grid(row=2, column=1, padx=5, pady=5)
-        simTitle = Label(simFrame, text="Run config", font="Arial 16 bold")
-        simTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
+        simTitle = Label(simFrame, text="Run Config", font="Arial 16 bold")
+        simTitle.grid(row=0, column=2, columnspan=2, padx=5, pady=5)
 
         # Sets the maximum
         stepsLabel = Label(simFrame, text="Max sim steps")
