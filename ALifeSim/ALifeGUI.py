@@ -59,12 +59,12 @@ class ALifeGUI:
         self.shrubImage = PhotoImage(file='images/items/shrub.png')
         self.shrubFruitImage = PhotoImage(file='images/items/shrub_fruit.png')
 
-        # randomGeneticStrings = []
-        # randomGeneticStrings.append("221017300011")
-        # randomGeneticStrings.append("021003990011")
-        # randomGeneticStrings.append("111002990011")
-        # randomGeneticStrings.append("121106990011")
-        # randomGeneticStrings.append("121008990011")
+        randomGeneticStrings = []
+        randomGeneticStrings.append("11100449000011")
+        randomGeneticStrings.append("11100449000005")
+        randomGeneticStrings.append("11100449000005")
+        randomGeneticStrings.append("11100449000005")
+        randomGeneticStrings.append("11100449000005")
         #
         # randomGeneticStrings.append("12110199001")
         # randomGeneticStrings.append("12110399001")
@@ -98,7 +98,7 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
-        randomGeneticStrings = self.generateRandomGeneticStrings()
+        # randomGeneticStrings = self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
@@ -640,9 +640,6 @@ class ALifeGUI:
                 patchId = self.posToPatchId[row, col]
                 self.canvas.itemconfig(patchId, fill=cellColor, outline=cellColor)
 
-        if len(self.sim.getAgents()) == 0:
-            return False
-
         # for object in self.sim.getObjects():
         #     #TODO: Double-check this code to place objects in the GUI / is it necessary (since objects don't move)
         #     obColor = object.colorNumberToText(object.getColor())
@@ -789,6 +786,9 @@ class ALifeGUI:
             deadAgent[0].setVisId(ghostGuy)
             self.canvas.lift(ghostGuy)
 
+
+        if len(self.sim.getAgents()) == 0:
+            return False
 
         self.currSteps += 1
         self.currStepsText.set(self.currSteps)
@@ -1469,7 +1469,7 @@ class ALifeGUI:
 # The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 1
-    s = ALifeGUI(3, numberOfAgents)
+    numberOfAgents = 5
+    s = ALifeGUI(10, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

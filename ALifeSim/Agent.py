@@ -79,7 +79,8 @@ class Agent(Object):
             self.canScavenge = True
         if self.sickVal == 1:
             self.isSick = True
-            sicknessLength = random.randint(5, 30)
+            # TODO: make this scale by gridsize
+            sicknessLength = random.randint(10, 50)
             self.setStepsUntilHealthy(sicknessLength)
             print("Sickness length: ", sicknessLength)
 
@@ -128,8 +129,19 @@ class Agent(Object):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
         or below: the agent "dies" in that case."""
         if self.isSick:
+
+            randomInt = random.randint(0, 100)
+            chanceOfSurviving = .5-(self.resistanceVal*.05)
+
+            if randomInt < chanceOfSurviving * 100:
+                changeVal = -1000
+
+
+
             if changeVal < 0:
                 changeVal = changeVal * 2
+
+
         self.energy += changeVal
         if self.energy <= 0:
             return False
