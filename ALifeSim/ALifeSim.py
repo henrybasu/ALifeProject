@@ -925,7 +925,7 @@ class ALifeSimTest(object):
             if (mushroomTypeEaten == 1):
                 # print("SICK")
                 agent.isSick = True
-                agent.setStepsUntilHealthy(20)
+                agent.setStepsUntilHealthy(random.randint(10, 50))
             for ob in self.globalMap[row, col]:
                 if type(ob) is Mushroom:
                     self.globalMap[row, col].remove(ob)
