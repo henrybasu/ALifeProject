@@ -256,12 +256,12 @@ class ALifeGUI:
         sampleString = ""
         #TODO: make this length of genetic string
         self.g1num.set("22100990001111")
-        self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=11, justify=CENTER)
+        self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=13, justify=CENTER)
 
         geneticString2Label = Label(makerFrame2, text="Genetic String 2")
         self.g2num = StringVar()
         self.g2num.set("22100730001111")
-        self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=11, justify=CENTER)
+        self.numg2 = Entry(makerFrame2, textvariable=self.g2num, width=13, justify=CENTER)
 
         stonesLabel = Label(makerFrame, text="Stones")
         self.stonesNum = IntVar()
@@ -720,7 +720,10 @@ class ALifeGUI:
                     agentOutlineColor = "blue"
 
                 coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+                if self.sim.gridSize >= 10:
+                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+                else:
+                    agId = self.canvas.create_polygon(coords, outline=agentOutlineColor, fill=agColor,width=(2))
                 self.agentIdToPose[agId] = agent.getPose()
                 agent.setVisId(agId)
 
@@ -1027,7 +1030,10 @@ class ALifeGUI:
                     else:
                         agOutlineColor = "blue"
                     coords = [(x1 + x, y1 + y) for (x, y) in offsetCoords]
-                    agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+                    if self.sim.gridSize >= 10:
+                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor, width=(20/self.sim.gridSize))
+                    else:
+                        agId = self.canvas.create_polygon(coords, outline=agOutlineColor, fill=agColor,width=(2))
                     self.agentIdToPose[agId] = ag.getPose()
                     ag.setVisId(agId)
 
