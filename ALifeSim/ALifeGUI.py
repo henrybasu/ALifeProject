@@ -733,6 +733,88 @@ class ALifeGUI:
             #     self.agentIdToPose[trId] = tr.getPose()
             #     tr.setVisId(trId)
 
+        for sp in self.sim.getSpores():
+            (newRow, newCol) = sp.getPose()
+            # print("New coords:",newRow,newCol)
+            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+
+            # print("TREE IN GUI")
+            if sp.getVisId() is None:
+                spId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.sporesImage)
+                self.agentIdToPose[spId] = sp.getPose()
+                sp.setVisId(spId)
+                self.canvas.lift(spId)
+
+            # finds tree tkinter object id
+            # id = sp.getVisId()
+            # print(id)
+
+        for tr in self.sim.getTrees():
+            (newRow, newCol) = tr.getPose()
+            # print("New coords:",newRow,newCol)
+            (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
+
+            # print("TREE IN GUI")
+            if tr.getVisId() is None:
+                if tr.getHasFood() == "0":
+                    # print("NO FOOD")
+                    trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeImage)
+                    self.agentIdToPose[trId] = tr.getPose()
+                    tr.setVisId(trId)
+                    self.canvas.lift(trId)
+                    tr.setJustChangedBloom(False)
+                elif tr.getHasFood() == "1":
+                    # print("FOOD")
+                    trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeFruitImage)
+                    self.agentIdToPose[trId] = tr.getPose()
+                    tr.setVisId(trId)
+                    self.canvas.lift(trId)
+                    tr.setJustChangedBloom(False)
+
+            # finds tree tkinter object id
+            id = tr.getVisId()
+            print(id)
+
+            # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
+            # self.canvas.create_image(x1, y1, image=self.ghostImage)
+            # ghostGuy = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.ghostImage)
+            # tr.setVisId(ghostGuy)
+            # self.canvas.lift(ghostGuy)
+
+            if tr.getHasFood() == '0' and tr.justChanged == True:
+                # deletes the object
+                self.canvas.delete(id)
+                trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeImage)
+                self.agentIdToPose[trId] = tr.getPose()
+                tr.setVisId(trId)
+                self.canvas.lift(trId)
+                tr.setJustChangedBloom(False)
+            elif tr.getHasFood() == '1' and tr.justChanged == True:
+                # deletes the object
+                self.canvas.delete(id)
+                trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeFruitImage)
+                self.agentIdToPose[trId] = tr.getPose()
+                tr.setVisId(trId)
+                self.canvas.lift(trId)
+                tr.setJustChangedBloom(False)
+
+            # self.canvas.update()
+            # treeRow,treeCol = tr.getPose()
+            # # finds tree's current tkinter object id
+            # currentId = tr.getVisId()
+            # # deletes the object
+            # self.canvas.delete(currentId)
+            # self.canvas.update()
+            # coords = [(x1 + x2) / 2, (y1 + y2) / 2]
+            # if tr.getHasFood() == '0':
+            #     trId = self.canvas.create_image(coords, image=self.treeImage)
+            #     self.agentIdToPose[trId] = tr.getPose()
+            #     tr.setVisId(trId)
+            # elif tr.getHasFood() == '1':
+            #     trId = self.canvas.create_image(coords, image=self.treeFruitImage)
+            #     self.agentIdToPose[trId] = tr.getPose()
+            #     tr.setVisId(trId)
+
         for agent in self.sim.getAgents():
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())

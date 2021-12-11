@@ -7,6 +7,8 @@ from Water import Water
 from Food import Food
 from Pit import Pit
 from Mushroom import Mushroom
+from Spores import Spores
+from Seeds import Seeds
 
 class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its attributes and behavior,
@@ -72,7 +74,7 @@ class Agent(Object):
         self.mushroomInfluence = 0
         self.stepsUntilNoMushroomInfluence = 0
 
-        self.objectConsumed = 0
+        self.objectConsumed = 3
         """
         0 - Nothing
         1 - Food
@@ -1667,9 +1669,9 @@ class Agent(Object):
         r,c,h = self.getPose()
         if self.objectConsumed == 0:
             print("DROPPING OBJECT NONE")
-            nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
-            sim.treeList.append(nextTree)
-            sim.globalMap[r, c].append(nextTree)
+            # nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
+            # sim.treeList.append(nextTree)
+            # sim.globalMap[r, c].append(nextTree)
         elif self.objectConsumed == 1:
             print("DROPPING OBJECT FOOD SEEDS")
             pass
@@ -1677,6 +1679,9 @@ class Agent(Object):
             print("DROPPING OBJECT BERRY SEEDS")
             pass
         elif self.objectConsumed == 3:
+            nextSpores = Spores(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
+            sim.sporesList.append(nextSpores)
+            sim.globalMap[r, c].append(nextSpores)
             print("DROPPING OBJECT MUSHROOM SPORES")
             pass
         elif self.objectConsumed == 4:

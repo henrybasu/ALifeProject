@@ -1,6 +1,7 @@
 from Object import Object
+from Mushroom import *
 
-class Spores(Object):
+class Spores(Mushroom):
     """A pit object in the ALife simulation."""
     def __init__(self, initPose = (0, 0), geneticString = "0", stepSpawned=0):
         """
