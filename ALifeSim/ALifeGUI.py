@@ -263,7 +263,7 @@ class ALifeGUI:
         self.g1num = StringVar()
         sampleString = ""
         #TODO: make this length of genetic string
-        self.g1num.set("22100990001111")
+        self.g1num.set("02100949000000")
         widthOfGeneticStringInput = len(self.g1num.get())-1
         self.numg1 = Entry(makerFrame2, textvariable=self.g1num, width=widthOfGeneticStringInput, justify=CENTER)
 
@@ -770,6 +770,11 @@ class ALifeGUI:
             # ghostGuy = self.canvas.create_image((x1 + x2)/2, (y1 + y2) / 2, image=self.ghostImage)
             # self.canvas.lift(ghostGuy)
 
+        for eatenMushrooms in self.sim.getEatenMushrooms():
+            # finds eaten mushroom tkinter object id
+            id = eatenMushrooms[0].getVisId()
+            self.canvas.delete(id)
+
         for deadAgent in self.sim.getDeadAgents():
             # finds dead agent tkinter object id
             id = deadAgent[0].getVisId()
@@ -913,8 +918,6 @@ class ALifeGUI:
         for row in range(self.gridDim):
             for col in range(self.gridDim):
                 (x1, y1, x2, y2) = self._posToCoords(row, col)
-                food = self.sim.foodAt(row, col)
-
                 cellColor = self._determinePatchColor()
                 currId = self.canvas.create_rectangle(x1, y1, x2, y2, fill=cellColor, outline=cellColor)
                 self.patchIdToPos[currId] = (row, col)
@@ -1469,7 +1472,7 @@ class ALifeGUI:
 # The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 5
-    s = ALifeGUI(10, numberOfAgents)
+    numberOfAgents = 1
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

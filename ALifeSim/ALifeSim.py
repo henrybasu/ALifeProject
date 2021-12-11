@@ -20,7 +20,7 @@ class ALifeSimTest(object):
     set of behaviors. Each cell can have objects on it, and agents base their actions on detected objects.
     Each agent has a genetic string that determines their characteristics such as behavior patterns and energy level."""
 
-    FOOD_PERCENT = 0.01
+    FOOD_PERCENT = 0.1
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
@@ -76,6 +76,7 @@ class ALifeSimTest(object):
         self.agentList = []
         self.deadAgents = []
         self.eatenFood = []
+        self.eatenMushrooms = []
         self.agentList = []
         self.stepNum = 0
         self.verbose = False
@@ -96,7 +97,7 @@ class ALifeSimTest(object):
         # inanimate objects
         # self._placeTreesOnHalf()
         # self._placePits()
-        # self._placeMushrooms()
+        self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
         # self._placeFood()
@@ -159,6 +160,10 @@ class ALifeSimTest(object):
     def getEatenFood(self):
         """Returns a list of the food eaten."""
         return self.eatenFood[:]
+
+    def getEatenMushrooms(self):
+        """Returns a list of the mushrooms eaten."""
+        return self.eatenMushrooms[:]
 
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
@@ -304,7 +309,7 @@ class ALifeSimTest(object):
                     (randRow, randCol) = self._genRandomLoc()
                 else:
                     break
-            nextMushroom = Mushroom(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
+            nextMushroom = Mushroom(initPose=(randRow, randCol), geneticString=random.choice(["0","1","2","3","4"]), stepSpawned=self.stepNum)
             self.mushroomList.append(nextMushroom)
             self.globalMap[randRow, randCol].append(nextMushroom)
 
@@ -723,7 +728,7 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(-1)
 
                 elif action == 'eat':
-                    self.eatFood(agentR, agentC)
+                    self.eatItem(agentR, agentC)
                     isOkay = agent.changeEnergy(50)
 
                 elif action == 'eatBerries':
@@ -825,6 +830,7 @@ class ALifeSimTest(object):
 
     def _assessFood(self, row, col):
         """Given a row and column, examine the food there, and return 3 if food exists there."""
+        #TODO: do we need this function?
         foodAmt = self.foodAt(row, col)
         if len(foodAmt) > 0:
             return 3
@@ -877,6 +883,10 @@ class ALifeSimTest(object):
                 return agent.removeSelfFromList(self.foodAt(row, col))[0]
             elif len(agent.removeSelfFromList(self.waterAt(row, col))) > 0:
                 return agent.removeSelfFromList(self.waterAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.mushroomAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.mushroomAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.pitAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.pitAt(row, col))[0]
         return None
 
     def _listOfObjectsHere(self, row, col, agent):
@@ -884,7 +894,7 @@ class ALifeSimTest(object):
         listOfObjects = self.globalMap[row, col].copy()
         return listOfObjects
 
-    def eatFood(self, row, col):
+    def eatItem(self, row, col):
         """Removes a food object from a location on the global map."""
         foodAtCell = self.foodAt(row, col)
         if len(foodAtCell) > 0:
@@ -892,10 +902,18 @@ class ALifeSimTest(object):
             for ob in self.globalMap[row, col]:
                 if type(ob) is Food:
                     self.globalMap[row, col].remove(ob) #TODO: what if there is something else on that square other than food?
-
             for i in range(len(self.foodList)):
                 if foodAtCell == self.foodList[i]:
                     self.foodList.pop(i)
+        mushroomsAtCell = self.mushroomAt(row, col)
+        if len(mushroomsAtCell) > 0:
+            self.eatenMushrooms.append(mushroomsAtCell)
+            for ob in self.globalMap[row, col]:
+                if type(ob) is Mushroom:
+                    self.globalMap[row, col].remove(ob)
+            for i in range(len(self.mushroomList)):
+                if mushroomsAtCell == self.mushroomList[i]:
+                    self.mushroomList.pop(i)
 
     def makeABaby(self, agent1, agent2):
         """Takes in two agents and produces a baby agent with a combination of their genetic strings

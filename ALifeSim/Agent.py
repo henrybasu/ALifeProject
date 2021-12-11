@@ -6,7 +6,7 @@ from Stone import Stone
 from Water import Water
 from Food import Food
 from Pit import Pit
-
+from Mushroom import Mushroom
 
 class Agent(Object):
     """An agent object in the ALife simulation. An agent has a geneticString that governs its attributes and behavior,
@@ -601,13 +601,13 @@ class Agent(Object):
                 # if we aren't aggressive
                 if self.getAggression() == 0:
                     # TODO: change to random movement
-                    listOfPossibleActions = ['forward']
+                    return ['forward']
                 # if we are aggressive
                 else:
                     return ['attack']
 
         # if standing on food, eat
-        elif len(self.removeSelfFromList(sim.foodAt(ownX, ownY))) > 0:
+        elif len(self.removeSelfFromList(sim.foodAt(ownX, ownY))) > 0 or len(self.removeSelfFromList(sim.mushroomAt(ownX, ownY))) > 0:
             print("There is food here")
             # if we can eat
             if self.getAggression() == 0:
@@ -639,7 +639,7 @@ class Agent(Object):
                 if len(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))) > 0:
                     if self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 50:
                         visionList.append(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0])
-                        listOfPossibleActions = ['forward']
+                        return ['forward']
                     else:
                         break
 
@@ -659,7 +659,7 @@ class Agent(Object):
                 if len(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))) > 0:
                     if self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
                         visionList.append(self.removeSelfFromList(sim.treeAt(currentAboveCell, ownX))[0])
-                        listOfPossibleActions = ['forward']
+                        return ['forward']
                     else:
                         break
 
@@ -678,7 +678,7 @@ class Agent(Object):
                 if len(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))) > 0:
                     if self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
                         visionList.append(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell)))
-                        listOfPossibleActions = ['forward']
+                        return ['forward']
                     else:
                         break
 
@@ -697,7 +697,7 @@ class Agent(Object):
                 if len(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))) > 0:
                     if self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 100:
                         visionList.append(self.removeSelfFromList(sim.treeAt(ownY, currentAboveCell)))
-                        listOfPossibleActions = ['forward']
+                        return ['forward']
                     else:
                         break
 
@@ -705,27 +705,38 @@ class Agent(Object):
                 else:
                     visionList.append(sim._assessObjectsHere(ownY, currentAboveCell, self))
 
-
-
         print("Vision List: ", visionList)
+
+        try:
+            while True:
+                visionList.remove(None)
+        except ValueError:
+            pass
+
+        # print("Vision List after removing none: ", visionList)
 
         # if it can't see anything, return nothing
         if visionList == []:
             return listOfPossibleActions
 
         # if the vision is not blocked by a tree
-        firstThingInVision = None
-        for i in visionList:
-            if i is not None:
-                firstThingInVision = i
-                break
+        # firstThingInVision = None
+        # for i in visionList:
+        #     if i is not None:
+        #         firstThingInVision = i
+        #         break
+        firstThingInVision = visionList[0]
+        # print("First thing in vision:",firstThingInVision)
+        print(type(firstThingInVision))
 
         # if the thing it can see is none, return nothing
         if firstThingInVision is None:
+            # print("SITUATION 0")
             return listOfPossibleActions
 
         # if there is a stone directly in front and we can't jump, then take 'forward' out of the options
         if type(firstThingInVision) is Stone and visionList[0] == firstThingInVision:
+            # print("SITUATION 1")
             if self.canJump:
                 return listOfPossibleActions
             else:
@@ -738,6 +749,7 @@ class Agent(Object):
 
         # if there is a water directly in front and we can't swim, then take 'forward' out of the options
         if type(firstThingInVision) is Water and visionList[0] == firstThingInVision:
+            # print("SITUATION 2")
             if self.canSwim:
                 return listOfPossibleActions
             else:
@@ -749,22 +761,24 @@ class Agent(Object):
                 return listOfPossibleActions
 
         # if the first thing it sees is food
-        if type(firstThingInVision) is Food and self.getAggression == 0:
+        if ((type(firstThingInVision) is Food ) or type(firstThingInVision) is Mushroom ) and (self.getAggression()==0):
+            # print("FIRST THING IN VISION IS FOOD")
             # if we are hungry, eat
             if self.getEnergy() < 50:
-                listOfPossibleActions = ['forward']
+                return ['forward']
             # if we aren't, random
             else:
                 return listOfPossibleActions
 
         # if the first thing we see is an agent
         if type(firstThingInVision) is Agent:
+            # print("SITUATION 3")
             # if we are friends
             if self.getColor() == firstThingInVision.getColor():
                 if self.getReadyToBreed() == 0:
-                    listOfPossibleActions = ['forward']
+                    return ['forward']
                 else:
-                    listOfPossibleActions = ['forward']
+                    return ['forward']
             # if we aren't friends
             else:
                 # if I'm not aggressive, run
@@ -776,8 +790,9 @@ class Agent(Object):
                         pass
                 # if I am, try to attack
                 else:
-                    listOfPossibleActions = ['forward']
+                    return ['forward']
 
+        # print("SITUATION 5")
         print("possible actions: ", listOfPossibleActions)
         return listOfPossibleActions
 
@@ -851,7 +866,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()) :
                         #if ready to breeed
                         if self.getReadyToBreed() == 0:
-                            listOfPossibleActions = ['forward']
+                            return ['forward']
                     #enemy is in front
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -861,10 +876,10 @@ class Agent(Object):
                             except ValueError:
                                 pass
                         else:
-                            listOfPossibleActions = ['forward']
+                            return ['forward']
 
-                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
-                    listOfPossibleActions = ['forward']
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
+                    return ['forward']
 
             # Looking at the cell behind
             for object in cellsSmelled[1]:
@@ -880,7 +895,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()) :
                         #if ready to breeed
                         if self.getReadyToBreed() == 0:
-                            listOfPossibleActions = ['turnAround']
+                            return ['turnAround']
                     #enemy is behind
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -890,10 +905,10 @@ class Agent(Object):
                             except ValueError:
                                 pass
                         else:
-                            listOfPossibleActions = ['turnAround']
+                            return ['turnAround']
 
-                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
-                    listOfPossibleActions = ['turnAround']
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
+                    return ['turnAround']
 
             # Looking at the cell to the right
             for object in cellsSmelled[2]:
@@ -909,7 +924,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()) :
                         #if ready to breeed
                         if self.getReadyToBreed() == 0:
-                            listOfPossibleActions = ['right']
+                            return ['right']
                     #enemy is to the right
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -919,10 +934,10 @@ class Agent(Object):
                             except ValueError:
                                 pass
                         else:
-                            listOfPossibleActions = ['right']
+                            return ['right']
 
-                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
-                    listOfPossibleActions = ['right']
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
+                    return ['right']
 
             # Looking at the cell to the left
             for object in cellsSmelled[3]:
@@ -938,7 +953,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()) :
                         #if ready to breeed
                         if self.getReadyToBreed() == 0:
-                            listOfPossibleActions = ['left']
+                            return ['left']
                     #enemy is to the left
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -948,10 +963,10 @@ class Agent(Object):
                             except ValueError:
                                 pass
                         else:
-                            listOfPossibleActions = ['left']
+                            return ['left']
 
-                if (type(object) is Food and self.getAggression()==0 and self.getEnergy()<50):
-                    listOfPossibleActions = ['left']
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
+                    return ['left']
 
         if self.getSmellRadius() == 2:
             radius2cellssmelled = []
@@ -984,7 +999,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()):
                         # if ready to breeed
                         if self.getReadyToBreed() == 0 and 'forward' in listOfPossibleActions:
-                                listOfPossibleActions = ['forward']
+                                return ['forward']
                     # enemy is in front
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -995,11 +1010,11 @@ class Agent(Object):
                                 pass
                         else:
                             if 'forward' in listOfPossibleActions:
-                                listOfPossibleActions = ['forward']
+                                return ['forward']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'forward' in listOfPossibleActions:
-                        listOfPossibleActions = ['forward']
+                        return ['forward']
 
             # Looking at the cell 2 squares behind
             for object in radius2cellssmelled[1]:
@@ -1008,7 +1023,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()):
                         # if ready to breed
                         if self.getReadyToBreed() == 0 and 'turnAround' in listOfPossibleActions:
-                            listOfPossibleActions = ['turnAround']
+                            return ['turnAround']
                     # enemy is behind
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -1019,11 +1034,11 @@ class Agent(Object):
                                 pass
                         else:
                             if 'turnAround' in listOfPossibleActions:
-                                listOfPossibleActions = ['turnAround']
+                                return ['turnAround']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'turnAround' in listOfPossibleActions:
-                        listOfPossibleActions = ['turnAround']
+                        return ['turnAround']
 
             # Looking at the cell 2 squares to the right
             for object in radius2cellssmelled[2]:
@@ -1032,7 +1047,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()):
                         # if ready to breeed
                         if self.getReadyToBreed() == 0 and 'right' in listOfPossibleActions:
-                            listOfPossibleActions = ['right']
+                            return ['right']
                     # enemy is to the right
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -1043,11 +1058,11 @@ class Agent(Object):
                                 pass
                         else:
                             if 'right' in listOfPossibleActions:
-                                listOfPossibleActions = ['right']
+                                return ['right']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'right' in listOfPossibleActions:
-                        listOfPossibleActions = ['right']
+                        return ['right']
 
             # Looking at the cell 2 squares to the left
             for object in radius2cellssmelled[3]:
@@ -1056,7 +1071,7 @@ class Agent(Object):
                     if (object.getColor() == self.getColor()):
                         # if ready to breeed
                         if self.getReadyToBreed() == 0 and 'left' in listOfPossibleActions:
-                            listOfPossibleActions = ['left']
+                            return ['left']
                     # enemy is to the right
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -1067,11 +1082,11 @@ class Agent(Object):
                                 pass
                         else:
                             if 'left' in listOfPossibleActions:
-                                listOfPossibleActions = ['left']
+                                return ['left']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'left' in listOfPossibleActions:
-                        listOfPossibleActions = ['left']
+                        return ['left']
 
             # Looking at the cell above and left
             for object in radius2cellssmelled[4]:
@@ -1081,9 +1096,9 @@ class Agent(Object):
                         # if ready to breed
                         if self.getReadyToBreed() == 0:
                             if 'forward' in listOfPossibleActions:
-                                listOfPossibleActions = ['forward']
+                                return ['forward']
                             elif 'left' in listOfPossibleActions:
-                                listOfPossibleActions = ['left']
+                                return ['left']
                     # enemy is to the above + left
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -1100,15 +1115,15 @@ class Agent(Object):
                         #If we're aggressive
                         else:
                             if 'forward' in listOfPossibleActions:
-                                listOfPossibleActions = ['forward']
+                                return ['forward']
                             elif 'left' in listOfPossibleActions:
-                                listOfPossibleActions = ['left']
+                                return ['left']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'forward' in listOfPossibleActions:
-                        listOfPossibleActions = ['forward']
+                        return ['forward']
                     elif 'left' in listOfPossibleActions:
-                        listOfPossibleActions = ['left']
+                        return ['left']
 
             # Looking at the cell above and right
             for object in radius2cellssmelled[5]:
@@ -1118,9 +1133,9 @@ class Agent(Object):
                         # if ready to breed
                         if self.getReadyToBreed() == 0:
                             if 'forward' in listOfPossibleActions:
-                                listOfPossibleActions = ['forward']
+                                return ['forward']
                             elif 'right' in listOfPossibleActions:
-                                listOfPossibleActions = ['right']
+                                return ['right']
                     # enemy is to the above + right
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -1137,15 +1152,15 @@ class Agent(Object):
                         # If we're aggressive
                         else:
                             if 'forward' in listOfPossibleActions:
-                                listOfPossibleActions = ['forward']
+                                return ['forward']
                             elif 'right' in listOfPossibleActions:
-                                listOfPossibleActions = ['right']
+                                return ['right']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'forward' in listOfPossibleActions:
-                        listOfPossibleActions = ['forward']
+                        return ['forward']
                     elif 'right' in listOfPossibleActions:
-                        listOfPossibleActions = ['right']
+                        return ['right']
 
             # Looking at the cell below and left
             for object in radius2cellssmelled[6]:
@@ -1155,9 +1170,9 @@ class Agent(Object):
                         # if ready to breed
                         if self.getReadyToBreed() == 0:
                             if 'turnAround' in listOfPossibleActions:
-                                listOfPossibleActions = ['turnAround']
+                                return ['turnAround']
                             elif 'left' in listOfPossibleActions:
-                                listOfPossibleActions = ['left']
+                                return ['left']
                     # enemy is to the below + left
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -1174,15 +1189,15 @@ class Agent(Object):
                         # If we're aggressive
                         else:
                             if 'turnAround' in listOfPossibleActions:
-                                listOfPossibleActions = ['turnAround']
+                                return ['turnAround']
                             elif 'left' in listOfPossibleActions:
-                                listOfPossibleActions = ['left']
+                                return ['left']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'turnAround' in listOfPossibleActions:
-                        listOfPossibleActions = ['turnAround']
+                        return ['turnAround']
                     elif 'left' in listOfPossibleActions:
-                        listOfPossibleActions = ['left']
+                        return ['left']
 
             # Looking at the cell below and right
             for object in radius2cellssmelled[7]:
@@ -1192,9 +1207,9 @@ class Agent(Object):
                         # if ready to breed
                         if self.getReadyToBreed() == 0:
                             if 'turnAround' in listOfPossibleActions:
-                                listOfPossibleActions = ['turnAround']
+                                return ['turnAround']
                             elif 'right' in listOfPossibleActions:
-                                listOfPossibleActions = ['right']
+                                return ['right']
                     # enemy is to the below + right
                     elif (object.getColor() != self.getColor()):
                         if self.getAggression() == 0:
@@ -1211,15 +1226,15 @@ class Agent(Object):
                         # If we're aggressive
                         else:
                             if 'turnAround' in listOfPossibleActions:
-                                listOfPossibleActions = ['turnAround']
+                                return ['turnAround']
                             elif 'right' in listOfPossibleActions:
-                                listOfPossibleActions = ['right']
+                                return ['right']
 
-                if (type(object) is Food and self.getAggression() == 0 and self.getEnergy() < 50):
+                if ( ((type(object) is (Food)) or (type(object) is Mushroom) ) and (self.getAggression()==0) and (self.getEnergy()<50)):
                     if 'turnAround' in listOfPossibleActions:
-                        listOfPossibleActions = ['turnAround']
+                        return ['turnAround']
                     elif 'right' in listOfPossibleActions:
-                        listOfPossibleActions = ['right']
+                        return ['right']
         else:
             print("CANT SMELL")
 
@@ -1238,18 +1253,23 @@ class Agent(Object):
             # sets the action based on what we are standing on
             listOfPossibleActions = self.checkHere(sim, listOfPossibleActions)
             print("Actions after here: ", listOfPossibleActions)
+            if len(listOfPossibleActions) == 1:
+                return listOfPossibleActions[0]
 
             # ---------- Check what we see ---------- #
             # if it isn't standing on anything, keep going
             # sets the action based on what we see
             listOfPossibleActions = self.checkVision(sim, listOfPossibleActions)
             print("Actions after vision: ", listOfPossibleActions)
+            if len(listOfPossibleActions) == 1:
+                return listOfPossibleActions[0]
 
             # ---------- Check what we smell ---------- #
             # sets the action based on what we can smell
             listOfPossibleActions = self.checkSmell(sim, listOfPossibleActions)
             print("Actions after smell: ", listOfPossibleActions)
-
+            if len(listOfPossibleActions) == 1:
+                return listOfPossibleActions[0]
 
             if listOfPossibleActions == []:
                 return random.choice(['left', 'right', 'turnAround'])
@@ -1258,16 +1278,16 @@ class Agent(Object):
                 if self.getEnergy() < 25:
                     if self.canFly and len(self.removeSelfFromList(sim.treeAt(self.getPose()[0], self.getPose()[1]))) > 0:
                         print("I AM ROOSTING")
-                        listOfPossibleActions = ['roost']
+                        return ['roost']
                     else:
-                        listOfPossibleActions = ['rest']
+                        return ['rest']
 
             action = random.choice(listOfPossibleActions)
             print("Action: ", action)
             return action
 
         elif self.isAwake(self.sleepValue, time) == "sleeping":
-            listOfPossibleActions = ['rest']
+            return ['rest']
             action = random.choice(listOfPossibleActions)
             print("Action: ", action)
             return action
