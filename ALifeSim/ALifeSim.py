@@ -51,9 +51,10 @@ class ALifeSimTest(object):
         self.numForests = numForests
         self.numPits = 5
         self.numMushrooms = 5
-        self.numSands = (self.gridSize*self.gridSize) // 10
-        self.numSnows = (self.gridSize*self.gridSize) // 10
-        self.numGrass = (self.gridSize*self.gridSize) // 5
+        #TODO: make this a user input?
+        self.numSands = (self.gridSize * self.gridSize) // 100
+        self.numSnows = (self.gridSize * self.gridSize) // 100
+        self.numGrass = (self.gridSize * self.gridSize) // 50
 
         self.initialGeneticStrings = geneticStrings
         self.maxFood = 0
@@ -85,6 +86,8 @@ class ALifeSimTest(object):
                 self.sandDict[row,col] = []
                 self.snowDict[row,col] = []
 
+        self._placeWaters()
+
         # objects w/ no effect
         self._placeGrass()
         self._placeSand()
@@ -92,7 +95,6 @@ class ALifeSimTest(object):
 
         # inanimate objects
         # self._placeTreesOnHalf()
-        self._placeWaters()
         # self._placePits()
         self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
@@ -308,42 +310,111 @@ class ALifeSimTest(object):
 
     def _placeGrass(self):
         """Places grass objects randomly, avoiding locations where the globalMap already contains something"""
-        #TODO: make this place grass in natural patterns
-        for i in range(self.numGrass):
-            (randRow, randCol) = self._genRandomLoc()
-            while True:
-                if len(self.globalMap[randRow, randCol]) != 0:
-                    (randRow, randCol) = self._genRandomLoc()
-                else:
-                    break
-            nextGrass = Grass(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
-            self.grassDict[randRow,randCol].append(nextGrass)
+        # for i in range(self.numGrass):
+        #     (randRow, randCol) = self._genRandomLoc()
+        #     while True:
+        #         if len(self.globalMap[randRow, randCol]) != 0:
+        #             (randRow, randCol) = self._genRandomLoc()
+        #         else:
+        #             break
+        #     nextGrass = Grass(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
+        #     self.grassDict[randRow,randCol].append(nextGrass)
+
+        for grassPatch in range(self.numGrass):
+            r = random.randint(1, self.gridSize // 5)
+            rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            colLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            width = r*2
+            height = r*2
+            cx = width // 2
+            cy = height // 2
+            tiles = [[0 for _ in range(height)] for _ in range(width)]
+
+            self.make_circle(tiles, cx, cy, r)
+
+            for i in range(len(tiles)):
+                for j in range(len(tiles)):
+                    isGrassHere = random.choice([0, 1, 1])
+                    if tiles[i][j] == 1:
+                        if isGrassHere == 1:
+                            if self.gridSize > rowLoc + i >= 0 and self.gridSize > colLoc + j >= 0:
+                                if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
+                                    nextGrass = Grass(initPose=(rowLoc + i, colLoc + j),
+                                                    geneticString=random.choice(["0"]),
+                                                    stepSpawned=self.stepNum)
+                                    self.grassDict[rowLoc+i,colLoc+j].append(nextGrass)
 
     def _placeSand(self):
         """Places sand objects randomly, avoiding locations where the globalMap already contains something"""
-        #TODO: make this place sand in natural patterns
-        for i in range(self.numSands):
-            (randRow, randCol) = self._genRandomLoc()
-            while True:
-                if len(self.globalMap[randRow, randCol]) != 0:
-                    (randRow, randCol) = self._genRandomLoc()
-                else:
-                    break
-            nextSand = Sand(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
-            self.sandDict[randRow,randCol].append(nextSand)
+        # for i in range(self.numSands):
+        #     (randRow, randCol) = self._genRandomLoc()
+        #     while True:
+        #         if len(self.globalMap[randRow, randCol]) != 0:
+        #             (randRow, randCol) = self._genRandomLoc()
+        #         else:
+        #             break
+        #     nextSand = Sand(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
+        #     self.sandDict[randRow,randCol].append(nextSand)
+        for sandPatch in range(self.numSands):
+            r = random.randint(1, self.gridSize // 5)
+            rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            colLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            width = r*2
+            height = r*2
+            cx = width // 2
+            cy = height // 2
+            tiles = [[0 for _ in range(height)] for _ in range(width)]
+
+            self.make_circle(tiles, cx, cy, r)
+
+            for i in range(len(tiles)):
+                for j in range(len(tiles)):
+                    isSandHere = random.choice([0, 1, 1])
+                    if tiles[i][j] == 1:
+                        if isSandHere == 1:
+                            if self.gridSize > rowLoc + i >= 0 and self.gridSize > colLoc + j >= 0:
+                                if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
+                                    nextSand = Sand(initPose=(rowLoc + i, colLoc + j),
+                                                    geneticString=random.choice(["0"]),
+                                                    stepSpawned=self.stepNum)
+                                    self.sandDict[rowLoc+i,colLoc+j].append(nextSand)
 
     def _placeSnow(self):
         """Places snow objects randomly, avoiding locations where the globalMap already contains something"""
         #TODO: make this place snow objects in natural patterns -- high elevation has higher likelihood? Tree+snow?
-        for i in range(self.numSnows):
-            (randRow, randCol) = self._genRandomLoc()
-            while True:
-                if len(self.globalMap[randRow, randCol]) != 0:
-                    (randRow, randCol) = self._genRandomLoc()
-                else:
-                    break
-            nextSnow = Snow(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
-            self.snowDict[randRow,randCol].append(nextSnow)
+
+        # for i in range(self.numSnows):
+        #     (randRow, randCol) = self._genRandomLoc()
+        #     while True:
+        #         if len(self.globalMap[randRow, randCol]) != 0:
+        #             (randRow, randCol) = self._genRandomLoc()
+        #         else:
+        #             break
+        #     nextSnow = Snow(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
+        #     self.snowDict[randRow,randCol].append(nextSnow)
+        for sandPatch in range(self.numSnows):
+            r = random.randint(1, self.gridSize // 5)
+            rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            colLoc = random.randint(-r + 1, self.gridSize - r + 1)
+            width = r*2
+            height = r*2
+            cx = width // 2
+            cy = height // 2
+            tiles = [[0 for _ in range(height)] for _ in range(width)]
+
+            self.make_circle(tiles, cx, cy, r)
+
+            for i in range(len(tiles)):
+                for j in range(len(tiles)):
+                    isSnowHere = random.choice([0, 1, 1])
+                    if tiles[i][j] == 1:
+                        if isSnowHere == 1:
+                            if self.gridSize > rowLoc + i >= 0 and self.gridSize > colLoc + j >= 0:
+                                if len(self.objectsAt(rowLoc + i, colLoc + j)) == 0:
+                                    nextSnow = Snow(initPose=(rowLoc + i, colLoc + j),
+                                                    geneticString=random.choice(["0"]),
+                                                    stepSpawned=self.stepNum)
+                                    self.snowDict[rowLoc+i,colLoc+j].append(nextSnow)
 
     def _placeWaters(self):
         """Places water objects in the form of rivers and ponds,
