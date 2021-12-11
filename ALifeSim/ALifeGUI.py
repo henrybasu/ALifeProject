@@ -1196,7 +1196,7 @@ class ALifeGUI:
 
     def tintColor(self, agent):
         if agent.isSick:
-            return 'purple'
+            return 'white'
         else:
             return agent.colorNumberToText(agent.getColor())
 
