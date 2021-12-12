@@ -97,7 +97,7 @@ class ALifeSimTest(object):
         # inanimate objects
         # self._placeTreesOnHalf()
         # self._placePits()
-        self._placeMushrooms()
+        # self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3,10))
         self._placeStones()
         # self._placeFood()
@@ -656,12 +656,19 @@ class ALifeSimTest(object):
         while i < len(self.treeList):
             tree = self.treeList[i]
             treeR, treeC = tree.getPose()
-            if tree.getStepsUntilBloom() > 0:
+            if (tree.getStepsUntilBloom() >= 50):
+                tree.setHasFood("-1")
+                tree.setStepsUntilBloom(tree.getStepsUntilBloom() - 1)
+                if tree.getStepsUntilBloom() < 50:
+                    self.globalMap[treeR, treeC].append(tree)
+                    tree.setHasFood("0")
+            if (tree.getStepsUntilBloom() > 0) and (tree.getStepsUntilBloom() < 50):
+                tree.setHasFood("0")
                 tree.setStepsUntilBloom(tree.getStepsUntilBloom() - 1)
             if tree.getStepsUntilBloom() == 0:
                 tree.setHasFood("1")
                 # TODO: WHy can't we call this from the tree V ???
-                tree.setStepsUntilBloom(random.randint(10,40))
+                # tree.setStepsUntilBloom(random.randint(10,40))
 
             i = i + 1
 

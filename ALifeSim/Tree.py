@@ -18,7 +18,10 @@ class Tree(Object):
 
         self.hasFood = geneticString[0]
         self.justChanged = False
-        self.stepsUntilBloom = random.randint(5,40)
+        if self.hasFood == "0":
+            self.stepsUntilBloom = random.randint(5,40)
+        else:
+            self.stepsUntilBloom = 0
         # self.stepsUntilBloom = 500
         
     def getHasFood(self):

@@ -674,7 +674,14 @@ class ALifeGUI:
 
             # print("TREE IN GUI")
             if tr.getVisId() is None:
-                if tr.getHasFood() == "0":
+                if tr.getHasFood() == "-1":
+                    # print("NO FOOD")
+                    trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.seedsImage)
+                    self.agentIdToPose[trId] = tr.getPose()
+                    tr.setVisId(trId)
+                    self.canvas.lift(trId)
+                    tr.setJustChangedBloom(False)
+                elif tr.getHasFood() == "0":
                     # print("NO FOOD")
                     trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeImage)
                     self.agentIdToPose[trId] = tr.getPose()
@@ -691,15 +698,22 @@ class ALifeGUI:
 
             # finds tree tkinter object id
             id = tr.getVisId()
-            print(id)
+            # print(id)
 
             # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
             # self.canvas.create_image(x1, y1, image=self.ghostImage)
             # ghostGuy = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.ghostImage)
             # tr.setVisId(ghostGuy)
             # self.canvas.lift(ghostGuy)
-
-            if tr.getHasFood() == '0' and tr.justChanged == True:
+            if tr.getHasFood() == '-1' and tr.justChanged == True:
+                # deletes the object
+                self.canvas.delete(id)
+                trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.seedsImage)
+                self.agentIdToPose[trId] = tr.getPose()
+                tr.setVisId(trId)
+                self.canvas.lift(trId)
+                tr.setJustChangedBloom(False)
+            elif tr.getHasFood() == '0' and tr.justChanged == True:
                 # deletes the object
                 self.canvas.delete(id)
                 trId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.treeImage)
@@ -739,7 +753,6 @@ class ALifeGUI:
             (x1, y1, x2, y2) = self._posToCoords(newRow, newCol)
 
             if mu.getVisId() is None:
-                mu.setDroppingType(0)
                 if mu.getDroppingType() == 0:
                     muId = self.canvas.create_image((x1 + x2) / 2, (y1 + y2) / 2, image=self.sporesImage)
                     self.agentIdToPose[muId] = mu.getPose()
@@ -1092,7 +1105,11 @@ class ALifeGUI:
                 for tr in trees:
                     self.canvas.update()
                     coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-                    if tr.getHasFood() == '0':
+                    if tr.getHasFood() == '-1':
+                        trId = self.canvas.create_image(coords, image=self.seedsImage)
+                        self.agentIdToPose[trId] = tr.getPose()
+                        tr.setVisId(trId)
+                    elif tr.getHasFood() == '0':
                         trId = self.canvas.create_image(coords, image=self.treeImage)
                         self.agentIdToPose[trId] = tr.getPose()
                         tr.setVisId(trId)

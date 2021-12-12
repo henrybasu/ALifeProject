@@ -72,7 +72,7 @@ class Agent(Object):
         self.mushroomInfluence = 0
         self.stepsUntilNoMushroomInfluence = 0
 
-        self.objectConsumed = 0
+        self.objectConsumed = 3
         """
         0 - Nothing
         1 - Food
@@ -573,8 +573,8 @@ class Agent(Object):
         """Kills an agent at a given location if it is an enemy."""
         for j in range(len(sim.agentsAt(row, col))):
             if int(sim.agentsAt(row, col)[j].getColor()) != self.getColor():
-                self.setObjectConsumed(4)
                 deadCreature = sim.agentsAt(row, col)[j]
+                self.setObjectConsumed(deadCreature.getObjectConsumed())
                 deadCreature.changeEnergy(-100)
                 deadCreature.isDead = True
 
@@ -650,6 +650,7 @@ class Agent(Object):
             if self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 50:
                 self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].setHasFood("0")
                 print(self.removeSelfFromList(sim.treeAt(ownX, ownY))[0])
+                self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].setStepsUntilBloom(random.randint(10,40))
                 return ['eatBerries']
         return listOfPossibleActions
 
@@ -1670,21 +1671,37 @@ class Agent(Object):
             # nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
             # sim.treeList.append(nextTree)
             # sim.globalMap[r, c].append(nextTree)
+
         elif self.objectConsumed == 1:
             print("DROPPING OBJECT FOOD SEEDS")
             pass
+
         elif self.objectConsumed == 2:
-            print("DROPPING OBJECT BERRY SEEDS")
-            pass
+            ownX, ownY, ownH = self.getPose()
+            objectHere = sim._listOfObjectsHere(ownX, ownY, self)
+            objectHere = self.removeSelfFromList(objectHere)
+            if (len(objectHere) == 0):
+                print("DROPPING OBJECT TREE SEEDS")
+                nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
+                nextTree.setHasFood("-1")
+                nextTree.setStepsUntilBloom(51)
+                sim.treeList.append(nextTree)
+            # sim.globalMap[r, c].append(nextTree)
+
         elif self.objectConsumed == 3:
-            nextMushroom = Mushroom(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
-            sim.mushroomList.append(nextMushroom)
-            sim.globalMap[r, c].append(nextMushroom)
-            print("DROPPING OBJECT MUSHROOM SPORES")
-            pass
-        elif self.objectConsumed == 4:
-            print("DROPPING OBJECT FROM EATEN AGENT")
-            pass
+            ownX,ownY,ownH = self.getPose()
+            objectHere = sim._listOfObjectsHere(ownX, ownY, self)
+            objectHere = self.removeSelfFromList(objectHere)
+            if (len(objectHere) == 0):
+                nextMushroom = Mushroom(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
+                nextMushroom.setDroppingType(0)
+                sim.mushroomList.append(nextMushroom)
+                sim.globalMap[r, c].append(nextMushroom)
+                print("DROPPING OBJECT MUSHROOM SPORES")
+
+        # elif self.objectConsumed == 4:
+        #     print("DROPPING OBJECT FROM EATEN AGENT")
+        #     pass
 
     def getTypeAbbreviation(self):
         """Returns the abbreviation for an agent object, "a"."""
