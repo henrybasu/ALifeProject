@@ -614,7 +614,8 @@ class ALifeSimTest(object):
         """Update one step of the simulation. This means updating each object, and updating each agent
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
-        print("----------------------------------------- STEP " + str(self.stepNum) + " ---------------------------------------------------")
+        if self.verbose:
+            print("----------------------------------------- STEP " + str(self.stepNum) + " ---------------------------------------------------")
         #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
 
@@ -634,7 +635,8 @@ class ALifeSimTest(object):
             # print("   ", self.agentList[i].getEnergy())
             # print("--------------------------------------")
 
-        print("--------------------------------------------------------------------------------------------")
+        if self.verbose:
+            print("--------------------------------------------------------------------------------------------")
         #     print(self.agentList)
         #     print(self.getDeadAgents())
         #     print("~ Vision ~")
@@ -703,8 +705,9 @@ class ALifeSimTest(object):
             agentR, agentC, agentH = agent.getPose()
             rAhead, cAhead = agent._computeAhead(self.gridSize)
 
-            print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
-            print("Steps until healthy: ", agent.getStepsUntilHealthy())
+            if self.verbose:
+                print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
+                print("Steps until healthy: ", agent.getStepsUntilHealthy())
 
             if agent.getStepsUntilHealthy() > 0:
                 agent.isSick = True
@@ -713,7 +716,7 @@ class ALifeSimTest(object):
                 agent.isSick = False
                 agent.setStepsUntilHealthy(0)
 
-            print("Steps until no mushroom influence: ", agent.getStepsUntilNoMushroomInfluence())
+            # print("Steps until no mushroom influence: ", agent.getStepsUntilNoMushroomInfluence())
             if agent.getStepsUntilNoMushroomInfluence() > 0:
                 agent.setStepsUntilNoMushroomInfluence(agent.getStepsUntilNoMushroomInfluence() - 1)
             if agent.getStepsUntilNoMushroomInfluence() <= 0:
@@ -743,7 +746,7 @@ class ALifeSimTest(object):
 
             if not agent.isDead:
                 action = agent.determineAction(self, self.time)
-                print(agent.colorNumberToText(agent.getColor()), action)
+                # print(agent.colorNumberToText(agent.getColor()), action)
                 if action == 'breed':
                     twoAgents = []
                     agentsHere = self.agentsAt(agentR,agentC)
@@ -792,8 +795,9 @@ class ALifeSimTest(object):
                         # print("globalMap after removing before adding:")
                         # self.printGrid()
                     else:
-                        print("Agent not where expected:", agent, agentR, agentC)
-                        self.printGrid()
+                        pass
+                        # print("Agent not where expected:", agent, agentR, agentC)
+                        # self.printGrid()
                         # print("globalMap after removing before adding:",self.globalMap)
 
                     self.globalMap[rAhead, cAhead].append(agent)
@@ -820,7 +824,7 @@ class ALifeSimTest(object):
                     isOkay = agent.changeEnergy(-1000)
 
                 else:
-                    print("Unknown action:", action)
+                    # print("Unknown action:", action)
                     isOkay = agent.changeEnergy(0)
 
                 if self.verbose:
@@ -828,12 +832,12 @@ class ALifeSimTest(object):
 
                 if agent.getReadyToBreed() != 0:
                     agent.changeReadyToBreed(1)
-
-                print("~~~~~~~~~ Energy After Step ~~~~~~~~~")
-                print("OBJECT CONSUMED:",agent.getObjectConsumed())
-                print("GlobalMap:",self.globalMap)
-                print("   ", self.agentList[i].getEnergy())
-                print("----------------------------------------------------------------------------")
+                if self.verbose:
+                    print("~~~~~~~~~ Energy After Step ~~~~~~~~~")
+                    print("OBJECT CONSUMED:",agent.getObjectConsumed())
+                    print("GlobalMap:",self.globalMap)
+                    print("   ", self.agentList[i].getEnergy())
+                    print("----------------------------------------------------------------------------")
 
             # for j in range(len(self.agentList)-1):
             #     print("AGENT 1 ID: ", self.agentList[j].getVisId)
@@ -959,7 +963,7 @@ class ALifeSimTest(object):
             self.eatenMushrooms.append(mushroomsAtCell)
             agent.setMushroomInfluence(mushroomTypeEaten)
             agent.setStepsUntilNoMushroomInfluence(10)
-            print("MUSHROOM TYPE EATEN:", mushroomTypeEaten)
+            # print("MUSHROOM TYPE EATEN:", mushroomTypeEaten)
             if (mushroomTypeEaten == 4):
                 agent.changeEnergy(-10)
             else:
@@ -993,7 +997,7 @@ class ALifeSimTest(object):
                 else:
                     babyGeneticString = babyGeneticString + agent2GeneticString[i]
 
-            print("babyGeneticString before mutating", babyGeneticString)
+            # print("babyGeneticString before mutating", babyGeneticString)
             newBabyGeneticString = self.mutate(babyGeneticString)
 
             babyAgent = Agent(geneticString=newBabyGeneticString, initPose=agentPose, stepSpawned=self.stepNum)
@@ -1035,12 +1039,12 @@ class ALifeSimTest(object):
             newVal = random.choice([0, 0, 1])
 
         babyGeneticStringAsList = list(newBabyGeneticString)
-        print(babyGeneticStringAsList)
+        # print(babyGeneticStringAsList)
         babyGeneticStringAsList[randElem] = newVal
         newBabyGeneticString = ""
         for j in range(len(babyGeneticStringAsList)):
             newBabyGeneticString+=str(babyGeneticStringAsList[j])
-        print(newBabyGeneticString)
+        # print(newBabyGeneticString)
         return newBabyGeneticString
 
 

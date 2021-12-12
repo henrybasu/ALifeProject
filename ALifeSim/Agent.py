@@ -72,7 +72,7 @@ class Agent(Object):
         self.mushroomInfluence = 0
         self.stepsUntilNoMushroomInfluence = 0
 
-        self.objectConsumed = 3
+        self.objectConsumed = 0
         """
         0 - Nothing
         1 - Food
@@ -94,7 +94,7 @@ class Agent(Object):
             # TODO: make this scale by gridsize
             sicknessLength = random.randint(10, 50)
             self.setStepsUntilHealthy(sicknessLength)
-            print("Sickness length: ", sicknessLength)
+            # print("Sickness length: ", sicknessLength)
 
         # self.score = 0
 
@@ -247,9 +247,9 @@ class Agent(Object):
         visionList = []
         visionRange = self.visionRange
 
-        print("Object Here: ", sim._assessObjectsHere(ownY, ownX, self))
+        # print("Object Here: ", sim._assessObjectsHere(ownY, ownX, self))
         if sim._assessObjectsHere(ownY, ownX, self) == 4:
-            print("IM ON A TREE")
+            # print("IM ON A TREE")
             return 0
 
         if heading == "n":
@@ -593,13 +593,13 @@ class Agent(Object):
         objectHere = sim._listOfObjectsHere(ownX, ownY, self)
         # list of objects without the current agent
         objectHere = self.removeSelfFromList(objectHere)
-        print("Here List:", objectHere)
+        # print("Here List:", objectHere)
         # Might not need this -------- ^^^^
 
         if not self.canSwim:
             # if standing on water, die
             if len(self.removeSelfFromList(sim.waterAt(ownX, ownY))) > 0:
-                print("There is water here")
+                # print("There is water here")
                 if self.canFly:
                     self.changeEnergy(-5)
                 else:
@@ -608,7 +608,7 @@ class Agent(Object):
         if not self.canJump:
             # if standing on rocks, die
             if len(self.removeSelfFromList(sim.stonesAt(ownX, ownY))) > 0:
-                print("There is a rock here")
+                # print("There is a rock here")
                 if self.canFly:
                     self.changeEnergy(-5)
                 else:
@@ -621,7 +621,7 @@ class Agent(Object):
                 self.setStepsUntilHealthy(random.randint(5, 30))
             # the agent is a friend
             if self.getColor() == self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getColor():
-                print("Time to breed")
+                # print("Time to breed")
                 # if both agents are ready to breed
                 if self.getReadyToBreed() == 0 and self.removeSelfFromList(sim.agentsAt(ownX, ownY))[0].getReadyToBreed() == 0:
                     return ['breed']
@@ -639,17 +639,17 @@ class Agent(Object):
 
         # if standing on food, eat
         elif len(self.removeSelfFromList(sim.foodAt(ownX, ownY))) > 0 or len(self.removeSelfFromList(sim.mushroomAt(ownX, ownY))) > 0:
-            print("There is food here")
+            # print("There is food here")
             # if we can eat
             if self.getAggression() == 0:
                 return ['eat']
 
         # if standing on tree
         elif len(self.removeSelfFromList(sim.treeAt(ownX, ownY))) > 0:
-            print("There is a tree here")
+            # print("There is a tree here")
             if self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].getHasFood() == "1" and self.canScavenge and self.getEnergy() < 50:
                 self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].setHasFood("0")
-                print(self.removeSelfFromList(sim.treeAt(ownX, ownY))[0])
+                # print(self.removeSelfFromList(sim.treeAt(ownX, ownY))[0])
                 self.removeSelfFromList(sim.treeAt(ownX, ownY))[0].setStepsUntilBloom(random.randint(10,40))
                 return ['eatBerries']
         return listOfPossibleActions
@@ -737,7 +737,7 @@ class Agent(Object):
                 else:
                     visionList.append(sim._assessObjectsHere(ownY, currentAboveCell, self))
 
-        print("Vision List: ", visionList)
+        # print("Vision List: ", visionList)
 
         try:
             while True:
@@ -759,7 +759,7 @@ class Agent(Object):
         #         break
         firstThingInVision = visionList[0]
         # print("First thing in vision:",firstThingInVision)
-        print(type(firstThingInVision))
+        # print(type(firstThingInVision))
 
         # if the thing it can see is none, return nothing
         if firstThingInVision is None:
@@ -825,7 +825,7 @@ class Agent(Object):
                     return ['forward']
 
         # print("SITUATION 5")
-        print("possible actions: ", listOfPossibleActions)
+        # print("possible actions: ", listOfPossibleActions)
         return listOfPossibleActions
 
     def reorderListBasedOnHeading(self, list):
@@ -1022,7 +1022,7 @@ class Agent(Object):
             radius2cellssmelled.append(cellBelowRight)
 
             radius2cellssmelled = self.reorderListBasedOnHeadingLength8(radius2cellssmelled)
-            print("R2CellsSmelled:",radius2cellssmelled)
+            # print("R2CellsSmelled:",radius2cellssmelled)
 
             # Looking at the cell in 2 squares front
             for object in radius2cellssmelled[0]:
@@ -1268,9 +1268,10 @@ class Agent(Object):
                     elif 'right' in listOfPossibleActions:
                         return ['right']
         else:
-            print("CANT SMELL")
+            pass
+            # print("CANT SMELL")
 
-        print("Actions after smell: " + str(listOfPossibleActions))
+        # print("Actions after smell: " + str(listOfPossibleActions))
         return listOfPossibleActions
 
 
@@ -1278,8 +1279,8 @@ class Agent(Object):
         """Starts with an initial list of actions, decides which ones are still viable options after checking here,
         checking vision, and checking smell, and chooses a random action from the remaining viable choices."""
         listOfPossibleActions = ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']
-        print("isSick: ", self.isSick)
-        print("Mushroom influence: ", self.mushroomInfluence)
+        # print("isSick: ", self.isSick)
+        # print("Mushroom influence: ", self.mushroomInfluence)
 
         if self.mushroomInfluence == 2:
             return 'pause'
@@ -1294,7 +1295,7 @@ class Agent(Object):
             # ---------- Check where we are ---------- #
             # sets the action based on what we are standing on
             listOfPossibleActions = self.checkHere(sim, listOfPossibleActions)
-            print("Actions after here: ", listOfPossibleActions)
+            # print("Actions after here: ", listOfPossibleActions)
             if len(listOfPossibleActions) == 1:
                 return listOfPossibleActions[0]
 
@@ -1302,14 +1303,14 @@ class Agent(Object):
             # if it isn't standing on anything, keep going
             # sets the action based on what we see
             listOfPossibleActions = self.checkVision(sim, listOfPossibleActions)
-            print("Actions after vision: ", listOfPossibleActions)
+            # print("Actions after vision: ", listOfPossibleActions)
             if len(listOfPossibleActions) == 1:
                 return listOfPossibleActions[0]
 
             # ---------- Check what we smell ---------- #
             # sets the action based on what we can smell
             listOfPossibleActions = self.checkSmell(sim, listOfPossibleActions)
-            print("Actions after smell: ", listOfPossibleActions)
+            # print("Actions after smell: ", listOfPossibleActions)
             if len(listOfPossibleActions) == 1:
                 return listOfPossibleActions[0]
 
@@ -1319,22 +1320,23 @@ class Agent(Object):
             if listOfPossibleActions == ['left', 'right', 'turnAround', 'forward', 'forward', 'forward']:
                 if self.getEnergy() < 25:
                     if self.canFly and len(self.removeSelfFromList(sim.treeAt(self.getPose()[0], self.getPose()[1]))) > 0:
-                        print("I AM ROOSTING")
+                        # print("I AM ROOSTING")
                         return 'roost'
                     else:
                         return 'rest'
 
             action = random.choice(listOfPossibleActions)
-            print("Action: ", action)
+            # print("Action: ", action)
             return action
 
         elif self.isAwake(self.sleepValue, time) == "sleeping":
             return 'rest'
             action = random.choice(listOfPossibleActions)
-            print("Action: ", action)
+            # print("Action: ", action)
             return action
         else:
-            print("ERROR WITH SLEEP VALUE")
+            pass
+            # print("ERROR WITH SLEEP VALUE")
 
     def _printVision(self, sim):
         """Prints what the agent can see."""
@@ -1667,13 +1669,14 @@ class Agent(Object):
     def dropObject(self, sim):
         r,c,h = self.getPose()
         if self.objectConsumed == 0:
-            print("DROPPING OBJECT NONE")
+            pass
+            # print("DROPPING OBJECT NONE")
             # nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
             # sim.treeList.append(nextTree)
             # sim.globalMap[r, c].append(nextTree)
 
         elif self.objectConsumed == 1:
-            print("DROPPING OBJECT FOOD SEEDS")
+            # print("DROPPING OBJECT FOOD SEEDS")
             pass
 
         elif self.objectConsumed == 2:
@@ -1681,7 +1684,7 @@ class Agent(Object):
             objectHere = sim._listOfObjectsHere(ownX, ownY, self)
             objectHere = self.removeSelfFromList(objectHere)
             if (len(objectHere) == 0):
-                print("DROPPING OBJECT TREE SEEDS")
+                # print("DROPPING OBJECT TREE SEEDS")
                 nextTree = Tree(initPose=(r, c), geneticString="0", stepSpawned=sim.stepNum)
                 nextTree.setHasFood("-1")
                 nextTree.setStepsUntilBloom(51)
@@ -1697,7 +1700,7 @@ class Agent(Object):
                 nextMushroom.setDroppingType(0)
                 sim.mushroomList.append(nextMushroom)
                 sim.globalMap[r, c].append(nextMushroom)
-                print("DROPPING OBJECT MUSHROOM SPORES")
+                # print("DROPPING OBJECT MUSHROOM SPORES")
 
         # elif self.objectConsumed == 4:
         #     print("DROPPING OBJECT FROM EATEN AGENT")
