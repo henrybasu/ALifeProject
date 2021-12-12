@@ -72,7 +72,7 @@ class Agent(Object):
         self.mushroomInfluence = 0
         self.stepsUntilNoMushroomInfluence = 0
 
-        self.objectConsumed = 3
+        self.objectConsumed = 0
         """
         0 - Nothing
         1 - Food
