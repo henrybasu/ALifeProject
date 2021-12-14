@@ -37,7 +37,7 @@ class Agent(Object):
         000X000000000000 - Aggression [3]
         0000X00000000000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
         00000X0000000000 - Color [5]
-        0000000X00000000 - Energy [6:7]
+        000000XX00000000 - Energy [6:7]
         00000000X0000000 - Jump [8]
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
