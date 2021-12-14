@@ -62,11 +62,11 @@ class ALifeGUI:
         self.seedsImage = PhotoImage(file='images/items/seeds.png')
 
         randomGeneticStrings = []
-        randomGeneticStrings.append("21100249000010")
-        randomGeneticStrings.append("11000449000009")
-        randomGeneticStrings.append("11100449000005")
-        randomGeneticStrings.append("11100449000005")
-        randomGeneticStrings.append("11100449000005")
+        # randomGeneticStrings.append("21100249000010")
+        # randomGeneticStrings.append("11000449000009")
+        # randomGeneticStrings.append("11100449000005")
+        # randomGeneticStrings.append("11100449000005")
+        # randomGeneticStrings.append("11100449000005")
         #
         # randomGeneticStrings.append("12110199001")
         # randomGeneticStrings.append("12110399001")
@@ -80,7 +80,7 @@ class ALifeGUI:
         000X000000000000 - Aggression [3]
         0000X00000000000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
         00000X0000000000 - Color [5]
-        0000000X00000000 - Energy [6:7]
+        000000XX00000000 - Initial Energy [6:7]
         00000000X0000000 - Jump [8]
         000000000X000000 - Swim [9]
         0000000000X00000 - Fly [10]
@@ -100,7 +100,7 @@ class ALifeGUI:
         #     randomGeneticStrings.append(randomGeneticString)
         #     print(randomGeneticString)
 
-        # randomGeneticStrings = self.generateRandomGeneticStrings()
+        randomGeneticStrings = self.generateRandomGeneticStrings()
 
         print("--------------------------------------------------------------------------------------------")
         print("The random genetic strings to be assigned to agents: " + str(randomGeneticStrings))
@@ -150,14 +150,14 @@ class ALifeGUI:
             randomSmell = str(random.randint(0, 2))
             randomMovement = str(random.randint(1, 1))
             randomAggression = str(random.randint(0, 1))
-            randomSleepType = str(random.randint(0, 0))
+            randomSleepType = str(random.randint(0, 1))
             randomColor = str(random.randint(1, 9))
             randomEnergy = str(random.randint(10, 60))
             randomJump = str(random.choice([0, 0, 0, 1]))
             randomSwim = str(random.choice([0, 0, 0, 1]))
             randomFly = str(random.choice([0, 0, 0, 1]))
             randomScavenge = str(random.choice([0, 0, 0, 1]))
-            randomSickness = str(random.choice([0, 0, 0, 0, 0, 0, 0, 0, 0, 1]))
+            randomSickness = str(random.choice([0, 0, 0, 0, 0, 1]))
             randomResistance = str(random.randint(0, 9))
 
             randomGeneticString = randomVision + \
@@ -224,11 +224,11 @@ class ALifeGUI:
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
         about how much work was done"""
-        messageFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
-        messageFrame.grid(row=2, column=2,  padx=5, pady=5)
+        messageFrame = Frame(self.root, bd=5, padx=10, pady=1, relief="groove")
+        messageFrame.grid(row=2, column=2,  padx=5, pady=1)
         self.messageVar = StringVar()
         self.messageVar.set("")
-        message = Label(messageFrame, textvariable=self.messageVar, width=50, height=10, wraplength = 300)
+        message = Label(messageFrame, textvariable=self.messageVar, width=50, height=14, wraplength = 300)
         message.grid(row=1, column=1)
 
     def _initGridBuildingTools(self):
@@ -342,7 +342,7 @@ class ALifeGUI:
         You can also choose how many steps should happen for each click of the "step" button."""
         simFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
         simFrame.grid(row=2, column=1, padx=5, pady=5)
-        simTitle = Label(simFrame, text="Run Config", font="Arial 16 bold")
+        simTitle = Label(simFrame, text="Run Config", font="Arial 16 bold", height=3)
         simTitle.grid(row=0, column=2, columnspan=2, padx=5, pady=5)
 
         # Sets the maximum
@@ -919,6 +919,23 @@ class ALifeGUI:
 
     def assessFinalResult(self):
         """Reports statistics on how the simulation came out."""
+
+        """
+        X000000000000000 - Vision [0]
+        0X00000000000000 - Smell [1]
+        00X0000000000000 - Movement [2]
+        000X000000000000 - Aggression [3]
+        0000X00000000000 - Sleep Type - Diurnal (0) or Nocturnal (1) [4]
+        00000X0000000000 - Color [5]
+        000000XX00000000 - Initial Energy [6:7]
+        00000000X0000000 - Jump [8]
+        000000000X000000 - Swim [9]
+        0000000000X00000 - Fly [10]
+        00000000000X0000 - Scavenge [11]
+        000000000000X000 - Has a sickness [12]
+        0000000000000X00 - Disease Resistance [13]
+        """
+
         deadAgents = self.sim.getDeadAgents()
         liveAgents = self.sim.getAgents()
         deadAgentGenetricStrings = []
@@ -928,7 +945,16 @@ class ALifeGUI:
         ListOfAggression = []
         ListOfSleepType = []
         ListOfColor = []
+        ListOfInitialEnergy = []
         ListOfJump = []
+        ListOfSwim = []
+        ListOfFly = []
+        ListOfScavenge = []
+        ListOfSickness = []
+        ListOfResistance = []
+
+
+
 
         for i in range(len(deadAgents)):
             deadAgent, timeLived = self.sim.getDeadAgents()[i]
@@ -943,7 +969,13 @@ class ALifeGUI:
             ListOfAggression.append(int(deadAgentGenetricStrings[j][3]))
             ListOfSleepType.append(int(deadAgentGenetricStrings[j][4]))
             ListOfColor.append(int(deadAgentGenetricStrings[j][5]))
+            ListOfInitialEnergy.append(int(deadAgentGenetricStrings[j][6:7]))
             ListOfJump.append(int(deadAgentGenetricStrings[j][8]))
+            ListOfSwim.append(int(deadAgentGenetricStrings[j][9]))
+            ListOfFly.append(int(deadAgentGenetricStrings[j][10]))
+            ListOfScavenge.append(int(deadAgentGenetricStrings[j][11]))
+            ListOfSickness.append(int(deadAgentGenetricStrings[j][12]))
+            ListOfResistance.append(int(deadAgentGenetricStrings[j][13]))
 
         print("ListOfVisions: ", ListOfVisions)
         print("ListOfSmell: ", ListOfSmell)
@@ -952,6 +984,11 @@ class ALifeGUI:
         print("ListOfSleepType: ", ListOfSleepType)
         print("ListOfColor: ", ListOfColor)
         print("ListOfJump: ", ListOfJump)
+        print("ListOfSwim: ", ListOfSwim)
+        print("ListOfFly: ", ListOfFly)
+        print("ListOfScavenge: ", ListOfScavenge)
+        print("ListOfSickness: ", ListOfSickness)
+        print("ListOfResistance: ", ListOfResistance)
 
         WorstVisionTrait = self.most_common(ListOfVisions)
         WorstSmellTrait = self.most_common(ListOfSmell)
@@ -960,16 +997,26 @@ class ALifeGUI:
         WorstSleepTrait = self.most_common(ListOfSleepType)
         WorstColorTrait = self.most_common(ListOfColor)
         WorstJumpTrait = self.most_common(ListOfJump)
+        WorstSwimTrait = self.most_common(ListOfSwim)
+        WorstFlyTrait = self.most_common(ListOfFly)
+        WorstScavengeTrait = self.most_common(ListOfScavenge)
+        WorstSicknessTrait = self.most_common(ListOfSickness)
+        WorstResistanceTrait = self.most_common(ListOfResistance)
 
         self._clearMessage()
 
-        self._addMessage("WorstVisionTrait: " + str(WorstVisionTrait))
-        self._addMessage("WorstSmellTrait: " + str(WorstSmellTrait))
-        self._addMessage("WorstMovementTrait: " + str(WorstMovementTrait))
-        self._addMessage("WorstAggressionTrait: " + str(WorstAggressionTrait))
-        self._addMessage("WorstSleepTrait: " + str(WorstSleepTrait))
-        self._addMessage("WorstColorTrait: " + str(WorstColorTrait))
-        self._addMessage("WorstJumpTrait: " + str(WorstJumpTrait))
+        self._addMessage("Worst Vision Trait: " + str(WorstVisionTrait))
+        self._addMessage("Worst Smell Trait: " + str(WorstSmellTrait))
+        self._addMessage("Worst Movement Trait: " + str(WorstMovementTrait))
+        self._addMessage("Worst Aggression Trait: " + str(WorstAggressionTrait))
+        self._addMessage("Worst Sleep Trait: " + str(WorstSleepTrait))
+        self._addMessage("Worst Color Trait: " + str(WorstColorTrait))
+        self._addMessage("Worst Jump Trait: " + str(WorstJumpTrait))
+        self._addMessage("Worst Swim Trait: " + str(WorstSwimTrait))
+        self._addMessage("Worst Fly Trait: " + str(WorstFlyTrait))
+        self._addMessage("Worst Scavenge Trait: " + str(WorstScavengeTrait))
+        self._addMessage("Worst Sickness Trait: " + str(WorstSicknessTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
 
 
     ### =================================================================
@@ -1575,7 +1622,7 @@ class ALifeGUI:
 # The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 2
-    s = ALifeGUI(4, numberOfAgents)
+    numberOfAgents = 20
+    s = ALifeGUI(15, numberOfAgents)
     s.setupWidgets()
     s.goProgram()

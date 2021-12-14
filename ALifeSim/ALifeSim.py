@@ -20,12 +20,12 @@ class ALifeSimTest(object):
     set of behaviors. Each cell can have objects on it, and agents base their actions on detected objects.
     Each agent has a genetic string that determines their characteristics such as behavior patterns and energy level."""
 
-    FOOD_PERCENT = 0.1
+    FOOD_PERCENT = 0.01
     NEW_FOOD_PERCENT = 0.005
     GROWTH_RATE = 0.005
     MAX_FOOD = 1
     time = 12
-    numStones = 10
+    numStones = 15
     numForest = 0
     numPonds = 0
     numRivers = 0
@@ -43,7 +43,7 @@ class ALifeSimTest(object):
         self.gridSize = gridSize
 
         self.numAgents = numAgents
-        self.numStones = numStones
+        self.numStones = 15
         self.numWaters = 0
         self.numTrees = 10
         self.numRivers = numRivers
@@ -90,17 +90,17 @@ class ALifeSimTest(object):
         self._placeWaters()
 
         # objects w/ no effect
-        # self._placeGrass()
-        # self._placeSand()
-        # self._placeSnow()
+        self._placeGrass()
+        self._placeSand()
+        self._placeSnow()
 
         # inanimate objects
         # self._placeTreesOnHalf()
-        # self._placePits()
-        # self._placeMushrooms()
-        self._placeTrees(self.numForests, random.randint(3,10))
+        self._placePits()
+        self._placeMushrooms()
+        self._placeTrees(self.numForests, random.randint(3, 10))
         self._placeStones()
-        # self._placeFood()
+        self._placeFood()
 
         # agent objects
         self._placeAgents()
@@ -619,10 +619,10 @@ class ALifeSimTest(object):
         #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
 
-        # if self.time != 24:
-        #     self.time += 1
-        # else:
-        #     self.time = 0
+        if self.time != 24:
+            self.time += 1
+        else:
+            self.time = 0
 
         self._updateTrees()
         self._updateMushrooms()

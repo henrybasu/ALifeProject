@@ -25,7 +25,7 @@ class ALifeSim(object):
             for col in range(gridSize):
                 self.foodMap[row, col] = 0
                 self.agentMap[row, col] = []
-        # self._placeFood()
+        self._placeFood()
         self.deadAgents = []
         self.agentList = []
         self.stepNum = 0
