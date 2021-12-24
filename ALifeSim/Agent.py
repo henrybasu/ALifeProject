@@ -1,6 +1,8 @@
 import random
 from Object import Object
 from ALifeSim import *
+
+# Import objects the agent might interact with
 from Tree import Tree
 from Stone import Stone
 from Water import Water
@@ -46,10 +48,11 @@ class Agent(Object):
         0000000000000X00 - Disease Resistance [13]
         """
 
+        # Initiating agent's attributes based on its genetic string
         self.visionRange = int(self.geneticString[0])
         self.smellRadius = int(self.geneticString[1])
         # self.moveSpeed = int(self.geneticString[2])
-        self.moveSpeed = 1
+        self.moveSpeed = 1 #TODO: implement different move speeds
         self.Aggression = int(self.geneticString[3])
         self.sleepValue = int(self.geneticString[4])
         self.color = int(self.geneticString[5])
@@ -61,6 +64,7 @@ class Agent(Object):
         self.sickVal = int(self.geneticString[12])
         self.resistanceVal = int(self.geneticString[13])
 
+        # Setting default values
         self.canSwim = False
         self.canJump = False
         self.canFly = False
@@ -96,14 +100,17 @@ class Agent(Object):
             self.setStepsUntilHealthy(sicknessLength)
             # print("Sickness length: ", sicknessLength)
 
-        # self.score = 0
+        # self.score = 0 #TODO: use this variable?
+
+    # =================================================================
+    # Getter functions
 
     def getEnergy(self):
-        """Returns the current energy value"""
+        """Returns the current energy value."""
         return self.energy
 
     def getAggression(self):
-        """Returns 0 if the agent is docile, 1 if it is aggressive"""
+        """Returns 0 if the agent is docile, 1 if it is aggressive."""
         return self.Aggression
 
     def getVisionRange(self):
@@ -119,7 +126,7 @@ class Agent(Object):
         return self.geneticString
 
     def getPose(self):
-        """Return the row, column, and heading of the agent."""
+        """Returns a tuple containing the row, column, and heading of the agent."""
         return self.row, self.col, self.heading
 
     def getReadyToBreed(self):
@@ -127,38 +134,56 @@ class Agent(Object):
         return self.readyToBreed
 
     def getIsSick(self):
+        """Returns a boolean that tells if the agent is sick."""
         return self.isSick
 
+    def getStepsUntilHealthy(self):
+        """Returns the agent's mushroomInfluence attribute."""
+        return self.stepsUntilHealthy
+
     def getMushroomInfluence(self):
+        """Returns an integer that tells which mushroom influence the agent is currently affected by."""
         return self.mushroomInfluence
 
     def getObjectConsumed(self):
+        """Returns which object the agent has consumed most recently."""
         return self.objectConsumed
+
+    def getStepsUntilNoMushroomInfluence(self):
+        """Returns the number of steps until the agent's mushroomInfluence wears off."""
+        return self.stepsUntilNoMushroomInfluence
+
+    def isAwake(self, sleepValue, time):
+        """Returns a string that tells whether the agent is awake or asleep
+        based on its sleep pattern and the time of day."""
+        if sleepValue == 0 and 6 <= time <= 18:
+            return "awake"
+        elif sleepValue == 1 and (time < 6 or time > 18):
+            return "awake"
+        else:
+            return "sleeping"
+
+    # =================================================================
+    # Setter functions
 
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
-        # print("before updating pos",self)
         self.row = newRow
         self.col = newCol
         self.heading = newHeading
-        # print("after updating pos", self)
 
     def changeEnergy(self, changeVal):
         """Changes the energy value by adding changeVal to it, reports back if the value goes to zero
         or below: the agent "dies" in that case."""
         if self.isSick:
-
             randomInt = random.randint(0, 100)
             chanceOfSurviving = .5-(self.resistanceVal*.05)
 
             if randomInt < chanceOfSurviving * 100:
                 changeVal = -1000
 
-
-
             if changeVal < 0:
                 changeVal = changeVal * 2
-
 
         self.energy += changeVal
         if self.energy <= 0:
@@ -186,42 +211,23 @@ class Agent(Object):
         self.readyToBreed = breedVal
 
     def setMushroomInfluence(self, newVal):
+        """Sets the agent's mushroomInfluence attribute."""
         self.mushroomInfluence = newVal
 
     def setStepsUntilHealthy(self, newVal):
+        """Sets the agent's stepsUntilHealthy attribute."""
         self.stepsUntilHealthy = newVal
 
     def setObjectConsumed(self, newObject):
+        """Sets the agent's objectConsumed attribute."""
         self.objectConsumed = newObject
 
-    def getStepsUntilHealthy(self):
-        return self.stepsUntilHealthy
-
     def setStepsUntilNoMushroomInfluence(self, newVal):
+        """Sets the agent's steps until its mushroomInfluence reverts to 0."""
         self.stepsUntilNoMushroomInfluence = newVal
 
-    def getStepsUntilNoMushroomInfluence(self):
-        return self.stepsUntilNoMushroomInfluence
-
-    def _assessEnergy(self):
-        """Converts energy level into 0 for low, 1 for medium, and 2 for high amounts of energy."""
-        #TODO: do we still need this function?
-        if self.energy < 20:
-            return 0
-        elif self.energy < 60:
-            return 1
-        else:
-            return 2
-
-    def isAwake(self, sleepValue, time):
-        """Returns a string that tells whether the agent is awake or asleep, based on its sleep pattern."""
-        if sleepValue == 0 and 6 <= time <= 18:
-            return "awake"
-        elif sleepValue == 1 and (time < 6 or time > 18):
-            return "awake"
-        else:
-            return "sleeping"
-
+    # =================================================================
+    # Coordinate-related functions
 
     def _computeAhead(self, gridSize):
         """Determines the cell that is one space ahead of current cell, given the heading."""
@@ -239,6 +245,56 @@ class Agent(Object):
         else:  # agent is pointing east, col value increases
             newC = (col + moveSpeed) % gridSize
             return row, newC
+
+    def _leftTurn(self):
+        """Returns the new heading after a left turn."""
+        r,c,heading = self.getPose()
+        if heading == 'n':
+            return 'w'
+        elif heading == 'w':
+            return 's'
+        elif heading == 's':
+            return 'e'
+        else:
+            return 'n'
+
+    def _rightTurn(self):
+        """Returns the new heading after a right turn."""
+        r, c, heading = self.getPose()
+        if heading == 'n':
+            return 'e'
+        elif heading == 'e':
+            return 's'
+        elif heading == 's':
+            return 'w'
+        else:
+            return 'n'
+
+    def _turnAround(self):
+        """Returns the new heading after turning around."""
+        r, c, heading = self.getPose()
+        if heading == 'n':
+            return 's'
+        elif heading == 'e':
+            return 'w'
+        elif heading == 's':
+            return 'n'
+        elif heading == 'w':
+            return 'e'
+        else:
+            return 'BROKEN'
+
+    def attackCreature(self, sim, row, col):
+        """Kills an agent at a given location if it is an enemy."""
+        for j in range(len(sim.agentsAt(row, col))):
+            if int(sim.agentsAt(row, col)[j].getColor()) != self.getColor():
+                deadCreature = sim.agentsAt(row, col)[j]
+                self.setObjectConsumed(deadCreature.getObjectConsumed())
+                deadCreature.changeEnergy(-100)
+                deadCreature.isDead = True
+
+    # =================================================================
+    # Detection helper functions
 
     def _areCreaturesInVision(self, sim):
         """Returns the first object in the agents line of sight."""
@@ -367,162 +423,218 @@ class Agent(Object):
 
         return cellsSmelled
 
-    def areCreaturesInSmellRadius(self, sim):
-        """Returns where relative to the agent another creature is, determined by the agent's smell."""
-        # TODO: do we still need this function?
+    def smellRadiusGlobal1(self, sim):
+        """Returns a list of all objects in the 4 squares around the agent."""
+        ownY, ownX, heading = self.getPose()
+        cellsSmelled = []
+        cellAbove = sim._assessObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
+        cellBelow = sim._assessObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
+        cellRight = sim._assessObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
+        cellLeft = sim._assessObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+        return cellsSmelled
+
+    def smellRadiusGlobal2(self, sim):
+        """Returns a list of all objects in the 12 squares around the agent."""
+        ownY, ownX, heading = self.getPose()
+        cellsSmelled = []
+
+        cellAbove = sim._assessObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
+        cellBelow = sim._assessObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
+        cellRight = sim._assessObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
+        cellLeft = sim._assessObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
+
+        cellTwoAbove = sim._assessObjectsHere((ownY - 2) % sim.gridSize, ownX, self)
+        cellTwoBelow = sim._assessObjectsHere((ownY + 2) % sim.gridSize, ownX, self)
+        cellTwoRight = sim._assessObjectsHere(ownY, (ownX + 2) % sim.gridSize, self)
+        cellTwoLeft = sim._assessObjectsHere(ownY, (ownX - 2) % sim.gridSize, self)
+
+        cellAboveLeft = sim._assessObjectsHere((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+        cellAboveRight = sim._assessObjectsHere((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+        cellBelowRight = sim._assessObjectsHere((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
+        cellBelowLeft = sim._assessObjectsHere((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
+
+        cellsSmelled.append(cellAbove)
+        cellsSmelled.append(cellBelow)
+        cellsSmelled.append(cellRight)
+        cellsSmelled.append(cellLeft)
+
+        cellsSmelled.append(cellTwoAbove)
+        cellsSmelled.append(cellTwoBelow)
+        cellsSmelled.append(cellTwoRight)
+        cellsSmelled.append(cellTwoLeft)
+
+        cellsSmelled.append(cellAboveLeft)
+        cellsSmelled.append(cellAboveRight)
+        cellsSmelled.append(cellBelowLeft)
+        cellsSmelled.append(cellBelowRight)
+        # print("Cells Smelled: ", cellsSmelled)
+
+        return cellsSmelled
+
+    def detectSmellRadius(self, sim):
+        """Returns the direction and object of one object in the agent's smell radius."""
         ownY, ownX, heading = self.getPose()
         smellRadius = self.geneticString[1]
 
-        # Locations for if the agent has a smell radius of 1
+        # actions for if the agent has a smell radius of 1
         if int(smellRadius) == 1:
-            cellsSmelled = self.smellRadius1(sim)
 
-            if cellsSmelled[0] != 0 and heading == "n":
+            creaturesSmelled = self.smellRadiusGlobal1(sim)
+            foodSmelled = self.smellRadiusGlobal1(sim)
+
+            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
+
+            if cellsSmelled[0] > 0 and heading == "n":
                 return "above", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "n":
+            elif cellsSmelled[1] > 0 and heading == "n":
                 return "below", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "n":
+            elif cellsSmelled[2] > 0 and heading == "n":
                 return "right", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "n":
+            elif cellsSmelled[3] > 0 and heading == "n":
                 return "left", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "s":
+            elif cellsSmelled[0] > 0 and heading == "s":
                 return "below", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "s":
+            elif cellsSmelled[1] > 0 and heading == "s":
                 return "above", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "s":
+            elif cellsSmelled[2] > 0 and heading == "s":
                 return "left", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "s":
+            elif cellsSmelled[3] > 0 and heading == "s":
                 return "right", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "e":
+            elif cellsSmelled[0] > 0 and heading == "e":
                 return "left", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "e":
+            elif cellsSmelled[1] > 0 and heading == "e":
                 return "right", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "e":
+            elif cellsSmelled[2] > 0 and heading == "e":
                 return "above", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "e":
+            elif cellsSmelled[3] > 0 and heading == "e":
                 return "below", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "w":
+            elif cellsSmelled[0] > 0 and heading == "w":
                 return "right", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "w":
+            elif cellsSmelled[1] > 0 and heading == "w":
                 return "left", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "w":
+            elif cellsSmelled[2] > 0 and heading == "w":
                 return "below", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "w":
+            elif cellsSmelled[3] > 0 and heading == "w":
                 return "above", cellsSmelled[3]
             else:
                 return "none"
 
         elif int(smellRadius) == 2:
-            cellsSmelled = self.smellRadius2(sim)
-            if cellsSmelled[0] != 0 and heading == "n":
+            cellsSmelled = self.smellRadiusGlobal2(sim)
+            if cellsSmelled[0] > 0 and heading == "n":
                 return "above", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "n":
+            elif cellsSmelled[1] > 0 and heading == "n":
                 return "below", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "n":
+            elif cellsSmelled[2] > 0 and heading == "n":
                 return "right", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "n":
+            elif cellsSmelled[3] > 0 and heading == "n":
                 return "left", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "s":
+            elif cellsSmelled[0] > 0 and heading == "s":
                 return "below", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "s":
+            elif cellsSmelled[1] > 0 and heading == "s":
                 return "above", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "s":
+            elif cellsSmelled[2] > 0 and heading == "s":
                 return "left", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "s":
+            elif cellsSmelled[3] > 0 and heading == "s":
                 return "right", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "e":
+            elif cellsSmelled[0] > 0 and heading == "e":
                 return "left", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "e":
+            elif cellsSmelled[1] > 0 and heading == "e":
                 return "right", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "e":
+            elif cellsSmelled[2] > 0 and heading == "e":
                 return "above", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "e":
+            elif cellsSmelled[3] > 0 and heading == "e":
                 return "below", cellsSmelled[3]
 
-            elif cellsSmelled[0] != 0 and heading == "w":
+            elif cellsSmelled[0] > 0 and heading == "w":
                 return "right", cellsSmelled[0]
-            elif cellsSmelled[1] != 0 and heading == "w":
+            elif cellsSmelled[1] > 0 and heading == "w":
                 return "left", cellsSmelled[1]
-            elif cellsSmelled[2] != 0 and heading == "w":
+            elif cellsSmelled[2] > 0 and heading == "w":
                 return "below", cellsSmelled[2]
-            elif cellsSmelled[3] != 0 and heading == "w":
+            elif cellsSmelled[3] > 0 and heading == "w":
                 return "above", cellsSmelled[3]
 
-            elif (cellsSmelled[4] != 0) and heading == "n":
+            elif (cellsSmelled[4] > 0) and heading == "n":
                 return "above", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "n":
+            elif (cellsSmelled[5] > 0) and heading == "n":
                 return "below", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "n":
+            elif (cellsSmelled[6] > 0) and heading == "n":
                 return "right", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "n":
+            elif (cellsSmelled[7] > 0) and heading == "n":
                 return "left", cellsSmelled[7]
 
-            elif (cellsSmelled[4] != 0) and heading == "s":
+            elif (cellsSmelled[4] > 0) and heading == "s":
                 return "below", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "s":
+            elif (cellsSmelled[5] > 0) and heading == "s":
                 return "above", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "s":
+            elif (cellsSmelled[6] > 0) and heading == "s":
                 return "left", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "s":
+            elif (cellsSmelled[7] > 0) and heading == "s":
                 return "right", cellsSmelled[7]
 
-            elif (cellsSmelled[4] != 0) and heading == "e":
+            elif (cellsSmelled[4] > 0) and heading == "e":
                 return "left", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "e":
+            elif (cellsSmelled[5] > 0) and heading == "e":
                 return "right", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "e":
+            elif (cellsSmelled[6] > 0) and heading == "e":
                 return "above", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "e":
+            elif (cellsSmelled[7] > 0) and heading == "e":
                 return "below", cellsSmelled[7]
 
-            elif (cellsSmelled[4] != 0) and heading == "w":
+            elif (cellsSmelled[4] > 0) and heading == "w":
                 return "right", cellsSmelled[4]
-            elif (cellsSmelled[5] != 0) and heading == "w":
+            elif (cellsSmelled[5] > 0) and heading == "w":
                 return "left", cellsSmelled[5]
-            elif (cellsSmelled[6] != 0) and heading == "w":
+            elif (cellsSmelled[6] > 0) and heading == "w":
                 return "below", cellsSmelled[6]
-            elif (cellsSmelled[7] != 0) and heading == "w":
+            elif (cellsSmelled[7] > 0) and heading == "w":
                 return "above", cellsSmelled[7]
 
-            elif cellsSmelled[8] != 0 and heading == "n":
+            elif cellsSmelled[8] > 0 and heading == "n":
                 return random.choice(["above", "left"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "n":
+            elif cellsSmelled[9] > 0 and heading == "n":
                 return random.choice(["above", "right"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "n":
+            elif cellsSmelled[10] > 0 and heading == "n":
                 return random.choice(["below", "left"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "n":
+            elif cellsSmelled[11] > 0 and heading == "n":
                 return random.choice(["below", "right"]), cellsSmelled[11]
 
-            elif cellsSmelled[8] != 0 and heading == "s":
+            elif cellsSmelled[8] > 0 and heading == "s":
                 return random.choice(["below", "right"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "s":
+            elif cellsSmelled[9] > 0 and heading == "s":
                 return random.choice(["below", "left"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "s":
+            elif cellsSmelled[10] > 0 and heading == "s":
                 return random.choice(["above", "right"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "s":
+            elif cellsSmelled[11] > 0 and heading == "s":
                 return random.choice(["above", "left"]), cellsSmelled[11]
 
-            elif cellsSmelled[8] != 0 and heading == "e":
+            elif cellsSmelled[8] > 0 and heading == "e":
                 return random.choice(["below", "left"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "e":
+            elif cellsSmelled[9] > 0 and heading == "e":
                 return random.choice(["above", "left"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "e":
+            elif cellsSmelled[10] > 0 and heading == "e":
                 return random.choice(["below", "right"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "e":
+            elif cellsSmelled[11] > 0 and heading == "e":
                 return random.choice(["above", "right"]), cellsSmelled[11]
 
-            elif cellsSmelled[8] != 0 and heading == "w":
+            elif cellsSmelled[8] > 0 and heading == "w":
                 return random.choice(["above", "right"]), cellsSmelled[8]
-            elif cellsSmelled[9] != 0 and heading == "w":
+            elif cellsSmelled[9] > 0 and heading == "w":
                 return random.choice(["below", "right"]), cellsSmelled[9]
-            elif cellsSmelled[10] != 0 and heading == "w":
+            elif cellsSmelled[10] > 0 and heading == "w":
                 return random.choice(["above", "left"]), cellsSmelled[10]
-            elif cellsSmelled[11] != 0 and heading == "w":
+            elif cellsSmelled[11] > 0 and heading == "w":
                 return random.choice(["below", "left"]), cellsSmelled[11]
 
             else:
@@ -531,59 +643,8 @@ class Agent(Object):
         else:
             return "none"
 
-    def _leftTurn(self):
-        """Returns the new heading after a left turn."""
-        r,c,heading = self.getPose()
-        if heading == 'n':
-            return 'w'
-        elif heading == 'w':
-            return 's'
-        elif heading == 's':
-            return 'e'
-        else:
-            return 'n'
-
-    def _rightTurn(self):
-        """Returns the new heading after a right turn."""
-        r, c, heading = self.getPose()
-        if heading == 'n':
-            return 'e'
-        elif heading == 'e':
-            return 's'
-        elif heading == 's':
-            return 'w'
-        else:
-            return 'n'
-
-    def _turnAround(self):
-        """Returns the new heading after turning around."""
-        r, c, heading = self.getPose()
-        if heading == 'n':
-            return 's'
-        elif heading == 'e':
-            return 'w'
-        elif heading == 's':
-            return 'n'
-        elif heading == 'w':
-            return 'e'
-        else:
-            return 'BROKEN'
-
-    def attackCreature(self, sim, row, col):
-        """Kills an agent at a given location if it is an enemy."""
-        for j in range(len(sim.agentsAt(row, col))):
-            if int(sim.agentsAt(row, col)[j].getColor()) != self.getColor():
-                deadCreature = sim.agentsAt(row, col)[j]
-                self.setObjectConsumed(deadCreature.getObjectConsumed())
-                deadCreature.changeEnergy(-100)
-                deadCreature.isDead = True
-
-    def removeSelfFromList(self, list):
-        """Takes in a list and removes this agent from the list."""
-        newList = list.copy()
-        if self in newList:
-            newList.remove(self)
-        return newList
+    # =================================================================
+    # Detection main functions - for determining actions
 
     def checkHere(self, sim, listOfPossibleActions):
         """Returns a list of possible actions after checking what objects are on the same square as the agent."""
@@ -827,44 +888,6 @@ class Agent(Object):
         # print("SITUATION 5")
         # print("possible actions: ", listOfPossibleActions)
         return listOfPossibleActions
-
-    def reorderListBasedOnHeading(self, list):
-        """Takes in a list (length 4) and reorders it to [above,below,right,left] based on the agent's current heading."""
-        heading = self.heading
-        if heading == 'n':
-            return list
-        elif heading == 's':
-            order = [1,0,3,2]
-        elif heading == 'e':
-            order = [2,3,1,0]
-        elif heading == 'w':
-            order = [3,2,0,1]
-        else:
-            print("heading invalid in reorder list function, returning north")
-            return list
-
-        list = [list[i] for i in order]
-        return list
-
-    def reorderListBasedOnHeadingLength8(self, list):
-        """Takes in a list (length 8) and reorders it to
-            [2above,2below,2right,2left,aboveLeft,aboveRight,belowLeft,belowRight]
-        based on the agent's current heading."""
-        heading = self.heading
-        if heading == 'n':
-            return list
-        elif heading == 's':
-            order = [1,0,3,2,7,6,5,4]
-        elif heading == 'e':
-            order = [2,3,1,0,5,7,4,6]
-        elif heading == 'w':
-            order = [3,2,0,1,6,4,7,5]
-        else:
-            print("heading invalid in reorder list function, returning north")
-            return list
-
-        list = [list[i] for i in order]
-        return list
 
     def checkSmell(self,sim, listOfPossibleActions):
         """Returns a list of possible actions after checking what objects the agent can smell."""
@@ -1338,6 +1361,9 @@ class Agent(Object):
             pass
             # print("ERROR WITH SLEEP VALUE")
 
+    # =================================================================
+    # Print functions
+
     def _printVision(self, sim):
         """Prints what the agent can see."""
         ownY, ownX, heading = self.getPose()
@@ -1385,225 +1411,6 @@ class Agent(Object):
                         print(visionList[i], end="")
         print("\n")
 
-    def smellRadiusGlobal1(self, sim):
-        ownY, ownX, heading = self.getPose()
-        cellsSmelled = []
-        cellAbove = sim._assessObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
-        cellBelow = sim._assessObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
-        cellRight = sim._assessObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
-        cellLeft = sim._assessObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
-
-        cellsSmelled.append(cellAbove)
-        cellsSmelled.append(cellBelow)
-        cellsSmelled.append(cellRight)
-        cellsSmelled.append(cellLeft)
-        return cellsSmelled
-
-    def smellRadiusGlobal2(self, sim):
-        ownY, ownX, heading = self.getPose()
-        cellsSmelled = []
-
-        cellAbove = sim._assessObjectsHere((ownY - 1) % sim.gridSize, ownX, self)
-        cellBelow = sim._assessObjectsHere((ownY + 1) % sim.gridSize, ownX, self)
-        cellRight = sim._assessObjectsHere(ownY, (ownX + 1) % sim.gridSize, self)
-        cellLeft = sim._assessObjectsHere(ownY, (ownX - 1) % sim.gridSize, self)
-
-        cellTwoAbove = sim._assessObjectsHere((ownY - 2) % sim.gridSize, ownX, self)
-        cellTwoBelow = sim._assessObjectsHere((ownY + 2) % sim.gridSize, ownX, self)
-        cellTwoRight = sim._assessObjectsHere(ownY, (ownX + 2) % sim.gridSize, self)
-        cellTwoLeft = sim._assessObjectsHere(ownY, (ownX - 2) % sim.gridSize, self)
-
-        cellAboveLeft = sim._assessObjectsHere((ownY - 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
-        cellAboveRight = sim._assessObjectsHere((ownY - 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-        cellBelowRight = sim._assessObjectsHere((ownY + 1) % sim.gridSize, (ownX + 1) % sim.gridSize, self)
-        cellBelowLeft = sim._assessObjectsHere((ownY + 1) % sim.gridSize, (ownX - 1) % sim.gridSize, self)
-
-        cellsSmelled.append(cellAbove)
-        cellsSmelled.append(cellBelow)
-        cellsSmelled.append(cellRight)
-        cellsSmelled.append(cellLeft)
-
-        cellsSmelled.append(cellTwoAbove)
-        cellsSmelled.append(cellTwoBelow)
-        cellsSmelled.append(cellTwoRight)
-        cellsSmelled.append(cellTwoLeft)
-
-        cellsSmelled.append(cellAboveLeft)
-        cellsSmelled.append(cellAboveRight)
-        cellsSmelled.append(cellBelowLeft)
-        cellsSmelled.append(cellBelowRight)
-        # print("Cells Smelled: ", cellsSmelled)
-
-        return cellsSmelled
-
-    def detectSmellRadius(self, sim):
-        ownY, ownX, heading = self.getPose()
-        smellRadius = self.geneticString[1]
-
-        # actions for if the agent has a smell radius of 1
-        if int(smellRadius) == 1:
-
-            creaturesSmelled = self.smellRadiusGlobal1(sim)
-            foodSmelled = self.smellRadiusGlobal1(sim)
-
-            cellsSmelled = self.combineStrings(creaturesSmelled, foodSmelled, self)
-
-            if cellsSmelled[0] > 0 and heading == "n":
-                return "above", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "n":
-                return "below", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "n":
-                return "right", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "n":
-                return "left", cellsSmelled[3]
-
-            elif cellsSmelled[0] > 0 and heading == "s":
-                return "below", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "s":
-                return "above", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "s":
-                return "left", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "s":
-                return "right", cellsSmelled[3]
-
-            elif cellsSmelled[0] > 0 and heading == "e":
-                return "left", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "e":
-                return "right", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "e":
-                return "above", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "e":
-                return "below", cellsSmelled[3]
-
-            elif cellsSmelled[0] > 0 and heading == "w":
-                return "right", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "w":
-                return "left", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "w":
-                return "below", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "w":
-                return "above", cellsSmelled[3]
-            else:
-                return "none"
-
-        elif int(smellRadius) == 2:
-            cellsSmelled = self.smellRadiusGlobal2(sim)
-
-
-            if cellsSmelled[0] > 0 and heading == "n":
-                return "above", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "n":
-                return "below", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "n":
-                return "right", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "n":
-                return "left", cellsSmelled[3]
-
-            elif cellsSmelled[0] > 0 and heading == "s":
-                return "below", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "s":
-                return "above", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "s":
-                return "left", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "s":
-                return "right", cellsSmelled[3]
-
-            elif cellsSmelled[0] > 0 and heading == "e":
-                return "left", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "e":
-                return "right", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "e":
-                return "above", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "e":
-                return "below", cellsSmelled[3]
-
-            elif cellsSmelled[0] > 0 and heading == "w":
-                return "right", cellsSmelled[0]
-            elif cellsSmelled[1] > 0 and heading == "w":
-                return "left", cellsSmelled[1]
-            elif cellsSmelled[2] > 0 and heading == "w":
-                return "below", cellsSmelled[2]
-            elif cellsSmelled[3] > 0 and heading == "w":
-                return "above", cellsSmelled[3]
-
-            elif (cellsSmelled[4] > 0) and heading == "n":
-                return "above", cellsSmelled[4]
-            elif (cellsSmelled[5] > 0) and heading == "n":
-                return "below", cellsSmelled[5]
-            elif (cellsSmelled[6] > 0) and heading == "n":
-                return "right", cellsSmelled[6]
-            elif (cellsSmelled[7] > 0) and heading == "n":
-                return "left", cellsSmelled[7]
-
-            elif (cellsSmelled[4] > 0) and heading == "s":
-                return "below", cellsSmelled[4]
-            elif (cellsSmelled[5] > 0) and heading == "s":
-                return "above", cellsSmelled[5]
-            elif (cellsSmelled[6] > 0) and heading == "s":
-                return "left", cellsSmelled[6]
-            elif (cellsSmelled[7] > 0) and heading == "s":
-                return "right", cellsSmelled[7]
-
-            elif (cellsSmelled[4] > 0) and heading == "e":
-                return "left", cellsSmelled[4]
-            elif (cellsSmelled[5] > 0) and heading == "e":
-                return "right", cellsSmelled[5]
-            elif (cellsSmelled[6] > 0) and heading == "e":
-                return "above", cellsSmelled[6]
-            elif (cellsSmelled[7] > 0) and heading == "e":
-                return "below", cellsSmelled[7]
-
-            elif (cellsSmelled[4] > 0) and heading == "w":
-                return "right", cellsSmelled[4]
-            elif (cellsSmelled[5] > 0) and heading == "w":
-                return "left", cellsSmelled[5]
-            elif (cellsSmelled[6] > 0) and heading == "w":
-                return "below", cellsSmelled[6]
-            elif (cellsSmelled[7] > 0) and heading == "w":
-                return "above", cellsSmelled[7]
-
-            elif cellsSmelled[8] > 0 and heading == "n":
-                return random.choice(["above", "left"]), cellsSmelled[8]
-            elif cellsSmelled[9] > 0 and heading == "n":
-                return random.choice(["above", "right"]), cellsSmelled[9]
-            elif cellsSmelled[10] > 0 and heading == "n":
-                return random.choice(["below", "left"]), cellsSmelled[10]
-            elif cellsSmelled[11] > 0 and heading == "n":
-                return random.choice(["below", "right"]), cellsSmelled[11]
-
-            elif cellsSmelled[8] > 0 and heading == "s":
-                return random.choice(["below", "right"]), cellsSmelled[8]
-            elif cellsSmelled[9] > 0 and heading == "s":
-                return random.choice(["below", "left"]), cellsSmelled[9]
-            elif cellsSmelled[10] > 0 and heading == "s":
-                return random.choice(["above", "right"]), cellsSmelled[10]
-            elif cellsSmelled[11] > 0 and heading == "s":
-                return random.choice(["above", "left"]), cellsSmelled[11]
-
-            elif cellsSmelled[8] > 0 and heading == "e":
-                return random.choice(["below", "left"]), cellsSmelled[8]
-            elif cellsSmelled[9] > 0 and heading == "e":
-                return random.choice(["above", "left"]), cellsSmelled[9]
-            elif cellsSmelled[10] > 0 and heading == "e":
-                return random.choice(["below", "right"]), cellsSmelled[10]
-            elif cellsSmelled[11] > 0 and heading == "e":
-                return random.choice(["above", "right"]), cellsSmelled[11]
-
-            elif cellsSmelled[8] > 0 and heading == "w":
-                return random.choice(["above", "right"]), cellsSmelled[8]
-            elif cellsSmelled[9] > 0 and heading == "w":
-                return random.choice(["below", "right"]), cellsSmelled[9]
-            elif cellsSmelled[10] > 0 and heading == "w":
-                return random.choice(["above", "left"]), cellsSmelled[10]
-            elif cellsSmelled[11] > 0 and heading == "w":
-                return random.choice(["below", "left"]), cellsSmelled[11]
-
-            else:
-                return "none"
-
-        else:
-            return "none"
-
     def _printSmell(self, sim, type):
         """Prints what the agent can smell."""
         smellRadius = self.geneticString[1]
@@ -1648,6 +1455,10 @@ class Agent(Object):
             print("\t\t" + str(cellsSmelled[5]) + "\t\t")
         else:
             print("NO SMELL")
+
+
+    # =================================================================
+    # Helper functions
 
     def combineStrings(self, creatureString, foodString, sim):
         #TODO: do we still need this function?
@@ -1705,6 +1516,51 @@ class Agent(Object):
         # elif self.objectConsumed == 4:
         #     print("DROPPING OBJECT FROM EATEN AGENT")
         #     pass
+
+    def removeSelfFromList(self, list):
+        """Takes in a list and removes this agent from the list."""
+        newList = list.copy()
+        if self in newList:
+            newList.remove(self)
+        return newList
+
+    def reorderListBasedOnHeading(self, list):
+        """Takes in a list (length 4) and reorders it to [above,below,right,left] based on the agent's current heading."""
+        heading = self.heading
+        if heading == 'n':
+            return list
+        elif heading == 's':
+            order = [1,0,3,2]
+        elif heading == 'e':
+            order = [2,3,1,0]
+        elif heading == 'w':
+            order = [3,2,0,1]
+        else:
+            print("heading invalid in reorder list function, returning north")
+            return list
+
+        list = [list[i] for i in order]
+        return list
+
+    def reorderListBasedOnHeadingLength8(self, list):
+        """Takes in a list (length 8) and reorders it to
+            [2above,2below,2right,2left,aboveLeft,aboveRight,belowLeft,belowRight]
+        based on the agent's current heading."""
+        heading = self.heading
+        if heading == 'n':
+            return list
+        elif heading == 's':
+            order = [1,0,3,2,7,6,5,4]
+        elif heading == 'e':
+            order = [2,3,1,0,5,7,4,6]
+        elif heading == 'w':
+            order = [3,2,0,1,6,4,7,5]
+        else:
+            print("heading invalid in reorder list function, returning north")
+            return list
+
+        list = [list[i] for i in order]
+        return list
 
     def getTypeAbbreviation(self):
         """Returns the abbreviation for an agent object, "a"."""
