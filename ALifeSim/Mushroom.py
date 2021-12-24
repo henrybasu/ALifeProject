@@ -54,9 +54,11 @@ class Mushroom(Object):
         return "m"
 
     def getTypeOfMushroom(self):
+        """Returns an integer for the type of mushroom."""
         return self.typeOfMushroom
 
     def setTypeOfMushroom(self, newVal):
+        """Sets the type of this mushroom."""
         self.typeOfMushroom = newVal
 
 

@@ -1,8 +1,9 @@
 import random
 import tkinter
 import math
-
 from ALifeGUI import *
+
+# Import all objects used in the simulation.
 from Object import *
 from Agent import *
 from Stone import *
@@ -105,6 +106,8 @@ class ALifeSimTest(object):
         # agent objects
         self._placeAgents()
 
+    # =================================================================
+    # Getter functions
     def getSize(self):
         """Returns the side length of the grid"""
         return self.gridSize
@@ -165,6 +168,8 @@ class ALifeSimTest(object):
         """Returns a list of the mushrooms eaten."""
         return self.eatenMushrooms[:]
 
+    # =================================================================
+    # Checking the grid functions
     def stonesAt(self, row, col):
         """Given a row and column, returns a list of the stones at that location."""
         objectsHereList = self.globalMap[row, col].copy()
@@ -247,6 +252,89 @@ class ALifeSimTest(object):
         """Given a row and column, returns a list of all objects at the location."""
         return self.globalMap[row, col]
 
+    def _assessFood(self, row, col):
+        """Given a row and column, examine the food there, and return 3 if food exists there."""
+        #TODO: do we need this function?
+        foodAmt = self.foodAt(row, col)
+        if len(foodAmt) > 0:
+            return 3
+        else:
+            return 0
+
+    def _assessCreature(self, row, col, agent):
+        """Given a row and column, examine the agents there, and divide it into
+        no creatures, friendly creatures, and enemy creatures, returning 0, 2, or 1 respectively."""
+        creatureAmt = self.agentsAt(row,col)
+
+        if creatureAmt == []:
+            return 0
+
+        elif len(creatureAmt) >= 1:
+            for i in range(len(creatureAmt)):
+                if agent.getColor() == creatureAmt[i].getColor():
+                    return 2
+            return 1
+
+    def _assessCreatureHere(self, row, col):
+        """Given a row and column, examine the creatures there, and divide it into
+        no creatures, creatures with the same color, and creatures with different colors,
+        returning 0, 2, or 1 respectively."""
+        creatureAmt = self.agentsAt(row,col)
+        # for i in range(len(creatureAmt)):
+        #     print(creatureAmt[i].getColor())
+
+        if len(creatureAmt) <= 1:
+            return 0
+        else:
+            for i in range(len(creatureAmt)-1):
+                if creatureAmt[i].getColor() != creatureAmt[i+1].getColor():
+                    return 1
+            return 2
+
+    def _assessObjectsHere(self, row, col, agent):
+        """Given a row and column, examine the objects there, return a number corresponding to the most
+        important object there."""
+        listOfObjects = self.globalMap[row, col]
+        # print("listOfObjects",listOfObjects)
+        if listOfObjects != []:
+            if len(agent.removeSelfFromList(self.treeAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.treeAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.stonesAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.stonesAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.agentsAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.agentsAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.foodAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.foodAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.waterAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.waterAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.mushroomAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.mushroomAt(row, col))[0]
+            elif len(agent.removeSelfFromList(self.pitAt(row, col))) > 0:
+                return agent.removeSelfFromList(self.pitAt(row, col))[0]
+        return None
+
+    def _listOfObjectsHere(self, row, col, agent):
+        """Looks at the global map, returns all objects at a location."""
+        listOfObjects = self.globalMap[row, col].copy()
+        return listOfObjects
+
+    def _agentStringCodes(self, row, col):
+        """Produces three strings for the first three agents (if that many) sitting in the given cell."""
+        #TODO: Remove this function? Do we ever use it?
+        agentStr = "{0:s}{1:<3d}|"
+        emptyStr = "    |"
+        strings = [emptyStr, emptyStr, emptyStr]
+        agentsHere = self.globalMap[row, col]
+        for i in range(3):
+            if len(agentsHere) > i:
+                agent = agentsHere[i]
+                (r, c, h) = agent.getPose()
+                en = agent.getEnergy()
+                strings[i] = agentStr.format(h, en)
+        return strings
+
+    # =================================================================
+    # Functions to place objects on the grid -- used to initialize simulation.
     def _placeFood(self):
         """Places food objects in random clumps so that roughly self.percentFood cells have food."""
         totalCells = self.gridSize ** 2
@@ -314,17 +402,7 @@ class ALifeSimTest(object):
             self.globalMap[randRow, randCol].append(nextMushroom)
 
     def _placeGrass(self):
-        """Places grass objects randomly, avoiding locations where the globalMap already contains something"""
-        # for i in range(self.numGrass):
-        #     (randRow, randCol) = self._genRandomLoc()
-        #     while True:
-        #         if len(self.globalMap[randRow, randCol]) != 0:
-        #             (randRow, randCol) = self._genRandomLoc()
-        #         else:
-        #             break
-        #     nextGrass = Grass(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
-        #     self.grassDict[randRow,randCol].append(nextGrass)
-
+        """Places patches of grass objects randomly."""
         for grassPatch in range(self.numGrass):
             r = random.randint(1, self.gridSize // 5)
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
@@ -350,16 +428,7 @@ class ALifeSimTest(object):
                                     self.grassDict[rowLoc+i,colLoc+j].append(nextGrass)
 
     def _placeSand(self):
-        """Places sand objects randomly, avoiding locations where the globalMap already contains something"""
-        # for i in range(self.numSands):
-        #     (randRow, randCol) = self._genRandomLoc()
-        #     while True:
-        #         if len(self.globalMap[randRow, randCol]) != 0:
-        #             (randRow, randCol) = self._genRandomLoc()
-        #         else:
-        #             break
-        #     nextSand = Sand(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
-        #     self.sandDict[randRow,randCol].append(nextSand)
+        """Places patches of sand objects randomly."""
         for sandPatch in range(self.numSands):
             r = random.randint(1, self.gridSize // 5)
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
@@ -385,19 +454,9 @@ class ALifeSimTest(object):
                                     self.sandDict[rowLoc+i,colLoc+j].append(nextSand)
 
     def _placeSnow(self):
-        """Places snow objects randomly, avoiding locations where the globalMap already contains something"""
+        """Places patches of snow objects randomly."""
         #TODO: make this place snow objects in natural patterns -- high elevation has higher likelihood? Tree+snow?
-
-        # for i in range(self.numSnows):
-        #     (randRow, randCol) = self._genRandomLoc()
-        #     while True:
-        #         if len(self.globalMap[randRow, randCol]) != 0:
-        #             (randRow, randCol) = self._genRandomLoc()
-        #         else:
-        #             break
-        #     nextSnow = Snow(initPose=(randRow, randCol), geneticString="0", stepSpawned=self.stepNum)
-        #     self.snowDict[randRow,randCol].append(nextSnow)
-        for sandPatch in range(self.numSnows):
+        for snowPatch in range(self.numSnows):
             r = random.randint(1, self.gridSize // 5)
             rowLoc = random.randint(-r + 1, self.gridSize - r + 1)
             colLoc = random.randint(-r + 1, self.gridSize - r + 1)
@@ -470,17 +529,6 @@ class ALifeSimTest(object):
                         nextWater = Water(initPose=(place, i), geneticString="0", stepSpawned=self.stepNum)
                         self.waterList.append(nextWater)
                         self.globalMap[place, i].append(nextWater)
-
-    def dist(self, x1, y1, x2, y2):
-        """Takes in two points (x1,y1) and (x2,y2) and returns the distance between them"""
-        return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-
-    def make_circle(self, tiles, cx, cy, r):
-        """Generates a circular shape composed of square tiles"""
-        for x in range(cx - r, cx + r):
-            for y in range(cy - r, cy + r):
-                if self.dist(cx, cy, x, y) <= r:
-                    tiles[x][y] = 1
 
     def _placeTreesOnHalf(self):
         """Places berry trees on the left half of the simulation, avoiding objects that were placed first."""
@@ -558,6 +606,19 @@ class ALifeSimTest(object):
         self.foodList.append(nextFood)
         self.globalMap[randRow, randCol].append(nextFood)
 
+    # =================================================================
+    # Math helper functions
+    def dist(self, x1, y1, x2, y2):
+        """Takes in two points (x1,y1) and (x2,y2) and returns the distance between them"""
+        return math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+    def make_circle(self, tiles, cx, cy, r):
+        """Generates a circular shape composed of square tiles"""
+        for x in range(cx - r, cx + r):
+            for y in range(cy - r, cy + r):
+                if self.dist(cx, cy, x, y) <= r:
+                    tiles[x][y] = 1
+
     def _genRandomPose(self):
         """Generates a random location and direction on the grid with equal probability."""
         row = random.randrange(self.gridSize)
@@ -571,52 +632,14 @@ class ALifeSimTest(object):
         col = random.randrange(self.gridSize)
         return (row, col)
 
-    def printGrid(self):
-        """Prints the globalMap."""
-        for row in range(self.gridSize):
-            for col in range(self.gridSize):
-                if len(self.globalMap[row, col]) == 0:
-                    print("|       |", end="")
-                else:
-                    for i in range(len(self.globalMap[row, col])):
-                        print("|   " + str(self.globalMap[row, col][i].getTypeAbbreviation()) + "   |", end="")
-
-            print("\n")
-
-    def _agentStringCodes(self, row, col):
-        """Produces three strings for the first three agents (if that many) sitting in the given cell."""
-        #TODO: Remove this function? Do we ever use it?
-        agentStr = "{0:s}{1:<3d}|"
-        emptyStr = "    |"
-        strings = [emptyStr, emptyStr, emptyStr]
-        agentsHere = self.globalMap[row, col]
-        for i in range(3):
-            if len(agentsHere) > i:
-                agent = agentsHere[i]
-                (r, c, h) = agent.getPose()
-                en = agent.getEnergy()
-                strings[i] = agentStr.format(h, en)
-        return strings
-
-    def printAgents(self):
-        """Prints the current location, heading, energy, genetic string, step spawned, and step died of each agent."""
-        #TODO: Add steps created
-        print("===== Live Agents =====")
-        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepDied")
-        for agent in self.agentList:
-            print(agent, "       ", "x", "         ", "x")
-        print("===== Dead Agents =====")
-        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepDied")
-        for agent,stepDied in self.deadAgents:
-            print(agent, "       ", "x", "         ", stepDied)
-
+    # =================================================================
+    # Updating the sim functions.
     def step(self):
         """Update one step of the simulation. This means updating each object, and updating each agent
         with its chosen behavior. That could also mean managing agents who "die" because they run out
         of energy."""
         if self.verbose:
             print("----------------------------------------- STEP " + str(self.stepNum) + " ---------------------------------------------------")
-        #TODO Uncomment this to reimplement time VVV
         self.stepNum += 1
 
         if self.time != 24:
@@ -628,29 +651,8 @@ class ALifeSimTest(object):
         self._updateMushrooms()
         self._updateAgents()
 
-        # for i in range(len(self.agentList)):
-            # print("\n\n")
-            # print("==== AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ====")
-            # print("~~~~~~~~~ Energy After Step ~~~~~~~~~")
-            # print("   ", self.agentList[i].getEnergy())
-            # print("--------------------------------------")
-
         if self.verbose:
             print("--------------------------------------------------------------------------------------------")
-        #     print(self.agentList)
-        #     print(self.getDeadAgents())
-        #     print("~ Vision ~")
-        #     self.agentList[i]._printVision(self)
-        #     print("~ Smell Food ~")
-        #     self.agentList[i]._printSmell(self, "food")
-
-            # print("~ Smell Agent ~")
-            # self.agentList[i]._printSmell(self, "agent")
-            # print(self.agentList[i].detectSmellRadius(self), "agent")
-
-        # self.printGrid()
-        # print(self.globalMap)
-        # print("self.globalMap:",self.globalMap)
 
     def _updateTrees(self):
         """Keeps track of when a tree should bloom, and makes them bloom when needed."""
@@ -671,7 +673,6 @@ class ALifeSimTest(object):
                 tree.setHasFood("1")
                 # TODO: WHy can't we call this from the tree V ???
                 # tree.setStepsUntilBloom(random.randint(10,40))
-
             i = i + 1
 
     def _updateMushrooms(self):
@@ -722,31 +723,10 @@ class ALifeSimTest(object):
             if agent.getStepsUntilNoMushroomInfluence() <= 0:
                 agent.mushroomInfluence = 0
                 agent.setStepsUntilNoMushroomInfluence(0)
-
-            # print()
-            # print("Starting move for agent", agent, agentR, agentC, rAhead, cAhead)
-            # self.printGrid()
-
-            # foodHereRating = self._assessFood(agentR, agentC)
-            # print("foodHereRating: " + str(foodHereRating))
-            # foodAheadRating = self._assessFood(rAhead, cAhead)
-            # print("foodAheadRating " + str(foodAheadRating))
-
-            # creatureHereRating = self._assessCreatureHere(agentR, agentC)
-            # print("Creatures at current location: " + str(creatureHereRating))
-
-            # creatureAheadRating = self._assessCreature(rAhead,cAhead, agent)
-            # print("Agent color " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + "'s creatureAheadRating before moving: " + str(creatureAheadRating))
-            # print("-------------------------------------------------")
-            #TODO: replace 0s with foodHereRating and foodAheadRating
-            # action = agent.respond(0, 0, creatureHereRating, creatureAheadRating)
-
-            # print("Agent is ready to breed: " + str(agent.getReadyToBreed()))
             isOkay = True
 
             if not agent.isDead:
                 action = agent.determineAction(self, self.time)
-                # print(agent.colorNumberToText(agent.getColor()), action)
                 if action == 'breed':
                     twoAgents = []
                     agentsHere = self.agentsAt(agentR,agentC)
@@ -754,7 +734,6 @@ class ALifeSimTest(object):
                         # print(type(ob))
                         # if ob is Agent:
                         twoAgents.append(agentsHere[i])
-                        # print("twoAgents",twoAgents)
                     self.makeABaby(twoAgents[0], twoAgents[1])
                     for ag in agentsHere:
                         ag.setReadyToBreed(24)
@@ -876,72 +855,8 @@ class ALifeSimTest(object):
             if isOkay:
                 i = i + 1
 
-    def _assessFood(self, row, col):
-        """Given a row and column, examine the food there, and return 3 if food exists there."""
-        #TODO: do we need this function?
-        foodAmt = self.foodAt(row, col)
-        if len(foodAmt) > 0:
-            return 3
-        else:
-            return 0
-
-    def _assessCreature(self, row, col, agent):
-        """Given a row and column, examine the agents there, and divide it into
-        no creatures, friendly creatures, and enemy creatures, returning 0, 2, or 1 respectively."""
-        creatureAmt = self.agentsAt(row,col)
-
-        if creatureAmt == []:
-            return 0
-
-        elif len(creatureAmt) >= 1:
-            for i in range(len(creatureAmt)):
-                if agent.getColor() == creatureAmt[i].getColor():
-                    return 2
-            return 1
-
-    def _assessCreatureHere(self, row, col):
-        """Given a row and column, examine the creatures there, and divide it into
-        no creatures, creatures with the same color, and creatures with different colors,
-        returning 0, 2, or 1 respectively."""
-        creatureAmt = self.agentsAt(row,col)
-        # for i in range(len(creatureAmt)):
-        #     print(creatureAmt[i].getColor())
-
-        if len(creatureAmt) <= 1:
-            return 0
-        else:
-            for i in range(len(creatureAmt)-1):
-                if creatureAmt[i].getColor() != creatureAmt[i+1].getColor():
-                    return 1
-            return 2
-
-    def _assessObjectsHere(self, row, col, agent):
-        """Given a row and column, examine the objects there, return a number corresponding to the most
-        important object there."""
-        listOfObjects = self.globalMap[row, col]
-        # print("listOfObjects",listOfObjects)
-        if listOfObjects != []:
-            if len(agent.removeSelfFromList(self.treeAt(row, col))) > 0:
-                return agent.removeSelfFromList(self.treeAt(row, col))[0]
-            elif len(agent.removeSelfFromList(self.stonesAt(row, col))) > 0:
-                return agent.removeSelfFromList(self.stonesAt(row, col))[0]
-            elif len(agent.removeSelfFromList(self.agentsAt(row, col))) > 0:
-                return agent.removeSelfFromList(self.agentsAt(row, col))[0]
-            elif len(agent.removeSelfFromList(self.foodAt(row, col))) > 0:
-                return agent.removeSelfFromList(self.foodAt(row, col))[0]
-            elif len(agent.removeSelfFromList(self.waterAt(row, col))) > 0:
-                return agent.removeSelfFromList(self.waterAt(row, col))[0]
-            elif len(agent.removeSelfFromList(self.mushroomAt(row, col))) > 0:
-                return agent.removeSelfFromList(self.mushroomAt(row, col))[0]
-            elif len(agent.removeSelfFromList(self.pitAt(row, col))) > 0:
-                return agent.removeSelfFromList(self.pitAt(row, col))[0]
-        return None
-
-    def _listOfObjectsHere(self, row, col, agent):
-        """Looks at the global map, returns all objects at a location."""
-        listOfObjects = self.globalMap[row, col].copy()
-        return listOfObjects
-
+    # =================================================================
+    # Agent action functions
     def eatItem(self, agent, row, col):
         """Removes a food object from a location on the global map."""
         foodAtCell = self.foodAt(row, col)
@@ -981,7 +896,7 @@ class ALifeSimTest(object):
 
     def makeABaby(self, agent1, agent2):
         """Takes in two agents and produces a baby agent with a combination of their genetic strings
-        plus a random mutation"""
+        plus a random mutation."""
         if agent1.getReadyToBreed() == 0 and agent2.getReadyToBreed() == 0:
             agentPose = agent1.getPose()
             r, c, h = agentPose
@@ -1046,5 +961,31 @@ class ALifeSimTest(object):
             newBabyGeneticString+=str(babyGeneticStringAsList[j])
         # print(newBabyGeneticString)
         return newBabyGeneticString
+
+    # =================================================================
+    # Print functions
+    def printGrid(self):
+        """Prints the globalMap."""
+        for row in range(self.gridSize):
+            for col in range(self.gridSize):
+                if len(self.globalMap[row, col]) == 0:
+                    print("|       |", end="")
+                else:
+                    for i in range(len(self.globalMap[row, col])):
+                        print("|   " + str(self.globalMap[row, col][i].getTypeAbbreviation()) + "   |", end="")
+
+            print("\n")
+
+    def printAgents(self):
+        """Prints the current location, heading, energy, genetic string, step spawned, and step died of each agent."""
+        # TODO: Add steps created
+        print("===== Live Agents =====")
+        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepDied")
+        for agent in self.agentList:
+            print(agent, "       ", "x", "         ", "x")
+        print("===== Dead Agents =====")
+        print("       Row  Col  Hed   Energy    Genetic String  StepFirst  StepDied")
+        for agent, stepDied in self.deadAgents:
+            print(agent, "       ", "x", "         ", stepDied)
 
 
