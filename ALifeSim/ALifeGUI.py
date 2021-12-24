@@ -5,7 +5,6 @@ This file contains code, including a Tkinter class, that implements the
 GUI for this simulation.  This must be run in Python 3!
  ==================================================================="""
 
-#
 import collections
 import time
 import random
@@ -17,7 +16,6 @@ from PIL import Image,ImageTk
 
 import ALifeSim
 from LocalSearchSolver import RulesetState, HillClimber, BeamSearcher, GASearcher
-
 
 class ALifeGUI:
     """Set up and manage all the variables for the GUI interface."""
@@ -208,7 +206,7 @@ class ALifeGUI:
     # Widget-creating helper functions
 
     def _initTitle(self):
-        """Sets up the title section of the GUI, where the Quit and Help buttons are located"""
+        """Sets up the title section of the GUI, where the Quit and Help buttons are located."""
         titleButtonFrame = Frame(self.root, bd=5, padx=5, pady=5)
         titleButtonFrame.grid(row=1, column=1)
         quitButton = Button(titleButtonFrame, text="Quit", command=self.quit)
@@ -223,7 +221,7 @@ class ALifeGUI:
 
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
-        about how much work was done"""
+        about how much work was done."""
         messageFrame = Frame(self.root, bd=5, padx=10, pady=1, relief="groove")
         messageFrame.grid(row=2, column=2,  padx=5, pady=1)
         self.messageVar = StringVar()
@@ -232,7 +230,7 @@ class ALifeGUI:
         message.grid(row=1, column=1)
 
     def _initGridBuildingTools(self):
-        """Sets up the tools for modifying the grid and the number of agents"""
+        """Sets up the tools for modifying the grid and the number of agents."""
         gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove")
         gridSetupFrame.grid(row=3, column=1, padx=5, pady=5, sticky=N)
         editTitle = Label(gridSetupFrame, text="Grid Config", font="Arial 16 bold", anchor=CENTER)
@@ -323,7 +321,7 @@ class ALifeGUI:
 
     def _initGrid(self):
         """sets up the grid with current assigned dimensions, and number of agents
-        done as a helper because it may need to be done over later"""
+        done as a helper because it may need to be done over later."""
         self.canvas = None
         self.canvasSize = 500
         self.canvasPadding = 10
@@ -423,9 +421,6 @@ class ALifeGUI:
         self.sunTenImage = PhotoImage(file='images/time/sunTen.png')
         self.sunElevenImage = PhotoImage(file='images/time/sunEleven.png')
 
-        # print(self.ghostImage)
-        # print(self.testing)
-        # print(self.sim.time)
         timeImages = [
             self.moonMidnightImage,
             self.moonOneImage,
@@ -459,10 +454,6 @@ class ALifeGUI:
         # stepsLabel = tkinter.Canvas(timeBoxFrame)
         # stepsLabel.create_image(0,0,image=self.ghostImage, anchor="nw")
         stepsLabel.grid(row=1, column=1)
-
-    # def updateTimeBox(self):
-    #     self.moonImage = PhotoImage(file='images/bone.png')
-    #     stepsLabel.image
 
     ### =================================================================
     ### The following are callbacks for buttons
@@ -730,23 +721,6 @@ class ALifeGUI:
                 self.canvas.lift(trId)
                 tr.setJustChangedBloom(False)
 
-            # self.canvas.update()
-            # treeRow,treeCol = tr.getPose()
-            # # finds tree's current tkinter object id
-            # currentId = tr.getVisId()
-            # # deletes the object
-            # self.canvas.delete(currentId)
-            # self.canvas.update()
-            # coords = [(x1 + x2) / 2, (y1 + y2) / 2]
-            # if tr.getHasFood() == '0':
-            #     trId = self.canvas.create_image(coords, image=self.treeImage)
-            #     self.agentIdToPose[trId] = tr.getPose()
-            #     tr.setVisId(trId)
-            # elif tr.getHasFood() == '1':
-            #     trId = self.canvas.create_image(coords, image=self.treeFruitImage)
-            #     self.agentIdToPose[trId] = tr.getPose()
-            #     tr.setVisId(trId)
-
         for mu in self.sim.getMushrooms():
             (newRow, newCol) = mu.getPose()
             # print("New coords:",newRow,newCol)
@@ -796,9 +770,7 @@ class ALifeGUI:
         for agent in self.sim.getAgents():
             # agColor = self._determineAgentColor(agent.getEnergy())
             agColor = self._UpdateAgentColor(agent.getColor(), agent.getEnergy())
-
             newColor = self.tintColor(agent)
-            # print("NEWCOLOR", newColor)
 
             if agent.isSick:
                 agOutlineType = (3, 5)
@@ -856,6 +828,8 @@ class ALifeGUI:
             self.canvas.delete(id)
 
         for deadAgent in self.sim.getDeadAgents():
+            #TODO: make this fade out over time
+
             # finds dead agent tkinter object id
             id = deadAgent[0].getVisId()
 

@@ -104,7 +104,6 @@ class Agent(Object):
 
     # =================================================================
     # Getter functions
-
     def getEnergy(self):
         """Returns the current energy value."""
         return self.energy
@@ -165,7 +164,6 @@ class Agent(Object):
 
     # =================================================================
     # Setter functions
-
     def updatePose(self, newRow, newCol, newHeading):
         """Updates the agent's pose to a new position and heading"""
         self.row = newRow
@@ -295,7 +293,6 @@ class Agent(Object):
 
     # =================================================================
     # Detection helper functions
-
     def _areCreaturesInVision(self, sim):
         """Returns the first object in the agents line of sight."""
         #TODO: do we still need this function?
@@ -645,7 +642,6 @@ class Agent(Object):
 
     # =================================================================
     # Detection main functions - for determining actions
-
     def checkHere(self, sim, listOfPossibleActions):
         """Returns a list of possible actions after checking what objects are on the same square as the agent."""
         ownX, ownY, ownH = self.getPose()
@@ -1363,7 +1359,6 @@ class Agent(Object):
 
     # =================================================================
     # Print functions
-
     def _printVision(self, sim):
         """Prints what the agent can see."""
         ownY, ownX, heading = self.getPose()
@@ -1459,7 +1454,6 @@ class Agent(Object):
 
     # =================================================================
     # Helper functions
-
     def combineStrings(self, creatureString, foodString, sim):
         #TODO: do we still need this function?
         finalString = []
