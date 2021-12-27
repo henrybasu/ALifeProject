@@ -22,6 +22,11 @@ class ALifeGUI:
     def __init__(self, gridDim, numAgents=10, maxSteps=100):
         """Given the dimension of the grid, and the number of agents set up a new Tk object of the right size"""
         self.root = Tk()
+        sizex = 900
+        sizey = 800
+        posx = 600
+        posy = 0
+        self.root.wm_geometry("%dx%d+%d+%d" % (sizex, sizey, posx, posy))
         self.root.title("Jonathan and Henry's ALife Simulation")
         self.gridDim = gridDim
         self.userInputtedGeneticStrings = []
@@ -224,6 +229,12 @@ class ALifeGUI:
         about how much work was done."""
         messageFrame = Frame(self.root, bd=5, padx=10, pady=1, relief="groove")
         messageFrame.grid(row=2, column=2,  padx=5, pady=1)
+        # messageCanvas = Canvas(messageFrame1)
+        # messageFrame = Frame(messageCanvas)
+        # myscrollbar = Scrollbar(messageFrame, orient="vertical", command=messageCanvas.yview)
+        # messageCanvas.configure(yscrollcommand=myscrollbar.set)
+        # myscrollbar.pack(side="right", fill="y")
+        # messageCanvas.pack(side="left")
         self.messageVar = StringVar()
         self.messageVar.set("")
         message = Label(messageFrame, textvariable=self.messageVar, width=50, height=14, wraplength = 300)
@@ -990,6 +1001,13 @@ class ALifeGUI:
         self._addMessage("Worst Fly Trait: " + str(WorstFlyTrait))
         self._addMessage("Worst Scavenge Trait: " + str(WorstScavengeTrait))
         self._addMessage("Worst Sickness Trait: " + str(WorstSicknessTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
+        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
         self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
 
 
