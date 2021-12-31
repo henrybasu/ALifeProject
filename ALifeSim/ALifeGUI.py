@@ -232,16 +232,17 @@ class ALifeGUI:
 
         resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
                            anchor=CENTER, padx=5, pady=5, wraplength=300, height = 2)
-        resultsBoxTitle.grid(row=0,column=1)
+        resultsBoxTitle.grid(row=1,column=1)
 
         messageCanvas = Canvas(messageFrame1)
-        messageTextBox = Text(messageCanvas)
+        messageTextBox = Text(messageCanvas, height=10, width=10)
         myscrollbar = Scrollbar(messageFrame1, orient="vertical", command=messageCanvas.yview)
-        myscrollbar.grid(row=1, column=0, sticky=NS)
-        messageCanvas.grid(row=1, column=1, sticky=NS)
-        # messageCanvas.configure(yscrollcommand=myscrollbar.set)
+        myscrollbar.grid(row=2, column=2, sticky=NS)
+        messageCanvas.grid(row=2, column=1, sticky=NS)
+        messageCanvas.configure(yscrollcommand=myscrollbar.set)
         # messageTextBox.config(yscrollcommand=myscrollbar.set)
-        messageCanvas['yscrollcommand'] = myscrollbar.set
+        messageTextBox.grid(row=1,column=1)
+        # messageTextBox['yscrollcommand'] = myscrollbar.set
 
         messageCanvas.create_window((0, 0), window=messageTextBox, anchor='nw')
         messageTextBox.bind("<Configure>", messageCanvas.configure(scrollregion=messageCanvas.bbox("all")))
