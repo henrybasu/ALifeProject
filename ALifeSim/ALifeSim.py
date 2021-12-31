@@ -97,11 +97,11 @@ class ALifeSimTest(object):
 
         # inanimate objects
         # self._placeTreesOnHalf()
-        self._placePits()
-        self._placeMushrooms()
+        # self._placePits()
+        # self._placeMushrooms()
         self._placeTrees(self.numForests, random.randint(3, 10))
-        self._placeStones()
-        self._placeFood()
+        # self._placeStones()
+        # self._placeFood()
 
         # agent objects
         self._placeAgents()

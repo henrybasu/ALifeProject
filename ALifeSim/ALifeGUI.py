@@ -24,7 +24,7 @@ class ALifeGUI:
         self.root = Tk()
         sizex = 900
         sizey = 800
-        posx = 600
+        posx = 540
         posy = 0
         self.root.wm_geometry("%dx%d+%d+%d" % (sizex, sizey, posx, posy))
         self.root.title("Jonathan and Henry's ALife Simulation")
@@ -214,7 +214,7 @@ class ALifeGUI:
         """Sets up the title section of the GUI, where the Quit and Help buttons are located."""
         titleButtonFrame = Frame(self.root, bd=5, padx=5, pady=5)
         titleButtonFrame.grid(row=1, column=1)
-        quitButton = Button(titleButtonFrame, text="Quit", command=self.quit)
+        quitButton = Button(titleButtonFrame, text="Quit", command=self.quit, height=2)
         quitButton.grid(row=1, column=1, padx=5)
 
         titleFrame =  Frame(self.root, bd=5, padx=5, pady=5)
@@ -227,35 +227,47 @@ class ALifeGUI:
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
         about how much work was done."""
-        messageFrame = Frame(self.root, bd=5, padx=10, pady=1, relief="groove")
-        messageFrame.grid(row=2, column=2,  padx=5, pady=1)
-        # messageCanvas = Canvas(messageFrame1)
-        # messageFrame = Frame(messageCanvas)
-        # myscrollbar = Scrollbar(messageFrame, orient="vertical", command=messageCanvas.yview)
+        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=2, relief="groove")
+        messageFrame1.grid(row=2, column=2,  padx=5, pady=1)
+
+        resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
+                           anchor=CENTER, padx=5, pady=5, wraplength=300, height = 2)
+        resultsBoxTitle.grid(row=0,column=1)
+
+        messageCanvas = Canvas(messageFrame1)
+        messageTextBox = Text(messageCanvas)
+        myscrollbar = Scrollbar(messageFrame1, orient="vertical", command=messageCanvas.yview)
+        myscrollbar.grid(row=1, column=0, sticky=NS)
+        messageCanvas.grid(row=1, column=1, sticky=NS)
         # messageCanvas.configure(yscrollcommand=myscrollbar.set)
-        # myscrollbar.pack(side="right", fill="y")
-        # messageCanvas.pack(side="left")
+        # messageTextBox.config(yscrollcommand=myscrollbar.set)
+        messageCanvas['yscrollcommand'] = myscrollbar.set
+
+        messageCanvas.create_window((0, 0), window=messageTextBox, anchor='nw')
+        messageTextBox.bind("<Configure>", messageCanvas.configure(scrollregion=messageCanvas.bbox("all")))
+
         self.messageVar = StringVar()
-        self.messageVar.set("")
-        message = Label(messageFrame, textvariable=self.messageVar, width=50, height=14, wraplength = 300)
+        # self.messageVar.set("")
+        self.messageVar.set("1 \n2 \n3 \n4 \n5 \n6 \n7 \n8 \n9 \n10 \n11 \n12 \n13 \n14 \n15 \n16 \n17 \n18 \n19 \n20 \n21 \n22")
+        message = Label(messageTextBox, textvariable=self.messageVar, width=30, height=14, wraplength = 300)
         message.grid(row=1, column=1)
 
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents."""
-        gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove")
-        gridSetupFrame.grid(row=3, column=1, padx=5, pady=5, sticky=N)
-        editTitle = Label(gridSetupFrame, text="Grid Config", font="Arial 16 bold", anchor=CENTER)
+        gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove", width=500)
+        gridSetupFrame.grid(row=3, column=1, padx=5, pady=5, sticky=NW)
+        editTitle = Label(gridSetupFrame, text="Grid Config", font="Arial 16 bold", anchor=CENTER, height=2)
         editTitle.grid(row=0, column=1, padx=5, pady=5)
 
         # Make a new subframe
         makerFrame = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
-        makerFrame.grid(row=1, column=1, padx=5, pady=5)
+        makerFrame.grid(row=1, column=1, padx=5, pady=5, sticky=W)
 
         makerFrame2 = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
-        makerFrame2.grid(row=2, column=1, padx=5, pady=5)
+        makerFrame2.grid(row=2, column=1, padx=5, pady=5, sticky=W)
 
-        makerFrame3 = Frame(gridSetupFrame, bd=2, relief="groove", padx=5, pady=5)
-        makerFrame3.grid(row=3, column=1, padx=5, pady=5)
+        makerFrame3 = Frame(gridSetupFrame, bd=0, relief="groove", padx=5, pady=5)
+        makerFrame3.grid(row=3, column=1, padx=5, pady=5, sticky=W)
 
         sizeLabel1 = Label(makerFrame, text="Grid Dimension")
         # sizeLabel2 = Label(makerFrame, text="x") #TODO: Reimplement this
@@ -304,7 +316,7 @@ class ALifeGUI:
         self.numPonds = Entry(makerFrame, textvariable=self.pondsNum, width=4, justify=CENTER)
 
         # self.gridButton = Button(gridSetupFrame, text="New Simulation", command=self.resetGridWorld)
-        self.gridButton = Button(makerFrame3, text="Generate New Simulation", command=self.resetGridWorld)
+        self.gridButton = Button(makerFrame3, text="Generate New Simulation", command=self.resetGridWorld, height=2)
         self.gridButton.grid(row=3, column=2, columnspan=2, pady=5)
 
         sizeLabel1.grid(row=1, column=1)
@@ -350,23 +362,23 @@ class ALifeGUI:
         stepping or running it, running it 100 times, and quitting from it.
         You can also choose how many steps should happen for each click of the "step" button."""
         simFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
-        simFrame.grid(row=2, column=1, padx=5, pady=5)
-        simTitle = Label(simFrame, text="Run Config", font="Arial 16 bold", height=3)
-        simTitle.grid(row=0, column=2, columnspan=2, padx=5, pady=5)
+        simFrame.grid(row=2, column=1, padx=5, pady=5, sticky=W)
+        simTitle = Label(simFrame, text="Run Config", font="Arial 16 bold", height=2, anchor=CENTER)
+        simTitle.grid(row=0, column=2, columnspan=1, padx=5, pady=1)
 
         # Sets the maximum
         stepsLabel = Label(simFrame, text="Max sim steps")
         self.maxStepsText = IntVar()
         self.maxStepsText.set(self.maxSteps)
         self.stepsEntry = Entry(simFrame, textvariable=self.maxStepsText, width=4, justify=CENTER)
-        stepsLabel.grid(row=1, column=1)
+        stepsLabel.grid(row=1, column=1, sticky=W)
         self.stepsEntry.grid(row=1, column=2)
 
         delayLabel = Label(simFrame, text="Step delay")
         self.delayText = StringVar()
         self.delayText.set("{0:4.2f}".format(self.delayTime))
         self.delayEntry = Entry(simFrame, textvariable=self.delayText, width=5, justify=CENTER)
-        delayLabel.grid(row=2, column=1)
+        delayLabel.grid(row=2, column=1, sticky=W)
         self.delayEntry.grid(row=2, column=2)
 
         # gapLabel = Label(simFrame, text="", width=20, bg="light gray")
@@ -376,17 +388,17 @@ class ALifeGUI:
         self.currStepsText.set(self.currSteps)
         currStepLabel = Label(simFrame, text="Current steps:")
         currSteps = Label(simFrame, textvariable=self.currStepsText, width=4, justify=CENTER, relief="raised")
-        currStepLabel.grid(row=5, column=1)
+        currStepLabel.grid(row=5, column=1, sticky=W)
         currSteps.grid(row=5, column=2)
 
-        self.stepButton = Button(simFrame, text="Step simulation", command=self.stepSimulation)
-        self.stepButton.grid(row=6, column=1, columnspan=2, pady=5)
+        self.run100Button = Button(simFrame, text="Run 100x", command=self.run100Simulations, height=2)
+        self.run100Button.grid(row=6, column=3, columnspan=1, pady=5)
 
-        self.runButton = Button(simFrame, text="Run simulation", command=self.runSimulation)
-        self.runButton.grid(row=7, column=1, columnspan=2, pady=5)
+        self.runButton = Button(simFrame, text="Run 1x", command=self.runSimulation, height = 2)
+        self.runButton.grid(row=6, column=2, columnspan=1, pady=5)
 
-        self.run100Button = Button(simFrame, text="Run 100x", command=self.run100Simulations)
-        self.run100Button.grid(row=7, column=3, columnspan=2, pady=5)
+        self.stepButton = Button(simFrame, text="Step", command=self.stepSimulation, height=2)
+        self.stepButton.grid(row=6, column=1, columnspan=1, pady=5, sticky=E)
 
     def _initSearchTools(self):
         """Sets up the searcher for optimal string."""
@@ -400,9 +412,10 @@ class ALifeGUI:
     def _makeTimeBox(self):
         """Sets up a box with an image to display the simulation's current time."""
         timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
-        timeBoxFrame.grid(row=4, column=1, padx=5, pady=5, sticky=N)
-        # timeBoxTitle = Label(timeBoxFrame, text="Time box", font="Arial 16 bold")
-        # timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
+        timeBoxFrame.grid(row=2, column=2, padx=5, pady=5, sticky=SE)
+        timeBoxTitle = Label(timeBoxFrame, text="Time", font="Arial 16 bold")
+        #TODO: replace "Time" with the current time as a number
+        timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
         #TODO: change where these images load - put them in the top w/ other images
         self.sunNoonImage=PhotoImage(file='images/time/sunNoon.png')
@@ -1406,19 +1419,19 @@ class ALifeGUI:
     def _postMessage(self, messageText):
         """Posts a message in the message box"""
         self.messageVar.set(messageText)
-        print(messageText)
+        print("Message text:", messageText)
 
     def _clearMessage(self):
         """Clears the message in the message box"""
         self.messageVar.set("")
-        print()
+        print("Message cleared")
 
     def _addMessage(self, messageText):
         """Adds a message to the results frame. """
         oldMessage = self.messageVar.get()
         newMessage = oldMessage + '\n' + messageText
         self.messageVar.set(newMessage)
-        # print(newMessage)
+        # print("New Message", newMessage)
 
     def _setCellColor(self, cellId, color):
         """Sets the grid cell with cellId, and at row and column position, to have the
@@ -1614,7 +1627,7 @@ class ALifeGUI:
 # The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 20
-    s = ALifeGUI(15, numberOfAgents)
+    numberOfAgents = 5
+    s = ALifeGUI(5, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
