@@ -230,28 +230,56 @@ class ALifeGUI:
         messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=2, relief="groove")
         messageFrame1.grid(row=2, column=2,  padx=5, pady=1)
 
-        resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
-                           anchor=CENTER, padx=5, pady=5, wraplength=300, height = 2)
-        resultsBoxTitle.grid(row=1,column=1)
+        # resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
+        #                    anchor=CENTER, padx=5, pady=5, wraplength=300, height = 2)
+        # resultsBoxTitle.grid(row=1,column=1)
 
-        messageCanvas = Canvas(messageFrame1)
-        messageTextBox = Text(messageCanvas, height=10, width=10)
-        myscrollbar = Scrollbar(messageFrame1, orient="vertical", command=messageCanvas.yview)
-        myscrollbar.grid(row=2, column=2, sticky=NS)
-        messageCanvas.grid(row=2, column=1, sticky=NS)
-        messageCanvas.configure(yscrollcommand=myscrollbar.set)
-        # messageTextBox.config(yscrollcommand=myscrollbar.set)
-        messageTextBox.grid(row=1,column=1)
-        # messageTextBox['yscrollcommand'] = myscrollbar.set
+        # messageCanvas = Canvas(messageFrame1)
+        # messageCanvas.grid(row=2, column=1, sticky=NS)
+        #
+        # # myscrollbar = Scrollbar(messageFrame1, orient="vertical", command=messageCanvas.yview)
+        # # myscrollbar.grid(row=2, column=2, sticky=NS)
+        # # messageCanvas.configure(yscrollcommand=myscrollbar.set)
+        #
+        # messageTextFrame = Frame(messageCanvas)
+        # # messageTextFrame.config(yscrollcommand=myscrollbar.set)
+        # # messageTextFrame.grid(row=1,column=1)
+        # # messageTextFrame['yscrollcommand'] = myscrollbar.set
+        #
+        # messageCanvas.create_window((0, 0), window=messageTextFrame, anchor='nw')
+        # messageTextFrame.bind("<Configure>", messageCanvas.configure(scrollregion=messageCanvas.bbox("all")))
+        #
+        # textWidget = Text(messageTextFrame)
+        # vsb = Scrollbar(messageTextFrame, orient="vertical", command=textWidget.yview)
+        # # vsb.config(command=textWidget.yview)
+        # textWidget.config(yscrollcommand=vsb.set)
+        # textWidget.grid(row=0, column=1)
+        # vsb.grid(row=0, column=0, sticky=NS)
+        #
+        # self.messageVar = StringVar()
+        # # self.messageVar.set("")
+        # self.messageVar.set("1 \n2 \n3 \n4 \n5 \n6 \n7 \n8 \n9 \n10 \n11 \n12 \n13 \n14 \n15 \n16 \n17 \n18 \n19 \n20 \n21 \n22")
+        # message = Label(textWidget, textvariable=self.messageVar, width=30, height=14, wraplength = 300)
+        # message.grid(row=1, column=1)
 
-        messageCanvas.create_window((0, 0), window=messageTextBox, anchor='nw')
-        messageTextBox.bind("<Configure>", messageCanvas.configure(scrollregion=messageCanvas.bbox("all")))
+        canvas1 = Canvas(messageFrame1)
+        scroll1 = Scrollbar(messageFrame1, orient='vertical', command=canvas1.yview)
+        canvas1.configure(yscrollcommand=scroll1.set)
+        frame1 = Frame(
+            canvas1)  # frame does not get pack() as it needs to be embedded into canvas throught canvas.
+        scroll1.pack(side='right', fill='y')
+        canvas1.pack(fill='both', expand='yes')
+        canvas1.create_window((0, 0), window=frame1, anchor='nw')
+        frame1.bind('<Configure>',
+                        lambda x: canvas1.configure(scrollregion=canvas1.bbox('all')))  # lambda function
 
-        self.messageVar = StringVar()
-        # self.messageVar.set("")
-        self.messageVar.set("1 \n2 \n3 \n4 \n5 \n6 \n7 \n8 \n9 \n10 \n11 \n12 \n13 \n14 \n15 \n16 \n17 \n18 \n19 \n20 \n21 \n22")
-        message = Label(messageTextBox, textvariable=self.messageVar, width=30, height=14, wraplength = 300)
-        message.grid(row=1, column=1)
+        # 1st Text Widget
+        journal1 = Text(frame1)
+        vsb1 = Scrollbar(frame1)
+        vsb1.config(command=journal1.yview)
+        journal1.config(yscrollcommand=vsb1.set)
+        journal1.grid(row=0, column=0)  # grid instead
+        vsb1.grid(row=0, column=1, sticky='ns')  # grid instead
 
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents."""
