@@ -227,41 +227,13 @@ class ALifeGUI:
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
         about how much work was done."""
-        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=200, width=350, relief="groove")
-        messageFrame1.grid(row=2, column=2,  padx=5, pady=1, sticky=SW)
+        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=190, width=350, relief="groove")
+        messageFrame1.grid(row=2, column=2, padx=60, pady=1, sticky=SW)
         messageFrame1.pack_propagate(0)
 
         resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
                            anchor=CENTER, wraplength=300, height=2)
         resultsBoxTitle.pack()
-
-        # messageCanvas = Canvas(messageFrame1)
-        # messageCanvas.grid(row=2, column=1, sticky=NS)
-        #
-        # # myscrollbar = Scrollbar(messageFrame1, orient="vertical", command=messageCanvas.yview)
-        # # myscrollbar.grid(row=2, column=2, sticky=NS)
-        # # messageCanvas.configure(yscrollcommand=myscrollbar.set)
-        #
-        # messageTextFrame = Frame(messageCanvas)
-        # # messageTextFrame.config(yscrollcommand=myscrollbar.set)
-        # # messageTextFrame.grid(row=1,column=1)
-        # # messageTextFrame['yscrollcommand'] = myscrollbar.set
-        #
-        # messageCanvas.create_window((0, 0), window=messageTextFrame, anchor='nw')
-        # messageTextFrame.bind("<Configure>", messageCanvas.configure(scrollregion=messageCanvas.bbox("all")))
-        #
-        # textWidget = Text(messageTextFrame)
-        # vsb = Scrollbar(messageTextFrame, orient="vertical", command=textWidget.yview)
-        # # vsb.config(command=textWidget.yview)
-        # textWidget.config(yscrollcommand=vsb.set)
-        # textWidget.grid(row=0, column=1)
-        # vsb.grid(row=0, column=0, sticky=NS)
-        #
-        # self.messageVar = StringVar()
-        # # self.messageVar.set("")
-        # self.messageVar.set("1 \n2 \n3 \n4 \n5 \n6 \n7 \n8 \n9 \n10 \n11 \n12 \n13 \n14 \n15 \n16 \n17 \n18 \n19 \n20 \n21 \n22")
-        # message = Label(textWidget, textvariable=self.messageVar, width=30, height=14, wraplength = 300)
-        # message.grid(row=1, column=1)
 
         messageCanvas = Canvas(messageFrame1)
         messageScrollbar = Scrollbar(messageFrame1, orient='vertical', command=messageCanvas.yview)
@@ -274,27 +246,16 @@ class ALifeGUI:
         messageCanvas.bind('<Configure>',
                         lambda x: messageCanvas.configure(scrollregion=messageCanvas.bbox('all')))  # lambda function
 
-        # 1st Text Widget
-        # journal1 = Text(frame1)
-        # vsb1 = Scrollbar(frame1)
-        # vsb1.config(command=journal1.yview)
-        # journal1.config(yscrollcommand=vsb1.set)
-        # journal1.grid(row=0, column=0)
-        # vsb1.grid(row=0, column=1, sticky='ns')
-
         self.messageVar = StringVar()
-        # self.messageVar.set("")
-        self.messageVar.set("1 \n2 \n3 \n4 \n5 \n6 \n7 \n8 \n9 \n10 \n11 \n12 \n13 \n14 \n15 \n16 \n17 \n18 \n19 \n20 \n21 \n22")
+        self.messageVar.set("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         message = Label(frame1, textvariable=self.messageVar)
-        # message.config(yscrollcommand=vsb1.set)
         message.grid(row=0, column=0)
-
-        # vsb1.config(command=message.yview)
 
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents."""
-        gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove", width=500)
-        gridSetupFrame.grid(row=3, column=1, padx=5, pady=5, sticky=NW)
+        gridSetupFrame = Frame(self.root, bd=5, padx=5, pady=5, relief="groove", height=410, width=300)
+        gridSetupFrame.grid(row=3, column=1, padx=5, pady=10, sticky=NW)
+        gridSetupFrame.grid_propagate(0)
         editTitle = Label(gridSetupFrame, text="Grid Config", font="Arial 16 bold", anchor=CENTER, height=2)
         editTitle.grid(row=0, column=1, padx=5, pady=5)
 
@@ -400,9 +361,9 @@ class ALifeGUI:
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
         stepping or running it, running it 100 times, and quitting from it.
         You can also choose how many steps should happen for each click of the "step" button."""
-        simFrame = Frame(self.root, bd=5, padx=1, pady=1, height=200, width=225, relief="groove")
+        simFrame = Frame(self.root, bd=5, padx=1, pady=1, height=190, width=300, relief="groove")
         simFrame.grid(row=2, column=1, padx=5, pady=1, sticky=SW)
-        simFrame.pack_propagate(0)
+        simFrame.grid_propagate(0)
         simTitle = Label(simFrame, text="Run Config", font="Arial 16 bold", height=2, anchor=CENTER)
         simTitle.grid(row=0, column=2, columnspan=1, padx=5, pady=1)
 
@@ -451,8 +412,9 @@ class ALifeGUI:
 
     def _makeTimeBox(self):
         """Sets up a box with an image to display the simulation's current time."""
-        timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
+        timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove", width=80, height=120)
         timeBoxFrame.grid(row=2, column=2, padx=5, pady=5, sticky=SE)
+        timeBoxFrame.grid_propagate(0)
         timeBoxTitle = Label(timeBoxFrame, text="Time", font="Arial 16 bold")
         #TODO: replace "Time" with the current time as a number
         timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
