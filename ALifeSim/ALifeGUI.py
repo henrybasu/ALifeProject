@@ -1629,7 +1629,7 @@ class ALifeGUI:
 # The lines below cause the simulation to run when this file is double-clicked or sent to a launcher, or loaded
 # into the interactive shell.
 if __name__ == "__main__":
-    numberOfAgents = 5
-    s = ALifeGUI(5, numberOfAgents)
+    numberOfAgents = 20
+    s = ALifeGUI(15, numberOfAgents)
     s.setupWidgets()
     s.goProgram()
