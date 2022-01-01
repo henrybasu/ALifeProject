@@ -227,8 +227,8 @@ class ALifeGUI:
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
         about how much work was done."""
-        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=190, width=350, relief="groove")
-        messageFrame1.grid(row=2, column=2, padx=60, pady=1, sticky=SW)
+        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=190, width=225, relief="groove")
+        messageFrame1.grid(row=2, column=2, padx=120, pady=1, sticky=SW)
         messageFrame1.pack_propagate(0)
 
         resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
@@ -415,7 +415,8 @@ class ALifeGUI:
         timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove", width=80, height=120)
         timeBoxFrame.grid(row=2, column=2, padx=5, pady=5, sticky=SE)
         timeBoxFrame.grid_propagate(0)
-        timeBoxTitle = Label(timeBoxFrame, text="Time", font="Arial 16 bold")
+        timeText = str(self.sim.time) + ":00"
+        timeBoxTitle = Label(timeBoxFrame, text=timeText, font="Arial 16 bold")
         #TODO: replace "Time" with the current time as a number
         timeBoxTitle.grid(row=0, column=1, columnspan=2, padx=5, pady=5)
 
