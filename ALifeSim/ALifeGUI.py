@@ -227,12 +227,13 @@ class ALifeGUI:
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
         about how much work was done."""
-        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=2, relief="groove")
-        messageFrame1.grid(row=2, column=2,  padx=5, pady=1)
+        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=200, width=350, relief="groove")
+        messageFrame1.grid(row=2, column=2,  padx=5, pady=1, sticky=SW)
+        messageFrame1.pack_propagate(0)
 
-        # resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
-        #                    anchor=CENTER, padx=5, pady=5, wraplength=300, height = 2)
-        # resultsBoxTitle.grid(row=1,column=1)
+        resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
+                           anchor=CENTER, wraplength=300, height=2)
+        resultsBoxTitle.pack()
 
         # messageCanvas = Canvas(messageFrame1)
         # messageCanvas.grid(row=2, column=1, sticky=NS)
@@ -270,16 +271,16 @@ class ALifeGUI:
         messageScrollbar.pack(side='right', fill='y')
         messageCanvas.pack(fill='both', expand='yes')
         messageCanvas.create_window((0, 0), window=frame1, anchor='nw')
-        frame1.bind('<Configure>',
+        messageCanvas.bind('<Configure>',
                         lambda x: messageCanvas.configure(scrollregion=messageCanvas.bbox('all')))  # lambda function
 
         # 1st Text Widget
         # journal1 = Text(frame1)
-        vsb1 = Scrollbar(frame1)
+        # vsb1 = Scrollbar(frame1)
         # vsb1.config(command=journal1.yview)
         # journal1.config(yscrollcommand=vsb1.set)
         # journal1.grid(row=0, column=0)
-        vsb1.grid(row=0, column=1, sticky='ns')
+        # vsb1.grid(row=0, column=1, sticky='ns')
 
         self.messageVar = StringVar()
         # self.messageVar.set("")
@@ -288,7 +289,7 @@ class ALifeGUI:
         # message.config(yscrollcommand=vsb1.set)
         message.grid(row=0, column=0)
 
-        vsb1.config(command=message.yview)
+        # vsb1.config(command=message.yview)
 
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents."""
@@ -399,8 +400,9 @@ class ALifeGUI:
         """Sets up the search frame, with buttons for selecting which search, for starting a search,
         stepping or running it, running it 100 times, and quitting from it.
         You can also choose how many steps should happen for each click of the "step" button."""
-        simFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove")
-        simFrame.grid(row=2, column=1, padx=5, pady=5, sticky=W)
+        simFrame = Frame(self.root, bd=5, padx=1, pady=1, height=200, width=225, relief="groove")
+        simFrame.grid(row=2, column=1, padx=5, pady=1, sticky=SW)
+        simFrame.pack_propagate(0)
         simTitle = Label(simFrame, text="Run Config", font="Arial 16 bold", height=2, anchor=CENTER)
         simTitle.grid(row=0, column=2, columnspan=1, padx=5, pady=1)
 
