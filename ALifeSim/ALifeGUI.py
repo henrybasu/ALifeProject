@@ -262,24 +262,33 @@ class ALifeGUI:
         # message = Label(textWidget, textvariable=self.messageVar, width=30, height=14, wraplength = 300)
         # message.grid(row=1, column=1)
 
-        canvas1 = Canvas(messageFrame1)
-        scroll1 = Scrollbar(messageFrame1, orient='vertical', command=canvas1.yview)
-        canvas1.configure(yscrollcommand=scroll1.set)
+        messageCanvas = Canvas(messageFrame1)
+        messageScrollbar = Scrollbar(messageFrame1, orient='vertical', command=messageCanvas.yview)
+        messageCanvas.configure(yscrollcommand=messageScrollbar.set)
         frame1 = Frame(
-            canvas1)  # frame does not get pack() as it needs to be embedded into canvas throught canvas.
-        scroll1.pack(side='right', fill='y')
-        canvas1.pack(fill='both', expand='yes')
-        canvas1.create_window((0, 0), window=frame1, anchor='nw')
+            messageCanvas)  # frame does not get pack() as it needs to be embedded into canvas throught canvas.
+        messageScrollbar.pack(side='right', fill='y')
+        messageCanvas.pack(fill='both', expand='yes')
+        messageCanvas.create_window((0, 0), window=frame1, anchor='nw')
         frame1.bind('<Configure>',
-                        lambda x: canvas1.configure(scrollregion=canvas1.bbox('all')))  # lambda function
+                        lambda x: messageCanvas.configure(scrollregion=messageCanvas.bbox('all')))  # lambda function
 
         # 1st Text Widget
-        journal1 = Text(frame1)
+        # journal1 = Text(frame1)
         vsb1 = Scrollbar(frame1)
-        vsb1.config(command=journal1.yview)
-        journal1.config(yscrollcommand=vsb1.set)
-        journal1.grid(row=0, column=0)  # grid instead
-        vsb1.grid(row=0, column=1, sticky='ns')  # grid instead
+        # vsb1.config(command=journal1.yview)
+        # journal1.config(yscrollcommand=vsb1.set)
+        # journal1.grid(row=0, column=0)
+        vsb1.grid(row=0, column=1, sticky='ns')
+
+        self.messageVar = StringVar()
+        # self.messageVar.set("")
+        self.messageVar.set("1 \n2 \n3 \n4 \n5 \n6 \n7 \n8 \n9 \n10 \n11 \n12 \n13 \n14 \n15 \n16 \n17 \n18 \n19 \n20 \n21 \n22")
+        message = Label(frame1, textvariable=self.messageVar)
+        # message.config(yscrollcommand=vsb1.set)
+        message.grid(row=0, column=0)
+
+        vsb1.config(command=message.yview)
 
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents."""
