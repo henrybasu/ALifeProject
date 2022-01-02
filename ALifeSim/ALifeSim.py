@@ -42,7 +42,6 @@ class ALifeSimTest(object):
         """Takes in the side length of the grid, as well as what objects to place in the simulation.
         Creates the simulation and initializes variables based on the input."""
         self.gridSize = gridSize
-
         self.numAgents = numAgents
         self.numStones = numStones
         self.numWaters = 0
@@ -694,11 +693,9 @@ class ALifeSimTest(object):
         i = 0
         if self.verbose:
             print("aLifeSim object is using _updateAgents() for step " + str(self.stepNum))
-
-        if self.verbose:
             print("--------------------------------------------------------------------------------------------")
-        while i < len(self.agentList):
 
+        while i < len(self.agentList):
             if self.verbose:
                 print("*************** AGENT COLOR: " + str(self.agentList[i].colorNumberToText(self.agentList[i].getColor())) + " ***************")
 

@@ -141,13 +141,6 @@ class ALifeGUI:
         except:
             print("Choosing randomly for genetic string #2")
 
-        #IF user inputs x, choose randomly
-        #TODO: what if user inputs something else that is not 12 digits?
-        # if len(randomGeneticStrings) == 2:
-        #     if randomGeneticStrings[0] == "x" and randomGeneticStrings[1] == "x":
-        #         print("choosing all genetic strings randomly")
-        #         randomGeneticStrings = []
-
         for n in range(self.numberAgents - len(randomGeneticStrings)):
             randomVision = str(random.randint(1, 2))
             randomSmell = str(random.randint(0, 2))
@@ -771,7 +764,7 @@ class ALifeGUI:
 
             # finds tree tkinter object id
             id = mu.getVisId()
-            print(id)
+            # print(id)
 
             # self.canvas.create_oval(x1, y1, x2, y2, outline="black", fill=agColor, width=2)
             # self.canvas.create_image(x1, y1, image=self.ghostImage)
@@ -980,18 +973,24 @@ class ALifeGUI:
             ListOfSickness.append(int(deadAgentGenetricStrings[j][12]))
             ListOfResistance.append(int(deadAgentGenetricStrings[j][13]))
 
-        print("ListOfVisions: ", ListOfVisions)
-        print("ListOfSmell: ", ListOfSmell)
-        print("ListOfMovement: ", ListOfMovement)
-        print("ListOfAggression: ", ListOfAggression)
-        print("ListOfSleepType: ", ListOfSleepType)
-        print("ListOfColor: ", ListOfColor)
-        print("ListOfJump: ", ListOfJump)
-        print("ListOfSwim: ", ListOfSwim)
-        print("ListOfFly: ", ListOfFly)
-        print("ListOfScavenge: ", ListOfScavenge)
-        print("ListOfSickness: ", ListOfSickness)
-        print("ListOfResistance: ", ListOfResistance)
+        print("===================================================================================================================")
+        print("==================================================SIMULATION OVER==================================================")
+        print("===================================================================================================================")
+
+        print("Assessing final result")
+
+        print("\t ListOfVisions: ", ListOfVisions)
+        print("\t ListOfSmell: ", ListOfSmell)
+        print("\t ListOfMovement: ", ListOfMovement)
+        print("\t ListOfAggression: ", ListOfAggression)
+        print("\t ListOfSleepType: ", ListOfSleepType)
+        print("\t ListOfColor: ", ListOfColor)
+        print("\t ListOfJump: ", ListOfJump)
+        print("\t ListOfSwim: ", ListOfSwim)
+        print("\t ListOfFly: ", ListOfFly)
+        print("\t ListOfScavenge: ", ListOfScavenge)
+        print("\t ListOfSickness: ", ListOfSickness)
+        print("\t ListOfResistance: ", ListOfResistance)
 
         WorstVisionTrait = self.most_common(ListOfVisions)
         WorstSmellTrait = self.most_common(ListOfSmell)
