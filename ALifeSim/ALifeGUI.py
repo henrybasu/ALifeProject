@@ -227,8 +227,8 @@ class ALifeGUI:
     def _initMessage(self):
         """Sets up the section of the window where messages appear, errors, failures, and numbers
         about how much work was done."""
-        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=190, width=225, relief="groove")
-        messageFrame1.grid(row=2, column=2, padx=120, pady=1, sticky=SW)
+        messageFrame1 = Frame(self.root, bd=5, padx=1, pady=1, height=120, width=400, relief="groove")
+        messageFrame1.grid(row=3, column=2, padx=30, pady=375, sticky=SW)
         messageFrame1.pack_propagate(0)
 
         resultsBoxTitle = Label(messageFrame1, text="Simulation Results", font="Arial 16 bold",
@@ -246,10 +246,13 @@ class ALifeGUI:
         messageCanvas.bind('<Configure>',
                         lambda x: messageCanvas.configure(scrollregion=messageCanvas.bbox('all')))  # lambda function
 
+        pad1 = Label(frame1, text="                              ")
+        pad1.grid(row=0, column=0)
+
         self.messageVar = StringVar()
-        self.messageVar.set("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        self.messageVar.set("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n") #TODO: change the number of these to make the box bigger.
         message = Label(frame1, textvariable=self.messageVar)
-        message.grid(row=0, column=0)
+        message.grid(row=0, column=1, sticky=NE)
 
     def _initGridBuildingTools(self):
         """Sets up the tools for modifying the grid and the number of agents."""
@@ -345,11 +348,10 @@ class ALifeGUI:
     def _initGrid(self):
         """sets up the grid with current assigned dimensions, and number of agents
         done as a helper because it may need to be done over later."""
-        self.canvas = None
         self.canvasSize = 500
         self.canvasPadding = 10
         canvasFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="raise", bg="gray")
-        canvasFrame.grid(row=3, column=2, rowspan=3, padx=5, pady=5)
+        canvasFrame.grid(row=2, column=2, rowspan=2, columnspan=2, padx=5, pady=0, sticky=N)
         self.canvas = Canvas(canvasFrame,
                              width=self.canvasSize + self.canvasPadding,
                              height=self.canvasSize + self.canvasPadding)
@@ -413,7 +415,7 @@ class ALifeGUI:
     def _makeTimeBox(self):
         """Sets up a box with an image to display the simulation's current time."""
         timeBoxFrame = Frame(self.root, bd=5, padx=10, pady=10, relief="groove", width=80, height=120)
-        timeBoxFrame.grid(row=2, column=2, padx=5, pady=5, sticky=SE)
+        timeBoxFrame.grid(row=3, column=3, padx=5, pady=375, sticky=SE)
         timeBoxFrame.grid_propagate(0)
         timeText = str(self.sim.time) + ":00"
         timeBoxTitle = Label(timeBoxFrame, text=timeText, font="Arial 16 bold")
@@ -1018,14 +1020,6 @@ class ALifeGUI:
         self._addMessage("Worst Scavenge Trait: " + str(WorstScavengeTrait))
         self._addMessage("Worst Sickness Trait: " + str(WorstSicknessTrait))
         self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-        self._addMessage("Worst Resistance Trait: " + str(WorstResistanceTrait))
-
 
     ### =================================================================
     ### Private helper functions
@@ -1427,7 +1421,7 @@ class ALifeGUI:
     def _clearMessage(self):
         """Clears the message in the message box"""
         self.messageVar.set("")
-        print("Message cleared")
+        # print("Message cleared")
 
     def _addMessage(self, messageText):
         """Adds a message to the results frame. """
