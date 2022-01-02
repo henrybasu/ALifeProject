@@ -642,7 +642,7 @@ class ALifeSimTest(object):
             print("----------------------------------------- STEP " + str(self.stepNum) + " ---------------------------------------------------")
         self.stepNum += 1
 
-        if self.time != 24:
+        if self.time < 23:
             self.time += 1
         else:
             self.time = 0
