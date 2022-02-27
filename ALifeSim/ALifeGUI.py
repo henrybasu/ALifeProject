@@ -27,7 +27,7 @@ class ALifeGUI:
         posx = 540
         posy = 0
         self.root.wm_geometry("%dx%d+%d+%d" % (sizex, sizey, posx, posy))
-        self.root.title("Jonathan and Henry's ALife Simulation")
+        self.root.title("Comp 484: ALife Simulation")
         self.gridDim = gridDim
         self.userInputtedGeneticStrings = []
         self.numberAgents = numAgents
