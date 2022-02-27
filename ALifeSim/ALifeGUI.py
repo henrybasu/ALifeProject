@@ -213,7 +213,7 @@ class ALifeGUI:
         titleFrame =  Frame(self.root, bd=5, padx=5, pady=5)
         titleFrame.grid(row=1, column=1, columnspan=3, padx=5, pady=5)
 
-        titleLabel = Label(titleFrame, text="Jonathan and Henry's ALife Simulation", font="Arial 20 bold",
+        titleLabel = Label(titleFrame, text="Comp 484: ALife Simulation", font="Arial 20 bold",
                            anchor=CENTER, padx=5, pady=5)
         titleLabel.grid(row=1, column=1)
 
